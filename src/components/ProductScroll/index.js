@@ -1,34 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
-import ProductCard from '../ProductCard';
-import { Container } from './style';
+import { Container, Arrow } from './style';
 
-import api from '../../services/api';
-
-export default function HorizontalScroll() {
-  const [products, setProducts] = useState({});
-
-  useEffect(() => {
-    async function loadAllProducts() {
-      const res = await api.get('product');
-      console.log(res.data.map((p) => p.category));
-      setProducts(res.data);
-    }
-    loadAllProducts();
-  }, []);
-
+export default function HorizontalScroll({
+  productCards,
+  category = 'Categoria',
+}) {
   return (
     <Container>
       <ScrollMenu
-        data={
-          products[0] &&
-          products.map((product) => {
-            const { name, id, description } = product;
-            return (
-              <ProductCard description={description} text={name} key={id} />
-            );
-          })
-        }
+        data={productCards}
+        arrowLeft={<Arrow>{'<'}</Arrow>}
+        arrowRight={<Arrow>{'>'}</Arrow>}
+        menuStyle={{ justifyContent: 'space-between' }}
+        wrapperStyle={{ width: '100%' }}
+        wheel={false}
+        dragging={false}
       />
     </Container>
   );

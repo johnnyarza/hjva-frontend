@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  margin: 30px 15px;
+  margin-top: 30px;
+  margin-left: 30px;
+  margin-right: 30px;
 `;
 
 export const Arrow = styled.div`
   font-size: 30px;
-  width: 80px;
+  width: 50px;
   height: 50px;
   border-radius: 60px;
   background-color: orange;

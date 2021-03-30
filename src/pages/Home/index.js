@@ -1,6 +1,10 @@
+/* eslint-disable */
 import React, { useState, useEffect } from 'react';
+
+import { MdClear } from 'react-icons/md';
 import ProductCard from '../../components/ProductCard';
 import ProductScroll from '../../components/ProductScroll';
+
 import api from '../../services/api';
 
 export default function Home() {
@@ -32,18 +36,26 @@ export default function Home() {
     return null;
   }
 
+  function generateScrolls(cats) {
+    cats.map((cat) => (
+      <div style={{ width: '100%' }}>
+        <ProductScroll
+          key={cat}
+          productCards={generateProductCards(cat)}
+          category={cat}
+        />
+      </div>
+    ));
+  }
   return (
     <>
-      {categories[0] &&
-        categories.map((cat) => (
-          <div style={{ width: '100%' }}>
-            <ProductScroll
-              key={cat}
-              productCards={generateProductCards(cat)}
-              category={cat}
-            />
-          </div>
-        ))}
+      {categories[0]
+        ? generateScrolls(categories)
+        :
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <MdClear />
+        </div>
+      }
     </>
   );
 }

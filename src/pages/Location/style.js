@@ -12,10 +12,3 @@ export const Content = styled.div`
     font-weight: 400;
   }
 `;
-
-export const MapContainer = styled.div`
-  position: relative;
-  height: 500px;
-  width: 960px;
-  margin-bottom: 30px;
-`;

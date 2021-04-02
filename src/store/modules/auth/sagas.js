@@ -45,6 +45,7 @@ export function setToken({ payload }) {
 export function signOut({ payload }) {
   const { history } = payload;
   history.push('/');
+  toast.success('Logout com sucesso');
 }
 export default all([
   takeLatest('@auth/SIGN_OUT', signOut),

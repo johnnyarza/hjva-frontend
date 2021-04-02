@@ -38,7 +38,7 @@ export default function Header() {
             <Link to="/">
               <MdCall />
             </Link>
-            <Link to="/">
+            <Link to="/location">
               <MdPlace />
             </Link>
           </div>

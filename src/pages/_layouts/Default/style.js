@@ -5,4 +5,6 @@ export const Wrapper = styled.div`
 `;
 export const Content = styled.div`
   margin-top: 150px;
+  margin-right: 64px;
+  margin-left: 64px;
 `;

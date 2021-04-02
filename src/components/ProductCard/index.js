@@ -1,9 +1,10 @@
 import React from 'react';
+
 import { Container, Description, ProductName } from './style';
 
-export default function ProductCard({ text, description, imgSrc }) {
-  return (
-    <Container>
+const ProductCard = ({ text, description, imgSrc }) => (
+  <Container>
+    <div style={{ alignSelf: 'center' }}>
       <img
         src={
           imgSrc ||
@@ -11,12 +12,14 @@ export default function ProductCard({ text, description, imgSrc }) {
         }
         alt="bloco"
       />
-      <Description>
-        <ProductName>
-          <span>{text}</span>
-        </ProductName>
-        <span>{description}</span>
-      </Description>
-    </Container>
-  );
-}
+    </div>
+    <Description>
+      <ProductName>
+        <span>{text}</span>
+      </ProductName>
+      <span>{description}</span>
+    </Description>
+  </Container>
+);
+
+export default ProductCard;

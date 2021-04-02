@@ -1,9 +1,19 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 
 export const Container = styled.div`
   margin-top: 30px;
   margin-left: 30px;
   margin-right: 30px;
+
+  > span {
+    display: inline-block;
+    font-weight: 300;
+    font-size: 26px;
+    margin-bottom: 20px;
+
+    color: ${darken(0.6, '#EBEBEB')};
+  }
 `;
 
 export const Arrow = styled.div`
@@ -11,7 +21,6 @@ export const Arrow = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 60px;
-  background-color: orange;
   text-align: center;
   display: table-cell;
   overflow: hidden;
@@ -21,5 +30,9 @@ export const Arrow = styled.div`
 
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+  }
+
+  &:active {
+    box-shadow: rgba(0, 0, 0, 0.8) 0 0 15px;
   }
 `;

@@ -18,6 +18,10 @@ export const Container = styled.div`
     box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
   }
 
+  &:active {
+    box-shadow: rgba(0, 0, 0, 0.8) 0 0 15px;
+  }
+
   img {
     width: 224px;
     height: 224px;
@@ -44,5 +48,25 @@ export const ProductName = styled.div`
   span {
     margin-left: 15px;
     font-size: 18px;
+  }
+`;
+
+export const EditIcon = styled.div`
+  display: flex;
+  position: absolute;
+  top: -5px;
+  border: solid 1px;
+  border-radius: 35px;
+  width: 35px;
+  height: 35px;
+  justify-content: center;
+  align-items: center;
+  z-index: 100px;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+  }
+  > svg {
+    width: 25px;
+    height: 25px;
   }
 `;

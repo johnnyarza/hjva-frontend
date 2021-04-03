@@ -8,6 +8,7 @@ import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import Product from '../pages/Product';
 import Location from '../pages/Location';
+import User from '../pages/User';
 
 export default function Routes() {
   return (
@@ -21,7 +22,19 @@ export default function Routes() {
       />
       <Route path="/login" exact component={(props) => <SignIn {...props} />} />
 
-      <Route path="/dashboard" exact component={Dashboard} isPrivate />
+      <Route
+        path="/dashboard"
+        exact
+        component={(props) => <Dashboard {...props} />}
+        isPrivate
+      />
+
+      <Route
+        path="/user"
+        exact
+        component={(props) => <User {...props} />}
+        isPrivate
+      />
 
       <Route
         path="/location"

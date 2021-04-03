@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useHistory, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
@@ -16,13 +16,13 @@ const schema = Yup.object().shape({
   password: Yup.string().min(6).required('Senha é obrigatória'),
 });
 
-const SignIn = (props) => {
+const SignIn = () => {
   const { auth } = store.getState();
-  const { history } = props;
+  const history = useHistory();
   const dispatch = useDispatch();
 
   if (auth.token) {
-    history.push('/dashboard');
+    return <Redirect to="/dashboard" />;
   }
 
   const handleSubmit = ({ email, password }) => {

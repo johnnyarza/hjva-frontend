@@ -14,9 +14,6 @@ export const Container = styled.div`
   top: 90px;
   width: 40px;
   transition: width 0.2s;
-  span {
-    visibility: collapse;
-  }
 
   &:hover {
     width: 10%;
@@ -25,20 +22,24 @@ export const Container = styled.div`
     }
   }
 `;
+
 export const Content = styled.ul`
   display: inline-block;
 `;
 
 export const BarItem = styled.li`
   height: 30px;
+  position: relative;
   a {
     display: flex;
     color: black;
     span {
       display: inline-block;
       align-self: center;
-      margin-left: 5px;
+      margin-left: 30px;
       font-size: 15px;
+      position: absolute;
+      white-space: nowrap;
     }
     svg {
       width: 20px;

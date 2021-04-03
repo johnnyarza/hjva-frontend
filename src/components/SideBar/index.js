@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdAccountCircle, MdLocalGroceryStore } from 'react-icons/md';
 
@@ -9,9 +9,9 @@ export default function SideBar() {
     <Container>
       <Content>
         <BarItem>
-          <Link to="/">
+          <Link to="/user">
             <MdAccountCircle />
-            <span>aaaaa</span>
+            <span>Editar usuario</span>
           </Link>
         </BarItem>
         <BarItem>

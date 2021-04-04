@@ -11,7 +11,9 @@ import {
 } from 'react-icons/md';
 import logo from '../../assets/HJVA-logo.png';
 
-import { Container, Content, MiddleContent, HeaderInput } from './style';
+import {
+  Container, Content, MiddleContent, HeaderInput,
+} from './style';
 import { signOut } from '../../store/modules/auth/actions';
 
 export default function Header() {

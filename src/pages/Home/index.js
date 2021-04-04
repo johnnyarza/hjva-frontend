@@ -26,7 +26,6 @@ export default function Home() {
   }, []);
 
   function generateProductCards(category) {
-
     if (products[0] && categories[0]) {
       const prodsByCat = products.filter((p) => p.category === category);
       const cards = prodsByCat.map((p) => (
@@ -50,11 +49,7 @@ export default function Home() {
   }
   return (
     <>
-      {categories[0] && products[0]
-        ? generateScrolls(categories)
-        :
-        <Empty />
-      }
+      {categories[0] && products[0] ? generateScrolls(categories) : <Empty />}
     </>
   );
 }

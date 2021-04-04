@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
     "babel-plugin-root-import": "^6.6.0",
+    "computer-name": "^0.1.0",
     "connected-react-router": "^6.9.1",
     "history": "^4.10.1",
     "immer": "^9.0.1",

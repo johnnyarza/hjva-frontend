@@ -33,10 +33,10 @@ export default function User() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const [nameInputValue, setNameInputValue] = useState(
-    user.name ? user.name : ''
+    user.name ? user.name : '',
   );
   const [emailInputValue, setEmailInputValue] = useState(
-    user.email ? user.email : ''
+    user.email ? user.email : '',
   );
 
   const [isChangingPassword, setIsChangingPassword] = useState(false);

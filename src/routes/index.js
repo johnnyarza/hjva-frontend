@@ -9,6 +9,7 @@ import SignUp from '../pages/SignUp';
 import Product from '../pages/Product';
 import Location from '../pages/Location';
 import User from '../pages/User';
+import ProductDashboard from '../pages/ProductDashboard';
 
 export default function Routes() {
   return (
@@ -43,9 +44,17 @@ export default function Routes() {
       />
 
       <Route
+        path="/product/edit"
+        exact
+        component={(props) => <ProductDashboard {...props} />}
+        isPrivate
+      />
+
+      <Route
         path="/product/:id"
         component={(props) => <Product {...props} />}
       />
+
     </Switch>
   );
 }

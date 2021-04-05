@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { Container, Description, ProductName } from './style';
 
@@ -21,5 +22,15 @@ const ProductCard = ({ text, description, imgSrc }) => (
     </Description>
   </Container>
 );
+
+ProductCard.propTypes = {
+  text: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  imgSrc: PropTypes.string,
+};
+
+ProductCard.defaultProps = {
+  imgSrc: '',
+};
 
 export default ProductCard;

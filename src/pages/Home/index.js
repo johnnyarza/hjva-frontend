@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 
-import { MdClear } from 'react-icons/md';
+import Loading from '../../components/Spinner';
 import ProductCard from '../../components/ProductCard';
 import ProductScroll from '../../components/ProductScroll';
 
@@ -11,6 +11,7 @@ import Empty from '../../components/Empty';
 export default function Home() {
   const [products, setProducts] = useState({});
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadAllProducts() {
@@ -23,6 +24,7 @@ export default function Home() {
       }
     }
     loadAllProducts();
+    setIsLoading(false)
   }, []);
 
   function generateProductCards(category) {
@@ -49,7 +51,9 @@ export default function Home() {
   }
   return (
     <>
-      {categories[0] && products[0] ? generateScrolls(categories) : <Empty />}
+      {isLoading ? <Loading /> : (categories[0] && products[0] ?
+        generateScrolls(categories) : <Empty />)}
     </>
   );
 }
+

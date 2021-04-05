@@ -15,9 +15,9 @@ export default function SideBar() {
           </Link>
         </BarItem>
         <BarItem>
-          <Link to="/">
+          <Link to="/product/edit">
             <MdLocalGroceryStore />
-            <span>a</span>
+            <span>Editar Produtos</span>
           </Link>
         </BarItem>
       </Content>

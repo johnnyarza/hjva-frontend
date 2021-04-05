@@ -16,7 +16,7 @@ export const Container = styled.div`
   transition: width 0.2s;
 
   &:hover {
-    width: 10%;
+    width: 152px;
     span {
       visibility: visible;
     }

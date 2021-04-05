@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ScrollMenu from 'react-horizontal-scrolling-menu';
 import { useHistory } from 'react-router-dom';
 import { Container, Arrow } from './style';
 
 export default function HorizontalScroll({
   productCards,
-  category = 'Categoria',
+  category,
 }) {
   const history = useHistory();
   return (
@@ -26,3 +27,8 @@ export default function HorizontalScroll({
     </Container>
   );
 }
+
+HorizontalScroll.propTypes = {
+  category: PropTypes.string.isRequired,
+  productCards: PropTypes.oneOfType([PropTypes.element, PropTypes.func]).isRequired,
+};

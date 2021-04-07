@@ -29,14 +29,17 @@ export default function SignUp() {
   const history = useHistory();
   const { signed } = store.getState().auth;
 
+  const handleSubmit = useCallback(
+    ({ email, password, name }) => {
+      dispatch(signUpRequest(name, email, password));
+      history.push('/dashboard');
+    },
+    [dispatch, history]
+  );
+
   if (signed) {
     return <Redirect to="/dashboard" />;
   }
-
-  const handleSubmit = useCallback(({ email, password, name }) => {
-    dispatch(signUpRequest(name, email, password));
-    history.push('/dashboard');
-  }, []);
 
   return (
     <AuthLayout>

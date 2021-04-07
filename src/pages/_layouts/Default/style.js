@@ -4,7 +4,7 @@ export const Wrapper = styled.div`
   overflow: hidden;
 `;
 export const Content = styled.div`
-  margin-top: 150px;
+  margin-top: 125px;
   margin-right: 64px;
   margin-left: 64px;
 `;

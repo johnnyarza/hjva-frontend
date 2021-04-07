@@ -1,8 +1,8 @@
 import React from 'react';
+import { Form, Input } from '@rocketseat/unform';
 
 import { Link, useHistory, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 
 import { signInRequest } from '../../store/modules/auth/actions';
@@ -31,7 +31,7 @@ const SignIn = () => {
 
   return (
     <AuthLayout>
-      <Form schema={schema} onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} schema={schema}>
         <h1>Fazer Login</h1>
         <Input name="email" type="email" placeholder="Seu e-mail" />
         <Input name="password" type="password" placeholder="Sua senha" />

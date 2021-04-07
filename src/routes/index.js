@@ -54,7 +54,6 @@ export default function Routes() {
         path="/product/:id"
         component={(props) => <Product {...props} />}
       />
-
     </Switch>
   );
 }

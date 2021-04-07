@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 
 import { Container, Content } from './style';
 
-const hjvaURL = 'https://www.google.com/maps/place/HJVA/@-19.0025942,-57.7223016,18z/data=!4m12!1m6!3m5!1s0x9387a14342c8fcad:0xd906e8972645b475!2sHJVA!8m2!3d-19.002701!4d-57.722296!3m4!1s0x9387a14342c8fcad:0xd906e8972645b475!8m2!3d-19.002701!4d-57.722296';
+const hjvaURL =
+  'https://www.google.com/maps/place/HJVA/@-19.0025942,-57.7223016,18z/data=!4m12!1m6!3m5!1s0x9387a14342c8fcad:0xd906e8972645b475!2sHJVA!8m2!3d-19.002701!4d-57.722296!3m4!1s0x9387a14342c8fcad:0xd906e8972645b475!8m2!3d-19.002701!4d-57.722296';
 function Location() {
   const openInNewTab = (url) => {
     const newWindow = window.open(url, '_blank', 'noopener,noreferrer');

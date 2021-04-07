@@ -1,6 +1,4 @@
-import {
-  all, takeLatest, call, put,
-} from 'redux-saga/effects';
+import { all, takeLatest, call, put } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 import { updateUserSuccess } from './actions';
 

@@ -9,18 +9,26 @@ import { Container, Content, ProductDetails } from './style';
 import api from '../../services/api';
 
 export default function Product() {
-  const { token } = useSelector((state) => state.auth);
   const [product, setProduct] = useState({});
+  const [userCanEdit, setUserCanEdit] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
     const loadProduct = async () => {
       const res = await api.get(`/product/${id}`);
       const { data } = res;
+      console.log(data);
       setProduct(data);
     };
+    const loadUserRole = async () => {
+      const res = await api.get('/user');
+      if (res.data.role === 'admin' || res.data.role === 'affice') {
+        setUserCanEdit(true);
+      }
+    };
+    loadUserRole();
     loadProduct();
-  }, []);
+  }, [id]);
 
   return (
     <Container>
@@ -40,7 +48,7 @@ export default function Product() {
             <p>{product.description}</p>
           </div>
         </ProductDetails>
-        {token && (
+        {userCanEdit && (
           <div className="edit-icon">
             <MdModeEdit />
           </div>

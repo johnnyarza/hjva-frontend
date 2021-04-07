@@ -1,61 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input } from '@rocketseat/unform';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import computerName from 'computer-name';
 import { updateUserRequest } from '../../store/modules/user/actions';
 
 import AuthLayout from '../_layouts/Auth';
 import SideBar from '../../components/SideBar';
 import { Container, Content } from './style';
+import Input from '../../components/Input';
 
 import userPath from '../../assets/user.svg';
 
+/* eslint-disable */
 const schema = Yup.object().shape({
-  name: Yup.string(),
+  name: Yup.string().min(1, 'Nome não pode ser vazio'),
   email: Yup.string().email('Insira um e-mail válido'),
   password: Yup.string(),
   confirmPassword: Yup.string()
-    .when('password', (password, field) => (password
-      ? field
-        .required('Confirmção é obrigatório')
-        .min(6, 'Senha deve conter no mínimo 6 caracteres')
-      : field))
+    .when('password', (password, field) =>
+      password
+        ? field
+          .required('Confirmção é obrigatório')
+          .min(6, 'Senha deve conter no mínimo 6 caracteres')
+        : field
+    )
     .oneOf([Yup.ref('password')], 'As senhas devem ser iguais'),
-  oldPassword: Yup.string().when('password', (password, field) => (password
-    ? field
-      .required('Senha atual é obrigatória')
-      .notOneOf([Yup.ref('confirmPassword')], 'Senha atual é igual a nova')
-    : field)),
+  oldPassword: Yup.string().when('password', (password, field) =>
+    password
+      ? field
+        .required('Senha atual é obrigatória')
+        .notOneOf([Yup.ref('confirmPassword')], 'Senha atual é igual a nova')
+      : field
+  ),
 });
+/* eslint-enable */
 
 export default function User() {
+  const formRef = useRef(null);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
-  const [nameInputValue, setNameInputValue] = useState(
-    user.name ? user.name : '',
-  );
-  const [emailInputValue, setEmailInputValue] = useState(
-    user.email ? user.email : '',
-  );
 
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   useEffect(() => {
-    setEmailInputValue(user.email ? user.email : '');
-    setNameInputValue(user.name ? user.name : '');
+    formRef.current.setData({ name: user.name, email: user.email });
   }, [user]);
 
   const handleNewPasswordChange = ({ target }) => {
     const { value } = target;
     setIsChangingPassword(!!value);
+    if (!value) {
+      formRef.current.setErrors({
+        confirmPassword: '',
+        oldPassword: '',
+      });
+    }
   };
 
   const AvatarImage = () => {
     if (user.avatar) {
-      return <img src={userPath} alt="user" />;
+      return <img src={userPath} alt="user" style={{ marginBottom: '15px' }} />;
     }
-    return <img src={userPath} alt="user" />;
+    return <img src={userPath} alt="user" style={{ marginBottom: '15px' }} />;
   };
 
   function clean(obj) {
@@ -69,46 +75,33 @@ export default function User() {
     return obj;
   }
 
-  const handleSubmit = async ({
-    name,
-    email,
-    password,
-    confirmPassword,
-    oldPassword,
-  }) => {
-    const body = clean({
-      name,
-      email,
-      password,
-      confirmPassword,
-      oldPassword,
-    });
-    dispatch(updateUserRequest(body));
+  const handleSubmit = async (data) => {
+    try {
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+      dispatch(updateUserRequest(clean(data)));
+    } catch (err) {
+      const validationErrors = {};
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach((error) => {
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current.setErrors(validationErrors);
+      }
+    }
   };
 
   return (
     <>
-      <SideBar />
       <Container>
         <h1>Editar usuário</h1>
         <Content isChangingPassword={isChangingPassword}>
           <AuthLayout>
-            <Form onSubmit={handleSubmit} schema={schema}>
+            <Form onSubmit={handleSubmit} schema={schema} ref={formRef}>
               {AvatarImage()}
-              <Input
-                name="name"
-                type="text"
-                placeholder="Seu nome"
-                value={nameInputValue}
-                onChange={(data) => { setNameInputValue(data.target.value); }}
-              />
-              <Input
-                name="email"
-                type="email"
-                placeholder="Seu e-mail"
-                value={emailInputValue}
-                onChange={(data) => { setEmailInputValue(data.target.value); }}
-              />
+              <Input name="name" type="text" placeholder="Seu nome" />
+              <Input name="email" type="email" placeholder="Seu e-mail" />
               <Input
                 name="password"
                 type="password"
@@ -121,11 +114,17 @@ export default function User() {
                     name="confirmPassword"
                     type="password"
                     placeholder="Confirme sua senha"
+                    onChange={() =>
+                      formRef.current.setFieldError('confirmPassword', '')
+                    }
                   />
                   <Input
                     name="oldPassword"
                     type="password"
                     placeholder="Senha atual"
+                    onChange={() =>
+                      formRef.current.setFieldError('oldPassword', '')
+                    }
                   />
                 </>
               )}
@@ -135,6 +134,7 @@ export default function User() {
           </AuthLayout>
         </Content>
       </Container>
+      <SideBar />
     </>
   );
 }

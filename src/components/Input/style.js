@@ -6,6 +6,7 @@ export const Container = styled.div`
 
 
   .component-input {
+    font: 15px 'Roboto';
     border: none;
     margin: 0;
     height: 40px;

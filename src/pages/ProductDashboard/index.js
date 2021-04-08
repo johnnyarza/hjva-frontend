@@ -5,7 +5,7 @@ import { Form } from '@unform/web';
 import NumberFormat from 'react-number-format';
 import { toast } from 'react-toastify';
 
-import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
+import { MdEdit, MdDelete, MdAdd, MdRemove } from 'react-icons/md';
 
 import InsertProductModal from '../../components/InsertProductModal';
 import SideBar from '../../components/SideBar';
@@ -112,6 +112,14 @@ export default function ProductDashboard() {
             </button>
             <button
               type="button"
+              style={{ backgroundColor: '#C0392B' }}
+              onClick={() => console.log('deletar cat')}
+            >
+              <MdRemove />
+              <span>Categoria</span>
+            </button>
+            <button
+              type="button"
               style={{ backgroundColor: '#27ae60' }}
               onClick={() => setIsInsertProductModalOpen(true)}
             >
@@ -146,7 +154,7 @@ export default function ProductDashboard() {
       {isInsertpProductModalOpen && (
         <InsertProductModal
           onEscPress={() => setIsInsertProductModalOpen(false)}
-          initialData={{ name: 'teste' }}
+          onCancelPress={() => setIsInsertProductModalOpen(false)}
         />
       )}
       <GenericModal

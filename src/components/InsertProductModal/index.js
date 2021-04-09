@@ -16,6 +16,7 @@ export default function InsertProductModal({
   onCancelPress,
   categories,
   onSubmit,
+  products,
   ...rest
 }) {
   const formRef = useRef(null);
@@ -34,6 +35,17 @@ export default function InsertProductModal({
     onCancelPress();
   }, [onCancelPress]);
 
+  const productNameExists = useCallback(
+    (name) => {
+      const exists = products.find((p) => p.name === name);
+      if (exists) {
+        formRef.current.setFieldError('name', 'Nome já existe');
+        throw Error('Nome do produto já existe');
+      }
+    },
+    [products]
+  );
+
   const handleSubmit = async (data) => {
     const schema = Yup.object().shape({
       name: Yup.string()
@@ -47,8 +59,8 @@ export default function InsertProductModal({
         .required('Descrição é obrigatória'),
     });
     try {
-      // Verificar produtos com nomes iguais
       await schema.validate(data, { abortEarly: false });
+      productNameExists(data.name);
       formRef.current.setErrors({});
       onSubmit(data);
     } catch (err) {
@@ -130,6 +142,8 @@ InsertProductModal.propTypes = {
     PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })
   ).isRequired,
   onSubmit: PropTypes.func.isRequired,
+  products: PropTypes.arrayOf({ id: PropTypes.string, name: PropTypes.string })
+    .isRequired,
 };
 
 InsertProductModal.defaultProps = {

@@ -37,6 +37,7 @@ export default function ProductDashboard() {
 
   async function loadAllProducts() {
     const res = await api.get('product');
+    console.log(res.data);
     setProducts(res.data);
   }
 
@@ -174,6 +175,7 @@ export default function ProductDashboard() {
           onEscPress={() => setIsInsertProductModalOpen(false)}
           onCancelPress={() => setIsInsertProductModalOpen(false)}
           categories={categories}
+          products={products.map((p) => ({ id: p.id, name: p.name }))}
           onSubmit={handleAddProduct}
         />
       )}

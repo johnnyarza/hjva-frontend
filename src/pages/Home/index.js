@@ -56,8 +56,8 @@ export default function Home() {
       ) : categories[0] && products[0] ? (
         generateScrolls(categories)
       ) : (
-        <Empty />
-      )}
+            <Empty />
+          )}
     </>
   )
 }

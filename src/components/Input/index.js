@@ -5,7 +5,7 @@ import { useField } from '@unform/core';
 import { MdInfoOutline } from 'react-icons/md';
 import { Container, Content, Tooltip } from './style';
 
-export default function Input({ name, ...rest }) {
+export default function Input({ name, hasBorder, ...rest }) {
   const [hasError, setHasError] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const { fieldName, defaultValue, error, registerField } = useField(name);
@@ -25,7 +25,12 @@ export default function Input({ name, ...rest }) {
 
   return (
     <Container>
-      <Content hasError={hasError} isFocused={isFocused}>
+      <Content
+        hasBorder={hasBorder}
+        hasError={hasError}
+        isFocused={isFocused}
+        className="input-container"
+      >
         <input
           className="component-input"
           ref={inputRef}
@@ -50,4 +55,9 @@ export default function Input({ name, ...rest }) {
 
 Input.propTypes = {
   name: PropTypes.string.isRequired,
+  hasBorder: PropTypes.bool,
+};
+
+Input.defaultProps = {
+  hasBorder: true,
 };

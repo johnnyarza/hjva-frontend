@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-import * as Yup from 'yup';
-import { Form } from '@unform/web';
+import React, { useState, useEffect } from 'react';
 import NumberFormat from 'react-number-format';
 import { toast } from 'react-toastify';
 
@@ -10,21 +7,19 @@ import { MdEdit, MdDelete, MdAdd, MdRemove } from 'react-icons/md';
 import InsertProductModal from '../../components/InsertProductModal';
 import SideBar from '../../components/SideBar';
 import Modal from '../../components/Modal';
-import GenericModal from '../../components/GenericModal';
+import InsertCategoryModal from '../../components/InsertCategoryModal';
 
 import { Container, Content, TableContainer, ButtonsContainer } from './style';
 
 import api from '../../services/api';
 
-const schema = Yup.object().shape({
-  name: Yup.string().required('Inserir um nome'),
-});
-
 export default function ProductDashboard() {
-  const [products, setProducts] = useState({});
+  const [products, setProducts] = useState([]);
   const [currentProdutc, setCurrentProdutc] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isGenericModalOpen, setIsGenericModalOpen] = useState(false);
+  const [isInsertCategoryModalOpen, setIsInsertCategoryModalOpen] = useState(
+    false
+  );
   const [isInsertpProductModalOpen, setIsInsertProductModalOpen] = useState(
     false
   );
@@ -50,8 +45,31 @@ export default function ProductDashboard() {
     setCategories(res.data);
   }
 
-  const handleAddCategory = () => {
-    console.log('sub');
+  const handleAddCategory = async (body) => {
+    try {
+      setIsInsertCategoryModalOpen(false);
+      const response = await api.post('category', body);
+      const newCategory = response.data;
+      const newCategories = [newCategory, ...categories];
+      setCategories(newCategories);
+      toast.success('Categoria criada com sucesso');
+    } catch (err) {
+      toast.error('Erro ao criar categoria');
+    }
+  };
+
+  const handleAddProduct = async (body) => {
+    try {
+      const res = await api.post('product', body);
+      const newProduct = res.data;
+      const newProducts = [...products];
+      newProducts.push(newProduct);
+      setIsInsertProductModalOpen(false);
+      setProducts(newProducts);
+      toast.success('Produto criado com sucesso');
+    } catch (err) {
+      toast.error('Erro ao criar produto');
+    }
   };
 
   const handleDelete = async ({ id }) => {
@@ -105,7 +123,7 @@ export default function ProductDashboard() {
             <button
               type="button"
               style={{ backgroundColor: '#27ae60' }}
-              onClick={() => setIsGenericModalOpen(true)}
+              onClick={() => setIsInsertCategoryModalOpen(true)}
             >
               <MdAdd />
               <span>Categoria</span>
@@ -155,9 +173,34 @@ export default function ProductDashboard() {
         <InsertProductModal
           onEscPress={() => setIsInsertProductModalOpen(false)}
           onCancelPress={() => setIsInsertProductModalOpen(false)}
+          categories={categories}
+          onSubmit={handleAddProduct}
         />
       )}
-      <GenericModal
+
+      {isInsertCategoryModalOpen && (
+        <InsertCategoryModal
+          onEscPress={() => setIsInsertCategoryModalOpen(false)}
+          onCancelPress={() => setIsInsertCategoryModalOpen(false)}
+          onSubmit={handleAddCategory}
+          categories={categories}
+        />
+      )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onCancelClick={() => setIsModalOpen(false)}
+        onOkClick={async () => {
+          await handleDelete(currentProdutc);
+        }}
+        message="Certeza que deseja deletar?"
+        onEscPress={() => setIsModalOpen(false)}
+      />
+    </>
+  );
+}
+
+/* <GenericModal
         isOpen={isGenericModalOpen}
         onEscPress={() => setIsGenericModalOpen(false)}
       >
@@ -184,16 +227,4 @@ export default function ProductDashboard() {
             </button>
           </div>
         </form>
-      </GenericModal>
-      <Modal
-        isOpen={isModalOpen}
-        onCancelClick={() => setIsModalOpen(false)}
-        onOkClick={async () => {
-          await handleDelete(currentProdutc);
-        }}
-        message="Certeza que deseja deletar?"
-        onEscPress={() => setIsModalOpen(false)}
-      />
-    </>
-  );
-}
+      </GenericModal> */

@@ -17,14 +17,16 @@ export const Content = styled.div`
   }
   .text-container {
     padding: 5px 5px 5px 5px;
-    min-height: 190px;
+    height: 100%;
+    width: 100%;
     textarea {
-      min-height: 165px;
-      min-width: 180px;
+      height: 100%;
+      width: 100%;
     }
   }
   .form-content {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -46,7 +48,6 @@ export const Content = styled.div`
     margin: 0 10px 0 5px;
 
     div {
-      border: none;
       margin: 4px 0 4px 0;
     }
   }

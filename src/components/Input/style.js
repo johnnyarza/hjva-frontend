@@ -12,28 +12,38 @@ export const Container = styled.div`
     height: 40px;
   }
 
+  .input-container{
+    background-color: white;
+    padding: 5px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    width: 200px;
+    font-size: 18px;
+    margin-bottom: 10px;
+
+  }
+
 `;
 /* eslint-enable */
 
 export const Content = styled.div`
-  background-color: white;
-  padding: 5px;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid black;
-  border-radius: 10px;
-  width: 200px;
-  font-size: 18px;
-  margin-bottom: 10px;
-
+  ${(props) =>
+    props.hasBorder
+      ? css`
+          border: 1px solid black;
+        `
+      : css`
+          border: none;
+        `}
   ${(props) => {
     const hasError = props.hasError
       ? css`
           border: 1px solid #e74c3c;
         `
-      : '';
+      : css``;
     const isFocused = props.isFocused
       ? css`
           box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;

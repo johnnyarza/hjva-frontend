@@ -71,5 +71,10 @@ export const ProductDetails = styled.div`
       display: inline;
       text-align: justify;
     }
+
+    pre {
+      font: 16px 'Roboto';
+      text-align: justify;
+    }
   }
 `;

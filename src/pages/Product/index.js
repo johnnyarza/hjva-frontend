@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import { useParams } from 'react-router-dom';
 import { MdModeEdit } from 'react-icons/md';
@@ -17,7 +16,6 @@ export default function Product() {
     const loadProduct = async () => {
       const res = await api.get(`/product/${id}`);
       const { data } = res;
-      console.log(data);
       setProduct(data);
     };
     const loadUserRole = async () => {
@@ -45,7 +43,7 @@ export default function Product() {
             <h1>{product.name}</h1>
           </div>
           <div className="product-details">
-            <p>{product.description}</p>
+            <pre>{product.description}</pre>
           </div>
         </ProductDetails>
         {userCanEdit && (

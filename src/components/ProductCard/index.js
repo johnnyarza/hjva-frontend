@@ -18,7 +18,7 @@ const ProductCard = ({ text, description, imgSrc }) => (
       <ProductName>
         <span>{text}</span>
       </ProductName>
-      <span>{description}</span>
+      <p className="product-description">{description}</p>
     </Description>
   </Container>
 );

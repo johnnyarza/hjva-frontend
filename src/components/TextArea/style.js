@@ -48,7 +48,7 @@ export const Tooltip = styled.div`
   border-radius: 15px;
 
   position: absolute;
-  left: 103%;
+  left: 102%;
   padding: 5px;
   min-height: 25px;
   width: 30px;

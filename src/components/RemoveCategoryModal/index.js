@@ -5,19 +5,19 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 
 import GenericModal from '../GenericModal';
-import { Container, Content } from './style';
+import { Content } from './style';
 import Select from '../Select';
 
-export default function RemoveCategoryModal(
+export default function RemoveCategoryModal({
   initialData,
   onCancelPress,
   categories,
   onSubmit,
   products,
   ...rest
-) {
-  const formRef = useRef(null);
+}) {
   const [catNames, setCatNames] = useState([]);
+  const formRef = useRef(null);
 
   useEffect(() => {
     formRef.current.setData(initialData);
@@ -31,24 +31,28 @@ export default function RemoveCategoryModal(
   const handleCancel = useCallback(() => {
     onCancelPress();
   }, [onCancelPress]);
+
   return (
     <GenericModal isOpen {...rest}>
       <Content>
-        <Form onSubmit={onSubmit}>
+        <Form onSubmit={onSubmit} ref={formRef}>
           <Select
             name="category"
             optionsData={catNames}
             placeHolder="Categoria"
           />
-          <button type="submit">Apagar</button>
-          <button
-            type="button"
-            name="inserir"
-            style={{ backgroundColor: '#C0392B' }}
-            onClick={handleCancel}
-          >
-            Cancelar
-          </button>
+          <div className="button-container">
+            <button type="submit" className="ok-button">
+              Apagar
+            </button>
+            <button
+              type="button"
+              className="cancel-button"
+              onClick={handleCancel}
+            >
+              Cancelar
+            </button>
+          </div>
         </Form>
       </Content>
     </GenericModal>

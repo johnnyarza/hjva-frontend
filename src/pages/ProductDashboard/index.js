@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import NumberFormat from 'react-number-format';
 import { toast } from 'react-toastify';
 
@@ -12,18 +12,19 @@ import InsertCategoryModal from '../../components/InsertCategoryModal';
 import { Container, Content, TableContainer, ButtonsContainer } from './style';
 
 import api from '../../services/api';
+import RemoveCategoryModal from '../../components/RemoveCategoryModal';
 
 export default function ProductDashboard() {
   const [products, setProducts] = useState([]);
   const [currentProdutc, setCurrentProdutc] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isInsertCategoryModalOpen, setIsInsertCategoryModalOpen] = useState(
-    false
-  );
-  const [isInsertpProductModalOpen, setIsInsertProductModalOpen] = useState(
-    false
-  );
   const [categories, setCategories] = useState([]);
+  const [modalsOpen, setModalsOpen] = useState({
+    insertProductModal: false,
+    InsertCategoryModal: false,
+    ModalOpen: false,
+    removeCategoryModal: false,
+  });
 
   const changeTableDisplay = (p, display = 'block') => {
     if (p.target.children.length) {
@@ -35,20 +36,25 @@ export default function ProductDashboard() {
     }
   };
 
-  async function loadAllProducts() {
-    const res = await api.get('product');
-    console.log(res.data);
-    setProducts(res.data);
-  }
+  const handleModals = (modalStateName, state) => {
+    const newState = { ...modalsOpen };
+    newState[modalStateName] = state;
+    setModalsOpen(newState);
+  };
 
-  async function loadAllCategories() {
+  const loadAllProducts = useCallback(async () => {
+    const res = await api.get('product');
+    setProducts(res.data);
+  }, []);
+
+  const loadAllCategories = useCallback(async () => {
     const res = await api.get('categories');
     setCategories(res.data);
-  }
+  }, []);
 
   const handleAddCategory = async (body) => {
     try {
-      setIsInsertCategoryModalOpen(false);
+      handleModals('InsertCategoryModal', false);
       const response = await api.post('category', body);
       const newCategory = response.data;
       const newCategories = [newCategory, ...categories];
@@ -65,7 +71,7 @@ export default function ProductDashboard() {
       const newProduct = res.data;
       const newProducts = [...products];
       newProducts.push(newProduct);
-      setIsInsertProductModalOpen(false);
+      handleModals('insertProductModal', false);
       setProducts(newProducts);
       toast.success('Produto criado com sucesso');
     } catch (err) {
@@ -87,7 +93,7 @@ export default function ProductDashboard() {
   useEffect(() => {
     loadAllCategories();
     loadAllProducts();
-  }, []);
+  }, [loadAllProducts, loadAllCategories]);
 
   function generateTableRows(category) {
     if (products[0] && categories[0]) {
@@ -124,7 +130,7 @@ export default function ProductDashboard() {
             <button
               type="button"
               style={{ backgroundColor: '#27ae60' }}
-              onClick={() => setIsInsertCategoryModalOpen(true)}
+              onClick={() => handleModals('InsertCategoryModal', true)}
             >
               <MdAdd />
               <span>Categoria</span>
@@ -132,7 +138,7 @@ export default function ProductDashboard() {
             <button
               type="button"
               style={{ backgroundColor: '#C0392B' }}
-              onClick={() => console.log('deletar cat')}
+              onClick={() => handleModals('removeCategoryModal', true)}
             >
               <MdRemove />
               <span>Categoria</span>
@@ -140,7 +146,7 @@ export default function ProductDashboard() {
             <button
               type="button"
               style={{ backgroundColor: '#27ae60' }}
-              onClick={() => setIsInsertProductModalOpen(true)}
+              onClick={() => handleModals('insertProductModal', true)}
             >
               <MdAdd />
               <span>Produto</span>
@@ -170,25 +176,33 @@ export default function ProductDashboard() {
         </Content>
       </Container>
 
-      {isInsertpProductModalOpen && (
+      {modalsOpen.insertProductModal && (
         <InsertProductModal
-          onEscPress={() => setIsInsertProductModalOpen(false)}
-          onCancelPress={() => setIsInsertProductModalOpen(false)}
+          onEscPress={() => handleModals('insertProductModal', false)}
+          onCancelPress={() => handleModals('insertProductModal', false)}
           categories={categories}
           products={products.map((p) => ({ id: p.id, name: p.name }))}
           onSubmit={handleAddProduct}
         />
       )}
 
-      {isInsertCategoryModalOpen && (
+      {modalsOpen.InsertCategoryModal && (
         <InsertCategoryModal
-          onEscPress={() => setIsInsertCategoryModalOpen(false)}
-          onCancelPress={() => setIsInsertCategoryModalOpen(false)}
+          onEscPress={() => handleModals('InsertCategoryModal', false)}
+          onCancelPress={() => handleModals('InsertCategoryModal', false)}
           onSubmit={handleAddCategory}
           categories={categories}
         />
       )}
-
+      {modalsOpen.removeCategoryModal && (
+        <RemoveCategoryModal
+          onCancelPress={() => handleModals('removeCategoryModal', false)}
+          onEscPress={() => handleModals('removeCategoryModal', false)}
+          categories={categories}
+          products={products.map((p) => ({ id: p.id, name: p.name }))}
+          onSubmit={(p) => console.log(p)}
+        />
+      )}
       <Modal
         isOpen={isModalOpen}
         onCancelClick={() => setIsModalOpen(false)}

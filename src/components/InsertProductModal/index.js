@@ -106,6 +106,7 @@ export default function InsertProductModal({
                   hasBorder={false}
                   step="0.01"
                   min="0"
+                  onChange={() => formRef.current.setFieldError('price', '')}
                 />
               </div>
             </div>

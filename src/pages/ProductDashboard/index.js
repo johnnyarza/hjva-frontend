@@ -36,11 +36,14 @@ export default function ProductDashboard() {
     }
   };
 
-  const handleModals = (modalStateName, state) => {
-    const newState = { ...modalsOpen };
-    newState[modalStateName] = state;
-    setModalsOpen(newState);
-  };
+  const handleModals = useCallback(
+    (modalStateName, state) => {
+      const newState = { ...modalsOpen };
+      newState[modalStateName] = state;
+      setModalsOpen(newState);
+    },
+    [modalsOpen]
+  );
 
   const loadAllProducts = useCallback(async () => {
     const res = await api.get('product');
@@ -89,6 +92,22 @@ export default function ProductDashboard() {
       toast.error('Erro ao deletar');
     }
   };
+
+  const handleRemoveCategory = useCallback(
+    async (data) => {
+      try {
+        const { id } = categories.find((cat) => cat.name === data.category);
+        await api.delete(`/category/${id}`);
+        const newCategories = categories.filter((cat) => cat.id !== id);
+        setCategories(newCategories);
+        handleModals('removeCategoryModal', false);
+        toast.success(`Cateria ${data.category} deletada`);
+      } catch (error) {
+        toast.error('Erro ao deletar categoria');
+      }
+    },
+    [categories, handleModals]
+  );
 
   useEffect(() => {
     loadAllCategories();
@@ -199,8 +218,12 @@ export default function ProductDashboard() {
           onCancelPress={() => handleModals('removeCategoryModal', false)}
           onEscPress={() => handleModals('removeCategoryModal', false)}
           categories={categories}
-          products={products.map((p) => ({ id: p.id, name: p.name }))}
-          onSubmit={(p) => console.log(p)}
+          products={products.map((p) => ({
+            id: p.id,
+            name: p.name,
+            category: p.category,
+          }))}
+          onSubmit={handleRemoveCategory}
         />
       )}
       <Modal
@@ -215,32 +238,3 @@ export default function ProductDashboard() {
     </>
   );
 }
-
-/* <GenericModal
-        isOpen={isGenericModalOpen}
-        onEscPress={() => setIsGenericModalOpen(false)}
-      >
-        <form onSubmit={handleAddCategory}>
-          <span>Criar nova categoria de produto</span>
-          <input
-            type="text"
-            name="categoryName"
-            placeholder="Nome da Categoria"
-          />
-          <button
-            type="submit"
-            style={{ marginTop: '15px', backgroundColor: '#27ae60' }}
-          >
-            Criar
-          </button>
-          <div>
-            <button
-              style={{ marginTop: '15px', backgroundColor: '#c0392b' }}
-              type="button"
-              onClick={() => setIsGenericModalOpen(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </GenericModal> */

@@ -32,14 +32,42 @@ export default function RemoveCategoryModal({
     onCancelPress();
   }, [onCancelPress]);
 
+  const isCategoryUsed = useCallback(
+    ({ category }) => {
+      const product = products.find((p) => p.category === category);
+      if (product) {
+        formRef.current.setFieldError('category', 'Categoria em uso');
+        throw Error('Categoria em uso');
+      }
+    },
+    [products]
+  );
+
+  const handleSubmit = useCallback(
+    async (data) => {
+      try {
+        const schema = Yup.object().shape({
+          category: Yup.string().required('Nome é obrigatório'),
+        });
+        await schema.validate(data);
+        isCategoryUsed(data);
+        onSubmit(data);
+      } catch (error) {
+        toast.error('Categoria em uso');
+      }
+    },
+    [isCategoryUsed, onSubmit]
+  );
+
   return (
     <GenericModal isOpen {...rest}>
       <Content>
-        <Form onSubmit={onSubmit} ref={formRef}>
+        <Form onSubmit={handleSubmit} ref={formRef}>
           <Select
             name="category"
             optionsData={catNames}
             placeHolder="Categoria"
+            onChange={() => formRef.current.setFieldError('category', '')}
           />
           <div className="button-container">
             <button type="submit" className="ok-button">
@@ -66,8 +94,13 @@ RemoveCategoryModal.propTypes = {
     PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })
   ).isRequired,
   onSubmit: PropTypes.func.isRequired,
-  products: PropTypes.arrayOf({ id: PropTypes.string, name: PropTypes.string })
-    .isRequired,
+  products: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+      category: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 RemoveCategoryModal.defaultProps = {

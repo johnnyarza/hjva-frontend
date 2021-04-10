@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useField } from '@unform/core';
 
-import { Container, Content } from './style';
+import { MdInfoOutline } from 'react-icons/md';
+import { Container, Content, Tooltip } from './style';
 
 export default function Select({ name, optionsData, placeHolder, ...rest }) {
   const refSelect = useRef(null);
   const [options, setOptions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const { fieldName, defaultValue, error, registerField } = useField(name);
 
   useEffect(() => {
@@ -20,11 +22,16 @@ export default function Select({ name, optionsData, placeHolder, ...rest }) {
 
   useEffect(() => {
     if (optionsData.length) setOptions(optionsData);
-  }, [optionsData]);
+    setHasError(!!error);
+  }, [optionsData, error]);
 
   return (
     <Container>
-      <Content className="select-container" isFocused={isFocused}>
+      <Content
+        className="select-container"
+        isFocused={isFocused}
+        hasError={hasError}
+      >
         <select
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -46,6 +53,14 @@ export default function Select({ name, optionsData, placeHolder, ...rest }) {
               </option>
             ))}
         </select>
+        {error && (
+          <>
+            <Tooltip className="tool-tip">
+              <MdInfoOutline className="icon-error" />
+              <span className="error-message">{error}</span>
+            </Tooltip>
+          </>
+        )}
       </Content>
     </Container>
   );

@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { MdEdit, MdDelete, MdAdd, MdRemove } from 'react-icons/md';
 
-import InsertProductModal from '../../components/InsertProductModal';
+import ProductModal from '../../components/ProductModal';
 import SideBar from '../../components/SideBar';
 import Modal from '../../components/Modal';
 import InsertCategoryModal from '../../components/InsertCategoryModal';
@@ -68,14 +68,23 @@ export default function ProductDashboard() {
     }
   };
 
+  const handleEditProduct = useCallback(
+    (product) => {
+      setCurrentProdutc(product);
+      handleModals('insertProductModal', true);
+    },
+    [handleModals]
+  );
+
   const handleAddProduct = async (body) => {
     try {
-      const res = await api.post('product', body);
-      const newProduct = res.data;
-      const newProducts = [...products];
-      newProducts.push(newProduct);
-      handleModals('insertProductModal', false);
-      setProducts(newProducts);
+      console.log(body);
+      // const res = await api.post('product', body);
+      // const newProduct = res.data;
+      // const newProducts = [...products];
+      // newProducts.push(newProduct);
+      // handleModals('insertProductModal', false);
+      // setProducts(newProducts);
       toast.success('Produto criado com sucesso');
     } catch (err) {
       toast.error('Erro ao criar produto');
@@ -125,7 +134,7 @@ export default function ProductDashboard() {
             <NumberFormat value={p.price} displayType="text" />
           </td>
           <td>
-            <MdEdit />
+            <MdEdit onClick={() => handleEditProduct(p)} />
             <MdDelete
               onClick={() => {
                 setCurrentProdutc(p);
@@ -165,7 +174,10 @@ export default function ProductDashboard() {
             <button
               type="button"
               style={{ backgroundColor: '#27ae60' }}
-              onClick={() => handleModals('insertProductModal', true)}
+              onClick={() => {
+                setCurrentProdutc({});
+                handleModals('insertProductModal', true);
+              }}
             >
               <MdAdd />
               <span>Produto</span>
@@ -196,12 +208,13 @@ export default function ProductDashboard() {
       </Container>
 
       {modalsOpen.insertProductModal && (
-        <InsertProductModal
+        <ProductModal
           onEscPress={() => handleModals('insertProductModal', false)}
           onCancelPress={() => handleModals('insertProductModal', false)}
           categories={categories}
           products={products.map((p) => ({ id: p.id, name: p.name }))}
           onSubmit={handleAddProduct}
+          initialData={currentProdutc}
         />
       )}
 

@@ -11,7 +11,7 @@ import Select from '../Select';
 
 import { Content } from './style';
 
-export default function InsertProductModal({
+export default function ProductModal({
   initialData,
   onCancelPress,
   categories,
@@ -21,9 +21,14 @@ export default function InsertProductModal({
 }) {
   const formRef = useRef(null);
   const [catNames, setCatNames] = useState([]);
+  const [productId, setProductId] = useState('');
 
   useEffect(() => {
     formRef.current.setData(initialData);
+    const { id } = initialData;
+    if (id) {
+      setProductId(id);
+    }
   }, [initialData]);
 
   useEffect(() => {
@@ -48,6 +53,7 @@ export default function InsertProductModal({
 
   const handleSubmit = async (data) => {
     const schema = Yup.object().shape({
+      id: Yup.string(),
       name: Yup.string()
         .min(1, 'Nome não pode ser vazio')
         .required('Nome é obrigatório'),
@@ -59,8 +65,11 @@ export default function InsertProductModal({
         .required('Descrição é obrigatória'),
     });
     try {
+      if (productId) {
+        data.id = productId;
+      }
       await schema.validate(data, { abortEarly: false });
-      productNameExists(data.name);
+      if (!productId) productNameExists(data.name);
       formRef.current.setErrors({});
       onSubmit(data);
     } catch (err) {
@@ -136,8 +145,11 @@ export default function InsertProductModal({
   );
 }
 
-InsertProductModal.propTypes = {
-  initialData: PropTypes.shape({ name: PropTypes.string }),
+ProductModal.propTypes = {
+  initialData: PropTypes.shape({
+    name: PropTypes.string,
+    id: PropTypes.string,
+  }),
   onCancelPress: PropTypes.func,
   categories: PropTypes.arrayOf(
     PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })
@@ -147,7 +159,7 @@ InsertProductModal.propTypes = {
     .isRequired,
 };
 
-InsertProductModal.defaultProps = {
+ProductModal.defaultProps = {
   initialData: {},
   onCancelPress: () => {
     // nothing

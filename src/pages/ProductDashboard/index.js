@@ -76,15 +76,23 @@ export default function ProductDashboard() {
     [handleModals]
   );
 
-  const handleAddProduct = async (body) => {
+  const handleSubmitProduct = async (body) => {
     try {
-      console.log(body);
-      // const res = await api.post('product', body);
-      // const newProduct = res.data;
-      // const newProducts = [...products];
-      // newProducts.push(newProduct);
-      // handleModals('insertProductModal', false);
-      // setProducts(newProducts);
+      const { id } = body;
+      let res = {};
+      if (id) {
+        res = await api.put(`product/${id}`, body);
+      } else {
+        res = await api.post('product', body);
+      }
+      const newProduct = res.data;
+      console.log(newProduct);
+      const newProducts = products.filter((p) => p.id !== newProduct.id);
+      newProducts.push(newProduct);
+      console.log(newProducts);
+
+      handleModals('insertProductModal', false);
+      setProducts(newProducts);
       toast.success('Produto criado com sucesso');
     } catch (err) {
       toast.error('Erro ao criar produto');
@@ -213,7 +221,7 @@ export default function ProductDashboard() {
           onCancelPress={() => handleModals('insertProductModal', false)}
           categories={categories}
           products={products.map((p) => ({ id: p.id, name: p.name }))}
-          onSubmit={handleAddProduct}
+          onSubmit={handleSubmitProduct}
           initialData={currentProdutc}
         />
       )}

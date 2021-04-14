@@ -20,7 +20,7 @@ const schema = Yup.object().shape({
     .when('password', (password, field) =>
       password
         ? field
-          .required('Confirmção é obrigatório')
+          .required('Confirmação é obrigatório')
           .min(6, 'Senha deve conter no mínimo 6 caracteres')
         : field
     )

@@ -10,6 +10,7 @@ import Product from '../pages/Product';
 import Location from '../pages/Location';
 import User from '../pages/User';
 import ProductDashboard from '../pages/ProductDashboard';
+import UsersDashboard from '../pages/UsersDashboard';
 
 export default function Routes() {
   return (
@@ -34,6 +35,13 @@ export default function Routes() {
         path="/user"
         exact
         component={(props) => <User {...props} />}
+        isPrivate
+      />
+
+      <Route
+        path="/users"
+        exact
+        component={(props) => <UsersDashboard {...props} />}
         isPrivate
       />
 

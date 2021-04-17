@@ -1,12 +1,20 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { MdAccountCircle, MdLocalGroceryStore, MdGroup } from 'react-icons/md';
+import {
+  MdAccountCircle,
+  MdLocalGroceryStore,
+  MdGroup,
+  MdLocalShipping,
+} from 'react-icons/md';
 
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
+
 import { Container, Content, BarItem } from './style';
 import api from '../../services/api';
 import { signOut } from '../../store/modules/auth/actions';
+import estoqueIconPath from '../../assets/estoque.svg';
+import concreteTestIconPath from '../../assets/concrete.ico';
 
 export default function SideBar() {
   const history = useHistory();
@@ -58,6 +66,18 @@ export default function SideBar() {
             </Link>
           </BarItem>
         )}
+        <BarItem>
+          <Link to="/">
+            <MdLocalShipping />
+            <span>Estoque</span>
+          </Link>
+        </BarItem>
+        <BarItem>
+          <Link to="/">
+            <img src={concreteTestIconPath} alt="probeta" />
+            <span>Probetas</span>
+          </Link>
+        </BarItem>
       </Content>
     </Container>
   );

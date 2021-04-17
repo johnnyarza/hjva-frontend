@@ -10,6 +10,7 @@ import { Container, Content } from './style';
 import Input from '../../components/Input';
 
 import userPath from '../../assets/user.svg';
+import api from '../../services/api';
 
 /* eslint-disable */
 const schema = Yup.object().shape({
@@ -38,6 +39,7 @@ const schema = Yup.object().shape({
 export default function User() {
   const formRef = useRef(null);
   const dispatch = useDispatch();
+  const [avatar, setAvatar] = useState({});
   const { user } = useSelector((state) => state.user);
 
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -45,6 +47,17 @@ export default function User() {
   useEffect(() => {
     formRef.current.setData({ name: user.name, email: user.email });
   }, [user]);
+
+  useEffect(() => {
+    const loadAvatar = async () => {
+      const { data } = await api.get('/user');
+      const { avatar: value } = data;
+      if (value) {
+        setAvatar(value);
+      }
+    };
+    loadAvatar();
+  });
 
   const handleNewPasswordChange = ({ target }) => {
     const { value } = target;
@@ -58,8 +71,21 @@ export default function User() {
   };
 
   const AvatarImage = () => {
-    if (user.avatar) {
-      return <img src={userPath} alt="user" style={{ marginBottom: '15px' }} />;
+    if (avatar) {
+      return (
+        <button
+          className="avatar"
+          type="button"
+          onClick={() => console.log('imagem')}
+        >
+          <img
+            className="avatar"
+            src={avatar.url}
+            alt="user"
+            style={{ marginBottom: '15px' }}
+          />
+        </button>
+      );
     }
     return <img src={userPath} alt="user" style={{ marginBottom: '15px' }} />;
   };

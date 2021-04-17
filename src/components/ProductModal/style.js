@@ -5,10 +5,15 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: center;
   min-width: 500px;
-
+  .img-div {
+    min-width: 240px;
+    min-height: 160px;
+    display: flex;
+    justify-content: center;
+  }
   img {
+    max-height: 240px;
     width: auto;
-    height: 142px;
   }
 
   div {

@@ -34,6 +34,9 @@ export const Description = styled.div`
   flex-direction: column;
   text-align: center;
 
+  .product-description {
+    display: block;
+  }
   span {
     display: inline-block;
     margin-bottom: 5px;
@@ -69,4 +72,11 @@ export const EditIcon = styled.div`
     width: 25px;
     height: 25px;
   }
+`;
+
+export const ProductText = styled.div`
+  padding: 10px 10px 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

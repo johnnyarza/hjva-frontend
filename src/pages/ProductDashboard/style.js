@@ -70,11 +70,19 @@ export const Content = styled.div`
       border-radius: 8px;
       box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
     }
+
+    .row-description {
+      max-width: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 `;
 
 export const ButtonsContainer = styled.div`
   max-width: 900px;
+  min-width: 600px;
   min-height: 60px;
   width: 100%;
   display: flex;
@@ -82,6 +90,7 @@ export const ButtonsContainer = styled.div`
 
 export const TableContainer = styled.div`
   transition: box-shadow 0.2s;
+  min-width: 600px;
 
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;

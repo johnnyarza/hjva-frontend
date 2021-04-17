@@ -17,6 +17,8 @@ export default function ProductModal({
   categories,
   onSubmit,
   products,
+  title,
+  okButtonText,
   ...rest
 }) {
   const formRef = useRef(null);
@@ -24,6 +26,7 @@ export default function ProductModal({
   const [productId, setProductId] = useState('');
 
   useEffect(() => {
+    console.log(products);
     formRef.current.setData(initialData);
     const { id } = initialData;
     if (id) {
@@ -85,17 +88,25 @@ export default function ProductModal({
     }
   };
 
+  const productFilePath = () => {
+    if (productId && products.length) {
+      const product = products.find((p) => p.id === productId);
+      if (product.file.length) {
+        return product.file[0].url;
+      }
+    }
+    return 'https://images.unsplash.com/photo-1573871924474-04f515cf7399?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80';
+  };
   return (
     <GenericModal isOpen {...rest}>
       <Content>
-        <h1>Adicionar Novo Produto</h1>
+        <h1>{title}</h1>
         <Form ref={formRef} onSubmit={handleSubmit}>
           <div className="form-content">
             <div className="product-inputs-container">
-              <img
-                src="https://images.unsplash.com/photo-1573871924474-04f515cf7399?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                alt="bloco"
-              />
+              <div className="img-div">
+                <img src={productFilePath()} alt="bloco" />
+              </div>
               <div className="inputs-container">
                 <Input
                   name="name"
@@ -105,9 +116,25 @@ export default function ProductModal({
                 />
                 <Select
                   name="category"
-                  optionsData={catNames}
-                  placeHolder="Categoria"
-                />
+                  defaultValue={initialData.category || ''}
+                >
+                  <option value={initialData.category || ''} disabled>
+                    {initialData.category || 'Categoria'}
+                  </option>
+
+                  {catNames.length &&
+                    catNames.map((o) => {
+                      if (o !== initialData.category) {
+                        return (
+                          <option value={o} key={`select-${o}`}>
+                            {o}
+                          </option>
+                        );
+                      }
+
+                      return null;
+                    })}
+                </Select>
                 <Input
                   name="price"
                   placeholder="Preço"
@@ -128,7 +155,7 @@ export default function ProductModal({
           </div>
           <div>
             <button type="submit" name="inserir">
-              Criar
+              {okButtonText}
             </button>
             <button
               type="button"
@@ -149,17 +176,23 @@ ProductModal.propTypes = {
   initialData: PropTypes.shape({
     name: PropTypes.string,
     id: PropTypes.string,
+    category: PropTypes.string,
   }),
   onCancelPress: PropTypes.func,
   categories: PropTypes.arrayOf(
     PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })
   ).isRequired,
   onSubmit: PropTypes.func.isRequired,
-  products: PropTypes.arrayOf({ id: PropTypes.string, name: PropTypes.string })
-    .isRequired,
+  products: PropTypes.arrayOf(
+    PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })
+  ).isRequired,
+  title: PropTypes.string,
+  okButtonText: PropTypes.string,
 };
 
 ProductModal.defaultProps = {
+  title: 'Adicionar Novo Produto',
+  okButtonText: 'Criar',
   initialData: {},
   onCancelPress: () => {
     // nothing

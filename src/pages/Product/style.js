@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   max-width: 900px;
@@ -16,13 +16,18 @@ export const Content = styled.div`
   img {
     max-width: 400px;
   }
-
+  .product-price {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+  }
   .edit-icon {
     background-color: #2ecc71;
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
+    border: none;
     border-radius: 50px;
     width: 50px;
     height: 50px;
@@ -50,7 +55,6 @@ export const Content = styled.div`
 export const ProductDetails = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   margin-left: 24px;
   padding: 15px 24px;
   border: 1px solid #ebebeb;
@@ -58,7 +62,6 @@ export const ProductDetails = styled.div`
 
   .product-name {
     display: flex;
-    width: 100%;
     h1 {
       text-align: left;
     }
@@ -66,6 +69,12 @@ export const ProductDetails = styled.div`
 
   .product-details {
     margin-top: 30px;
+    max-height: 150px;
+    overflow-y: auto;
+    overflow-x: auto;
+    overflow-wrap: break-word;
+    max-width: 380px;
+
     p {
       font-size: 16px;
       display: inline;
@@ -74,7 +83,15 @@ export const ProductDetails = styled.div`
 
     pre {
       font: 16px 'Roboto';
-      text-align: justify;
+      white-space: pre-wrap; /* css-3 */
+      white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+      white-space: -pre-wrap; /* Opera 4-6 */
+      white-space: -o-pre-wrap; /* Opera 7 */
+      word-wrap: break-word;
     }
   }
+`;
+
+export const ProductText = styled.div`
+  ${css``}
 `;

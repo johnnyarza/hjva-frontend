@@ -16,9 +16,9 @@ import RemoveCategoryModal from '../../components/RemoveCategoryModal';
 
 export default function ProductDashboard() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [currentProdutc, setCurrentProdutc] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
   const [modalsOpen, setModalsOpen] = useState({
     insertProductModal: false,
     InsertCategoryModal: false,
@@ -38,6 +38,9 @@ export default function ProductDashboard() {
 
   const handleModals = useCallback(
     (modalStateName, state) => {
+      if (!state) {
+        setCurrentProdutc({});
+      }
       const newState = { ...modalsOpen };
       newState[modalStateName] = state;
       setModalsOpen(newState);
@@ -86,11 +89,8 @@ export default function ProductDashboard() {
         res = await api.post('product', body);
       }
       const newProduct = res.data;
-      console.log(newProduct);
       const newProducts = products.filter((p) => p.id !== newProduct.id);
       newProducts.push(newProduct);
-      console.log(newProducts);
-
       handleModals('insertProductModal', false);
       setProducts(newProducts);
       toast.success('Produto criado com sucesso');
@@ -137,7 +137,7 @@ export default function ProductDashboard() {
       const rows = prodsByCat.map((p) => (
         <tr className="row-data" key={`prodDash-TContainter-trData-${p.id}`}>
           <td>{p.name}</td>
-          <td>{p.description}</td>
+          <td className="row-description">{p.description}</td>
           <td>
             <NumberFormat value={p.price} displayType="text" />
           </td>
@@ -220,9 +220,14 @@ export default function ProductDashboard() {
           onEscPress={() => handleModals('insertProductModal', false)}
           onCancelPress={() => handleModals('insertProductModal', false)}
           categories={categories}
-          products={products.map((p) => ({ id: p.id, name: p.name }))}
+          products={products.map((p) => ({
+            id: p.id,
+            name: p.name,
+            file: p.file,
+          }))}
           onSubmit={handleSubmitProduct}
           initialData={currentProdutc}
+          okButtonText={currentProdutc.id ? 'Salvar' : 'Criar'}
         />
       )}
 

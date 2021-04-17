@@ -63,12 +63,18 @@ export default function RemoveCategoryModal({
     <GenericModal isOpen {...rest}>
       <Content>
         <Form onSubmit={handleSubmit} ref={formRef}>
-          <Select
-            name="category"
-            optionsData={catNames}
-            placeHolder="Categoria"
-            onChange={() => formRef.current.setFieldError('category', '')}
-          />
+          <Select name="category" defaultValue="">
+            <option value="" disabled>
+              Categoria
+            </option>
+
+            {catNames.length &&
+              catNames.map((o) => (
+                <option value={o} key={`select-${o}`}>
+                  {o}
+                </option>
+              ))}
+          </Select>
           <div className="button-container">
             <button type="submit" className="ok-button">
               Apagar

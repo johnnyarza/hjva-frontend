@@ -41,9 +41,13 @@ export const BarItem = styled.li`
       position: absolute;
       white-space: nowrap;
     }
-    svg {
+    svg,
+    img {
       width: 20px;
       height: 20px;
+      &:hover {
+        color: ${lighten(0.5, '#000')};
+      }
     }
 
     &:hover {

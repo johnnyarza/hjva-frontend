@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Container, Description, ProductName } from './style';
+import { Container, Description, ProductName, ProductText } from './style';
 
 const ProductCard = ({ text, description, imgSrc }) => (
   <Container>
@@ -18,7 +18,7 @@ const ProductCard = ({ text, description, imgSrc }) => (
       <ProductName>
         <span>{text}</span>
       </ProductName>
-      <p className="product-description">{description}</p>
+      <ProductText>{description}</ProductText>
     </Description>
   </Container>
 );

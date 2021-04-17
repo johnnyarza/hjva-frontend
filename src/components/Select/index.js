@@ -5,9 +5,8 @@ import { useField } from '@unform/core';
 import { MdInfoOutline } from 'react-icons/md';
 import { Container, Content, Tooltip } from './style';
 
-export default function Select({ name, optionsData, placeHolder, ...rest }) {
+export default function Select({ name, children, placeHolder, ...rest }) {
   const refSelect = useRef(null);
-  const [options, setOptions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
   const [hasError, setHasError] = useState(false);
   const { fieldName, defaultValue, error, registerField } = useField(name);
@@ -21,9 +20,8 @@ export default function Select({ name, optionsData, placeHolder, ...rest }) {
   }, [fieldName, registerField]);
 
   useEffect(() => {
-    if (optionsData.length) setOptions(optionsData);
     setHasError(!!error);
-  }, [optionsData, error]);
+  }, [error]);
 
   return (
     <Container>
@@ -35,23 +33,13 @@ export default function Select({ name, optionsData, placeHolder, ...rest }) {
         <select
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          defaultValue=""
           required
-          placeholder="escolha"
           name={name}
-          {...rest}
           ref={refSelect}
           className="select-component"
+          {...rest}
         >
-          <option value="" disabled>
-            {placeHolder}
-          </option>
-          {options.length &&
-            options.map((o) => (
-              <option value={o} key={`select-${o}`}>
-                {o}
-              </option>
-            ))}
+          {children}
         </select>
         {error && (
           <>
@@ -68,7 +56,10 @@ export default function Select({ name, optionsData, placeHolder, ...rest }) {
 
 Select.propTypes = {
   name: PropTypes.string.isRequired,
-  optionsData: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]).isRequired,
   placeHolder: PropTypes.string,
 };
 

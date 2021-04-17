@@ -1,8 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
+
 import { toast } from 'react-toastify';
+import { MdDelete } from 'react-icons/md';
 import SideBar from '../../components/SideBar';
+import Modal from '../../components/Modal';
 
 import {
   Container,
@@ -11,7 +14,7 @@ import {
   SelectContainer,
   NameContainer,
 } from './style';
-import Select from '../../components/Select';
+
 import api from '../../services/api';
 import GenericModal from '../../components/GenericModal';
 import Input from '../../components/Input';
@@ -33,7 +36,11 @@ const formSchema = Yup.object().shape({
 export default function UsersDashboard() {
   const formRef = useRef(null);
   const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState([]);
+  const [deleteUserConfirmationOpen, setDeleteUserConfirmationOpen] = useState(
+    false
+  );
+
+  const [currentUser, setCurrentUser] = useState({});
   const [roles, setRoles] = useState([]);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(
     false
@@ -56,34 +63,33 @@ export default function UsersDashboard() {
     loadAllRoles();
   }, [loadAllUsers, loadAllRoles]);
 
-  const handleSelectChange = (selectedUser, role) => {
-    try {
-      api.put(`/user/role/${selectedUser.id}`, { role });
+  const handleSelectChange = useCallback(
+    (selectedUser, role) => {
+      try {
+        api.put(`/user/role/${selectedUser.id}`, { role });
 
-      const updatedUsers = users.map((user) => {
-        if (user.id === selectedUser.id) {
-          const newUser = { ...user };
-          newUser.role = role;
-          return newUser;
-        }
-        return user;
-      });
-      setUsers(updatedUsers);
-    } catch (error) {
-      toast.error('Erro ao atualizar privilégios');
-    }
-  };
+        const updatedUsers = users.map((user) => {
+          if (user.id === selectedUser.id) {
+            const newUser = { ...user };
+            newUser.role = role;
+            return newUser;
+          }
+          return user;
+        });
+        setUsers(updatedUsers);
+      } catch (error) {
+        toast.error('Erro ao atualizar privilégios');
+      }
+    },
+    [users]
+  );
 
-  const handleResetButtonClick = useCallback((selectedUser) => {
-    setCurrentUser(selectedUser);
-    setIsResetPasswordModalOpen(true);
-  }, []);
-
-  const handleUpdatePassword = useCallback(async (data) => {
+  const handleUpdatePassword = async (data) => {
     try {
       await formSchema.validate(data, {
         abortEarly: false,
       });
+      await api.put(`/user/password/${currentUser.id}`, data);
       setIsResetPasswordModalOpen(false);
       toast.success('Senha resetada com sucesso');
     } catch (err) {
@@ -96,17 +102,30 @@ export default function UsersDashboard() {
       }
       toast.error('Erro ao resetar senha');
     }
-  }, []);
+  };
+
+  const deleteHandle = async () => {
+    try {
+      await api.delete(`/user/${currentUser.id}`);
+      const newUsers = users.filter((user) => user.id !== currentUser.id);
+      setUsers(newUsers);
+      setDeleteUserConfirmationOpen(false);
+      toast.success('Usuário deletado');
+    } catch (err) {
+      const text = err.response?.data.message || err.message;
+      toast.error(text);
+    }
+  };
 
   const generateGridRows = useCallback(() => {
     if (users.length && users.length > 0 && roles?.length > 0) {
       const options = roles.map((role) => <option>{role.name}</option>);
       const rows = users.map((user) => (
         <>
-          <NameContainer>
+          <NameContainer key={`nameContainer-${user.id}`}>
             <div>{user.name}</div>
           </NameContainer>
-          <SelectContainer>
+          <SelectContainer key={`selectContainer-${user.id}`}>
             <select
               key={user.id}
               onChange={({ target }) => handleSelectChange(user, target.value)}
@@ -116,31 +135,50 @@ export default function UsersDashboard() {
             </select>
           </SelectContainer>
           <button
+            key={`b-${user.id}`}
             type="button"
             className="reset-password"
-            onClick={() => handleResetButtonClick(user)}
+            onClick={() => {
+              setCurrentUser(user);
+              setIsResetPasswordModalOpen(true);
+            }}
           >
             Resetar Senha
+          </button>
+          <button
+            key={`b1-${user.id}`}
+            className="delete-user-button"
+            onClick={() => {
+              setCurrentUser(user);
+              setDeleteUserConfirmationOpen(true);
+            }}
+            type="button"
+          >
+            <MdDelete
+              key={`ic-${user.id}`}
+              style={{ minHeight: '20px', width: 'auto' }}
+            />
           </button>
         </>
       ));
       return rows;
     }
     return <></>;
-  }, [users, roles]);
+  }, [users, roles, handleSelectChange]);
 
   return (
     <>
       <SideBar />
       <Container>
         <Content>
-          <GridContainer style={{ gridTemplateColumns: '50% 25% 25%' }}>
+          <GridContainer style={{ gridTemplateColumns: '45% 20% 25% 10%' }}>
             <div>
               <h1>Usuário</h1>
             </div>
             <div className="access-title">
               <h1>Acesso</h1>
             </div>
+            <div />
             <div />
             {generateGridRows()}
           </GridContainer>
@@ -194,6 +232,15 @@ export default function UsersDashboard() {
           </GenericModal>
         )}
       </Container>
+      {deleteUserConfirmationOpen && (
+        <Modal
+          isOpen
+          onCancelClick={() => setDeleteUserConfirmationOpen(false)}
+          onOkClick={deleteHandle}
+          message={`Certeza que deseja deletar usuário: ${currentUser.name} ?`}
+          onEscPress={() => setDeleteUserConfirmationOpen(false)}
+        />
+      )}
     </>
   );
 }

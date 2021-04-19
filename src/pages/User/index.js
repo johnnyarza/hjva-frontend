@@ -6,10 +6,12 @@ import { updateUserRequest } from '../../store/modules/user/actions';
 
 import AuthLayout from '../_layouts/Auth';
 import SideBar from '../../components/SideBar';
-import { Container, Content } from './style';
 import Input from '../../components/Input';
+import { Container, Content } from './style';
+import AvatarInput from './AvatarInput';
 
 import userPath from '../../assets/user.svg';
+
 import api from '../../services/api';
 
 /* eslint-disable */
@@ -57,7 +59,7 @@ export default function User() {
       }
     };
     loadAvatar();
-  });
+  }, []);
 
   const handleNewPasswordChange = ({ target }) => {
     const { value } = target;
@@ -73,18 +75,15 @@ export default function User() {
   const AvatarImage = () => {
     if (avatar) {
       return (
-        <button
-          className="avatar"
-          type="button"
-          onClick={() => console.log('imagem')}
-        >
+        <>
+          <input type="file" />
           <img
             className="avatar"
             src={avatar.url}
             alt="user"
             style={{ marginBottom: '15px' }}
           />
-        </button>
+        </>
       );
     }
     return <img src={userPath} alt="user" style={{ marginBottom: '15px' }} />;
@@ -124,8 +123,8 @@ export default function User() {
         <h1>Editar usuário</h1>
         <Content isChangingPassword={isChangingPassword}>
           <AuthLayout>
+            <AvatarInput />
             <Form onSubmit={handleSubmit} schema={schema} ref={formRef}>
-              {AvatarImage()}
               <Input name="name" type="text" placeholder="Seu nome" />
               <Input name="email" type="email" placeholder="Seu e-mail" />
               <Input

@@ -10,11 +10,4 @@ export const Content = styled.div`
   overflow: hidden;
   min-height: 410px;
   overflow-y: hidden;
-  .avatar {
-    height: 90px;
-    width: 90px;
-    border-radius: 50%;
-    align-self: center;
-    margin-bottom: 15px;
-  }
 `;

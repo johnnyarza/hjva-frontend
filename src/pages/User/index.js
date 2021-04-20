@@ -7,12 +7,9 @@ import { updateUserRequest } from '../../store/modules/user/actions';
 import AuthLayout from '../_layouts/Auth';
 import SideBar from '../../components/SideBar';
 import Input from '../../components/Input';
+import Spinner from '../../components/Spinner';
 import { Container, Content } from './style';
 import AvatarInput from './AvatarInput';
-
-import userPath from '../../assets/user.svg';
-
-import api from '../../services/api';
 
 /* eslint-disable */
 const schema = Yup.object().shape({
@@ -41,25 +38,16 @@ const schema = Yup.object().shape({
 export default function User() {
   const formRef = useRef(null);
   const dispatch = useDispatch();
-  const [avatar, setAvatar] = useState({});
   const { user } = useSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   useEffect(() => {
-    formRef.current.setData({ name: user.name, email: user.email });
-  }, [user]);
-
-  useEffect(() => {
-    const loadAvatar = async () => {
-      const { data } = await api.get('/user');
-      const { avatar: value } = data;
-      if (value) {
-        setAvatar(value);
-      }
-    };
-    loadAvatar();
-  }, []);
+    if (!isLoading) {
+      formRef.current.setData({ name: user.name, email: user.email });
+    }
+  }, [user, isLoading]);
 
   const handleNewPasswordChange = ({ target }) => {
     const { value } = target;
@@ -70,23 +58,6 @@ export default function User() {
         oldPassword: '',
       });
     }
-  };
-
-  const AvatarImage = () => {
-    if (avatar) {
-      return (
-        <>
-          <input type="file" />
-          <img
-            className="avatar"
-            src={avatar.url}
-            alt="user"
-            style={{ marginBottom: '15px' }}
-          />
-        </>
-      );
-    }
-    return <img src={userPath} alt="user" style={{ marginBottom: '15px' }} />;
   };
 
   function clean(obj) {
@@ -116,49 +87,54 @@ export default function User() {
       }
     }
   };
-
+  /* eslint-disable */
   return (
     <>
-      <Container>
-        <h1>Editar usuário</h1>
-        <Content isChangingPassword={isChangingPassword}>
-          <AuthLayout>
-            <AvatarInput />
-            <Form onSubmit={handleSubmit} schema={schema} ref={formRef}>
-              <Input name="name" type="text" placeholder="Seu nome" />
-              <Input name="email" type="email" placeholder="Seu e-mail" />
-              <Input
-                name="password"
-                type="password"
-                placeholder="Nova senha"
-                onChange={(data) => handleNewPasswordChange(data)}
-              />
-              {isChangingPassword && (
-                <>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+          <Container>
+            <h1>Editar usuário</h1>
+            <Content isChangingPassword={isChangingPassword}>
+              <AuthLayout>
+                <AvatarInput />
+                <Form onSubmit={handleSubmit} schema={schema} ref={formRef}>
+                  <Input name="name" type="text" placeholder="Seu nome" />
+                  <Input name="email" type="email" placeholder="Seu e-mail" />
                   <Input
-                    name="confirmPassword"
+                    name="password"
                     type="password"
-                    placeholder="Confirme sua senha"
-                    onChange={() =>
-                      formRef.current.setFieldError('confirmPassword', '')
-                    }
+                    placeholder="Nova senha"
+                    onChange={(data) => handleNewPasswordChange(data)}
                   />
-                  <Input
-                    name="oldPassword"
-                    type="password"
-                    placeholder="Senha atual"
-                    onChange={() =>
-                      formRef.current.setFieldError('oldPassword', '')
-                    }
-                  />
-                </>
-              )}
+                  {isChangingPassword && (
+                    <>
+                      <Input
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirme sua senha"
+                        onChange={() =>
+                          formRef.current.setFieldError('confirmPassword', '')
+                        }
+                      />
+                      <Input
+                        name="oldPassword"
+                        type="password"
+                        placeholder="Senha atual"
+                        onChange={() =>
+                          formRef.current.setFieldError('oldPassword', '')
+                        }
+                      />
+                    </>
+                  )}
 
-              <button type="submit">Atualizar</button>
-            </Form>
-          </AuthLayout>
-        </Content>
-      </Container>
+                  <button type="submit">Atualizar</button>
+                </Form>
+              </AuthLayout>
+            </Content>
+          </Container>
+        )}
+
       <SideBar />
     </>
   );

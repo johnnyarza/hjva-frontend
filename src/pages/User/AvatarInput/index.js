@@ -4,11 +4,14 @@ import { Container } from './style';
 
 import defaultAvatar from '../../../assets/user.svg';
 import api from '../../../services/api';
+import Spinner from '../../../components/Spinner';
 
 export default function AvatarInput() {
   const [avatar, setAvatar] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const loadAvatar = async () => {
       const { data } = await api.get('/user');
       const { avatar: value } = data;
@@ -17,6 +20,7 @@ export default function AvatarInput() {
       }
     };
     loadAvatar();
+    setIsLoading(false);
   }, []);
 
   const handleChange = async (e) => {
@@ -27,19 +31,25 @@ export default function AvatarInput() {
   };
 
   return (
-    <Container>
-      <label htmlFor="avatar">
-        <img src={avatar.url || defaultAvatar} alt="UserAvatar" />
-        <input
-          type="file"
-          id="avatar"
-          onChange={handleChange}
-          accept="image/jpeg,
+    <>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+          <Container>
+            <label htmlFor="avatar">
+              <img src={avatar.url || defaultAvatar} alt="UserAvatar" />
+              <input
+                type="file"
+                id="avatar"
+                onChange={handleChange}
+                accept="image/jpeg,
           image/pjpeg,
           image/png,
           image/gif"
-        />
-      </label>
-    </Container>
+              />
+            </label>
+          </Container>
+        )}
+    </>
   );
 }

@@ -40,12 +40,7 @@
     "prettier/prettier": [
       "error",
       {
-        "singleQuote": true,
-        "parser": "flow",
-        "endOfLine": "lf"
-      },
-      {
-        "usePrettierrc": false
+        "endOfLine": "auto"
       }
     ],
     "react/jsx-props-no-spreading": "off",

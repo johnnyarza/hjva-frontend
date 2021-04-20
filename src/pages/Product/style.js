@@ -59,6 +59,7 @@ export const ProductDetails = styled.div`
   padding: 15px 24px;
   border: 1px solid #ebebeb;
   border-radius: 15px;
+  width: 100%;
 
   .product-name {
     display: flex;

@@ -7,7 +7,8 @@
     "plugin:react/recommended",
     "airbnb",
     "prettier",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "eslint-config-prettier"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -22,6 +23,8 @@
     "prettier"
   ],
   "rules": {
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    "prettier/prettier": "off",
     "arrow-body-style": "off",
     "prefer-arrow-callback": "off",
     "no-console": [
@@ -37,12 +40,6 @@
     "no-param-reassign": "off",
     "no-useless-return": "off",
     "react/prop-types": "warn",
-    "prettier/prettier": [
-      "error",
-      {
-        "endOfLine": "auto"
-      }
-    ],
     "react/jsx-props-no-spreading": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",

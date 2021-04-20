@@ -26,7 +26,7 @@ export default function ProductModal({
   const [productId, setProductId] = useState('');
 
   useEffect(() => {
-    console.log(products);
+
     formRef.current.setData(initialData);
     const { id } = initialData;
     if (id) {
@@ -91,7 +91,8 @@ export default function ProductModal({
   const productFilePath = () => {
     if (productId && products.length) {
       const product = products.find((p) => p.id === productId);
-      if (product.file.length) {
+      console.log(product);
+      if (product.file?.length) {
         return product.file[0].url;
       }
     }

@@ -3,13 +3,21 @@ import { Form } from '@unform/web';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+import { CircularProgressbar } from 'react-circular-progressbar';
 
+import { uniqueId } from 'lodash';
+import { MdClose } from 'react-icons/md';
+import Loader from 'react-loader-spinner';
 import GenericModal from '../GenericModal';
 import Input from '../Input';
 import TextArea from '../TextArea';
 import Select from '../Select';
 
 import { Content } from './style';
+import Empty from '../Empty';
+
+const defaultProdUrl =
+  'https://images.unsplash.com/photo-1573871924474-04f515cf7399?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80';
 
 export default function ProductModal({
   initialData,
@@ -24,13 +32,24 @@ export default function ProductModal({
   const formRef = useRef(null);
   const [catNames, setCatNames] = useState([]);
   const [productId, setProductId] = useState('');
+  const [files, setFiles] = useState([]);
+  const [filesToDelete, setFilesToDelete] = useState([]);
+  const [fileIndex, setFileIndex] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-
     formRef.current.setData(initialData);
     const { id } = initialData;
     if (id) {
       setProductId(id);
+      if (initialData.file.length) {
+        const newFiles = initialData.file.map((file) => ({
+          ...file,
+          isNew: false,
+          toDelete: false,
+        }));
+        setFiles(newFiles);
+      }
     }
   }, [initialData]);
 
@@ -74,7 +93,8 @@ export default function ProductModal({
       await schema.validate(data, { abortEarly: false });
       if (!productId) productNameExists(data.name);
       formRef.current.setErrors({});
-      onSubmit(data);
+      setIsSaving(true);
+      onSubmit({ data, files: [...files, ...filesToDelete] });
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {
@@ -88,16 +108,64 @@ export default function ProductModal({
     }
   };
 
-  const productFilePath = () => {
-    if (productId && products.length) {
-      const product = products.find((p) => p.id === productId);
-      console.log(product);
-      if (product.file?.length) {
-        return product.file[0].url;
-      }
+  const productFilePath = useCallback(() => {
+    if (files.length) {
+      return files[fileIndex].url;
     }
-    return 'https://images.unsplash.com/photo-1573871924474-04f515cf7399?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80';
+    return defaultProdUrl;
+  }, [files, fileIndex]);
+
+  const handleImgChange = useCallback(
+    (to = 'next') => {
+      if (files.length) {
+        let index = fileIndex;
+
+        if (to === 'next') {
+          index += 1;
+        } else {
+          index -= 1;
+        }
+
+        if (index < 0) index = files.length - 1;
+        if (index > files.length - 1) index = 0;
+        setFileIndex(index);
+      }
+    },
+    [fileIndex, files.length]
+  );
+
+  const handleAddImg = (inputFiles) => {
+    const uploadFiles = [];
+
+    for (let i = 0; i < inputFiles.length; i++) {
+      const file = inputFiles[i];
+
+      uploadFiles.push({
+        file,
+        id: uniqueId(),
+        name: file.name,
+        url: URL.createObjectURL(file),
+        isNew: true,
+        toDelete: false,
+      });
+    }
+    const concatedFiles = uploadFiles.concat(files);
+    setFiles(concatedFiles);
+    setFileIndex(0);
   };
+
+  const handleDeleteImg = () => {
+    const newFiles = files.filter((f) => files[fileIndex].id !== f.id);
+    const newFilesToDelete = files.filter((f) => files[fileIndex].id === f.id);
+    newFilesToDelete.forEach((f) => {
+      f.toDelete = true;
+    });
+
+    setFiles(newFiles);
+    setFilesToDelete(newFilesToDelete.concat(filesToDelete));
+    setFileIndex(0);
+  };
+
   return (
     <GenericModal isOpen {...rest}>
       <Content>
@@ -106,7 +174,49 @@ export default function ProductModal({
           <div className="form-content">
             <div className="product-inputs-container">
               <div className="img-div">
-                <img src={productFilePath()} alt="bloco" />
+                <button
+                  className="prev-img"
+                  type="button"
+                  onClick={() => handleImgChange('prev')}
+                >
+                  {'<'}
+                </button>
+                {files?.length ? (
+                  <img src={productFilePath()} alt="UserAvatar" />
+                ) : (
+                  <MdClose style={{ width: '100%', height: 'auto' }} />
+                )}
+
+                <button
+                  className="next-img"
+                  type="button"
+                  onClick={handleImgChange}
+                >
+                  {'>'}
+                </button>
+                <div className="img-buttons-container">
+                  <label htmlFor="file">
+                    +
+                    <input
+                      type="file"
+                      id="file"
+                      multiple
+                      onChange={(f) => handleAddImg(f.target.files)}
+                      accept="image/jpeg,
+          image/pjpeg,
+          image/png,
+          image/gif"
+                    />
+                  </label>
+
+                  <button
+                    type="button"
+                    style={{ backgroundColor: '#C0392B' }}
+                    onClick={handleDeleteImg}
+                  >
+                    -
+                  </button>
+                </div>
               </div>
               <div className="inputs-container">
                 <Input
@@ -127,7 +237,7 @@ export default function ProductModal({
                     catNames.map((o) => {
                       if (o !== initialData.category) {
                         return (
-                          <option value={o} key={`select-${o}`}>
+                          <option value={o} key={uniqueId()}>
                             {o}
                           </option>
                         );
@@ -154,18 +264,24 @@ export default function ProductModal({
               onChange={() => formRef.current.setFieldError('description', '')}
             />
           </div>
-          <div>
-            <button type="submit" name="inserir">
-              {okButtonText}
-            </button>
-            <button
-              type="button"
-              name="inserir"
-              style={{ backgroundColor: '#C0392B' }}
-              onClick={handleCancel}
-            >
-              Cancelar
-            </button>
+          <div style={{ maxHeight: '40px' }}>
+            {isSaving ? (
+              <Loader type="TailSpin" color="#00BFFF" height={30} width={30} />
+            ) : (
+              <>
+                <button type="submit" name="inserir">
+                  {okButtonText}
+                </button>
+                <button
+                  type="button"
+                  name="cancelar"
+                  style={{ backgroundColor: '#C0392B' }}
+                  onClick={handleCancel}
+                >
+                  Cancelar
+                </button>
+              </>
+            )}
           </div>
         </Form>
       </Content>

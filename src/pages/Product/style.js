@@ -13,8 +13,56 @@ export const Content = styled.div`
   padding: 15px 30px;
   border-radius: 15px;
 
+  .prev-img {
+    background-color: #ebebeb !important;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 40px;
+    color: black;
+    align-self: center;
+    position: absolute;
+    z-index: 3;
+    margin-top: auto;
+    margin-bottom: auto;
+    top: 0;
+    bottom: 0;
+    left: -20px;
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+    }
+    &:active {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 15px;
+    }
+  }
+
+  .next-img {
+    background-color: #ebebeb !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    color: black;
+    align-self: center;
+    position: absolute;
+    z-index: 3;
+    margin-top: auto;
+    margin-bottom: auto;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    right: -20px;
+    border: none;
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+    }
+    &:active {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 15px;
+    }
+  }
+
   img {
     max-width: 400px;
+    max-height: 500px;
   }
   .product-price {
     position: absolute;

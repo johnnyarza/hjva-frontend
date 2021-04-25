@@ -24,7 +24,7 @@
   ],
   "rules": {
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
-    "prettier/prettier": "off",
+
     "arrow-body-style": "off",
     "prefer-arrow-callback": "off",
     "no-console": [

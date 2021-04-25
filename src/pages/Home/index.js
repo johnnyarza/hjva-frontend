@@ -22,16 +22,17 @@ export default function Home() {
         const cats = [...categoriesSet]
         setCategories(cats)
       }
+      setIsLoading(false)
     }
     loadAllProducts()
-    setIsLoading(false)
+
   }, [])
 
   function generateProductCards(category) {
     if (products[0] && categories[0]) {
       const prodsByCat = products.filter((p) => p.category === category)
       const cards = prodsByCat.map((p) => (
-        <ProductCard text={p.name} description={p.description} key={p.id} />
+        <ProductCard text={p.name} description={p.description} key={p.id} file={p.file}/>
       ))
       return cards
     }

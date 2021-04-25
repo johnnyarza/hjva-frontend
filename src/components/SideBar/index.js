@@ -73,7 +73,7 @@ export default function SideBar() {
           </Link>
         </BarItem>
         <BarItem>
-          <Link to="/">
+          <Link to="/compresionTest/home">
             <img src={concreteTestIconPath} alt="probeta" />
             <span>Probetas</span>
           </Link>

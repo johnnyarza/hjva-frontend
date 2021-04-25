@@ -13,6 +13,8 @@ import { store, persistor } from './store';
 import history from './services/history';
 
 import GlobalStyle from './styles/global';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import '@szhsin/react-menu/dist/index.css';
 
 function App() {
   return (

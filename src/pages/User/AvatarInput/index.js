@@ -35,21 +35,21 @@ export default function AvatarInput() {
       {isLoading ? (
         <Spinner />
       ) : (
-          <Container>
-            <label htmlFor="avatar">
-              <img src={avatar.url || defaultAvatar} alt="UserAvatar" />
-              <input
-                type="file"
-                id="avatar"
-                onChange={handleChange}
-                accept="image/jpeg,
+        <Container>
+          <label htmlFor="avatar">
+            <img src={avatar.url || defaultAvatar} alt="UserAvatar" />
+            <input
+              type="file"
+              id="avatar"
+              onChange={handleChange}
+              accept="image/jpeg,
           image/pjpeg,
           image/png,
           image/gif"
-              />
-            </label>
-          </Container>
-        )}
+            />
+          </label>
+        </Container>
+      )}
     </>
   );
 }

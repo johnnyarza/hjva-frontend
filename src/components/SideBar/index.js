@@ -5,7 +5,9 @@ import {
   MdLocalGroceryStore,
   MdGroup,
   MdLocalShipping,
+  MdPerson,
 } from 'react-icons/md';
+import { FaDolly } from 'react-icons/fa';
 
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
@@ -13,7 +15,6 @@ import { useDispatch } from 'react-redux';
 import { Container, Content, BarItem } from './style';
 import api from '../../services/api';
 import { signOut } from '../../store/modules/auth/actions';
-import estoqueIconPath from '../../assets/estoque.svg';
 import concreteTestIconPath from '../../assets/concrete.ico';
 
 export default function SideBar() {
@@ -58,7 +59,7 @@ export default function SideBar() {
             </Link>
           </BarItem>
         )}
-        {(userRole === 'admin' || userRole === 'office') && (
+        {(userRole === 'admin' || userRole === 'escritorio') && (
           <BarItem>
             <Link to="/product/edit">
               <MdLocalGroceryStore />
@@ -68,16 +69,34 @@ export default function SideBar() {
         )}
         <BarItem>
           <Link to="/">
-            <MdLocalShipping />
+            <FaDolly />
             <span>Estoque</span>
           </Link>
         </BarItem>
-        <BarItem>
-          <Link to="/compresionTest/home">
-            <img src={concreteTestIconPath} alt="probeta" />
-            <span>Probetas</span>
-          </Link>
-        </BarItem>
+        {userRole !== 'comum' && (
+          <>
+            <BarItem>
+              <Link to="/clients">
+                <MdPerson />
+                <span>Clientes</span>
+              </Link>
+            </BarItem>
+            <BarItem>
+              <Link to="/providers">
+                <MdLocalShipping />
+                <span>Proveedores</span>
+              </Link>
+            </BarItem>
+          </>
+        )}
+        {userRole !== 'comum' && userRole !== 'vendedor' && (
+          <BarItem>
+            <Link to="/compresionTest/home">
+              <img src={concreteTestIconPath} alt="probeta" />
+              <span>Probetas</span>
+            </Link>
+          </BarItem>
+        )}
       </Content>
     </Container>
   );

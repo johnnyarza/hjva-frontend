@@ -39,7 +39,7 @@ export default function User() {
   const formRef = useRef(null);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -47,6 +47,7 @@ export default function User() {
     if (!isLoading) {
       formRef.current.setData({ name: user.name, email: user.email });
     }
+    setIsLoading(false);
   }, [user, isLoading]);
 
   const handleNewPasswordChange = ({ target }) => {

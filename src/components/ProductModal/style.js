@@ -12,6 +12,7 @@ export const Content = styled.div`
     width: 100%;
     display: flex;
     justify-content: center;
+    z-index: 2;
     button {
       width: 20px;
       height: 20px;
@@ -54,6 +55,7 @@ export const Content = styled.div`
     align-self: center;
     margin-top: 15px;
     position: relative;
+    min-width: 400px;
     label {
       cursor: pointer;
       color: white;
@@ -119,7 +121,7 @@ export const Content = styled.div`
     align-items: center;
     justify-content: space-between;
     border: none;
-    margin: 4px 0 5px 4px;
+    margin: 4px 0 15px 4px;
   }
 
   .inputs-container {

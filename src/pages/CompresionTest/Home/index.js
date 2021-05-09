@@ -22,7 +22,7 @@ function CompresionTestHome() {
           </Menu>
           <Menu
             menuButton={<MenuButton>Registro</MenuButton>}
-            arrow="arrow"
+            arrow
             direction="bottom"
             viewScroll="initial"
           >

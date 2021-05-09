@@ -9,6 +9,7 @@ export default function Select({ name, children, placeHolder, ...rest }) {
   const refSelect = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
   const [hasError, setHasError] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const { fieldName, defaultValue, error, registerField } = useField(name);
 
   useEffect(() => {

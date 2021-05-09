@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import App from './App';
 
 ReactDOM.render(
-  <React.StrictMode>
+  <>
     <App />
     <ToastContainer
       position="bottom-center"
@@ -17,6 +17,6 @@ ReactDOM.render(
       draggable
       pauseOnHover
     />
-  </React.StrictMode>,
+  </>,
   document.getElementById('root')
 );

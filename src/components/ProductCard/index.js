@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Container, Description, ProductName, ProductText } from './style';
 
-const ProductCard = ({ text, description, imgSrc, file }) => {
+const ProductCard = ({ text, description, file }) => {
   const [files, setFiles] = useState([]);
   const [fileIndex, setFileIndex] = useState(0);
 
@@ -63,11 +63,6 @@ const ProductCard = ({ text, description, imgSrc, file }) => {
 ProductCard.propTypes = {
   text: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  imgSrc: PropTypes.string,
-};
-
-ProductCard.defaultProps = {
-  imgSrc: '',
 };
 
 export default ProductCard;

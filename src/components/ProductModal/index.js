@@ -3,7 +3,6 @@ import { Form } from '@unform/web';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-import { CircularProgressbar } from 'react-circular-progressbar';
 
 import { uniqueId } from 'lodash';
 import { MdClose } from 'react-icons/md';
@@ -14,7 +13,6 @@ import TextArea from '../TextArea';
 import Select from '../Select';
 
 import { Content } from './style';
-import Empty from '../Empty';
 
 const defaultProdUrl =
   'https://images.unsplash.com/photo-1573871924474-04f515cf7399?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80';

@@ -12,6 +12,8 @@ import User from '../pages/User';
 import ProductDashboard from '../pages/ProductDashboard';
 import UsersDashboard from '../pages/UsersDashboard';
 import CompresionTestHome from '../pages/CompresionTest/Home';
+import Clients from '../pages/Clients';
+import Providers from '../pages/Providers';
 
 export default function Routes() {
   return (
@@ -68,6 +70,16 @@ export default function Routes() {
         path="/compresionTest/home"
         exact
         component={(props) => <CompresionTestHome {...props} />}
+      />
+      <Route
+        path="/clients"
+        exact
+        component={(props) => <Clients {...props} />}
+      />
+      <Route
+        path="/providers"
+        exact
+        component={(props) => <Providers {...props} />}
       />
     </Switch>
   );

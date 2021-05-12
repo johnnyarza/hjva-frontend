@@ -14,6 +14,7 @@ import UsersDashboard from '../pages/UsersDashboard';
 import CompresionTestHome from '../pages/CompresionTest/Home';
 import Clients from '../pages/Clients';
 import Providers from '../pages/Providers';
+import Stock from '../pages/Stock';
 
 export default function Routes() {
   return (
@@ -81,6 +82,7 @@ export default function Routes() {
         exact
         component={(props) => <Providers {...props} />}
       />
+      <Route path="/stock" exact component={(props) => <Stock {...props} />} />
     </Switch>
   );
 }

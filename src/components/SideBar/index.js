@@ -68,7 +68,7 @@ export default function SideBar() {
           </BarItem>
         )}
         <BarItem>
-          <Link to="/">
+          <Link to="/stock">
             <FaDolly />
             <span>Estoque</span>
           </Link>

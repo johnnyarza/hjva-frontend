@@ -7,7 +7,7 @@ import {
   MdLocalShipping,
   MdPerson,
 } from 'react-icons/md';
-import { FaDolly } from 'react-icons/fa';
+import { FaDolly, FaTags, FaBalanceScale } from 'react-icons/fa';
 
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
@@ -67,28 +67,46 @@ export default function SideBar() {
             </Link>
           </BarItem>
         )}
-        <BarItem>
-          <Link to="/stock">
-            <FaDolly />
-            <span>Estoque</span>
-          </Link>
-        </BarItem>
+
         {userRole !== 'comum' && (
           <>
             <BarItem>
-              <Link to="/clients">
-                <MdPerson />
-                <span>Clientes</span>
+              <Link to="/category">
+                <FaTags />
+                <span>Categorias</span>
               </Link>
             </BarItem>
+            {(userRole === 'admin' ||
+              userRole === 'escritorio' ||
+              userRole === 'laboratorio') && (
+              <BarItem>
+                <Link to="/measurements">
+                  <FaBalanceScale />
+                  <span>Unidades Medi.</span>
+                </Link>
+              </BarItem>
+            )}
             <BarItem>
               <Link to="/providers">
                 <MdLocalShipping />
                 <span>Proveedores</span>
               </Link>
             </BarItem>
+            <BarItem>
+              <Link to="/stock">
+                <FaDolly />
+                <span>Estoque</span>
+              </Link>
+            </BarItem>
+            <BarItem>
+              <Link to="/clients">
+                <MdPerson />
+                <span>Clientes</span>
+              </Link>
+            </BarItem>
           </>
         )}
+
         {userRole !== 'comum' && userRole !== 'vendedor' && (
           <BarItem>
             <Link to="/compresionTest/home">

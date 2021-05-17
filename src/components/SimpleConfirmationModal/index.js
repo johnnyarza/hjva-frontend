@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import GenericModal from '../GenericModal';
 
 import { DeleteConfirmationContainer } from './styles';
@@ -34,3 +36,10 @@ function SimpleConfirmationModal({
 }
 
 export default SimpleConfirmationModal;
+
+SimpleConfirmationModal.propTypes = {
+  onEscPress: PropTypes.func.isRequired,
+  onOkClick: PropTypes.func.isRequired,
+  onCancelClick: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};

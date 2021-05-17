@@ -15,6 +15,7 @@ export const Container = styled.div`
   }
 
   .select-component {
+    cursor: pointer;
     border: none;
     font: 15px 'Roboto';
     width: 100%;

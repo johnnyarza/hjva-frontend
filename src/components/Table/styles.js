@@ -26,12 +26,13 @@ export const Container = styled.div`
 
     .tbody {
       ${'' /* These styles are required for a scrollable table body */}
-
-      max-height: 500px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      max-height: 450px;
     }
 
     .tr {
-      transition: all 0.2s;
+      transition: background-color 0.2s;
       :nth-child(even) {
         background-color: #bdc3c7;
       }
@@ -57,7 +58,6 @@ export const Container = styled.div`
       margin: 0;
       padding: 0.5rem;
       border-right: none;
-      overflow: hidden;
 
       ${
         '' /* In this example we use an absolutely position resizer,
@@ -73,7 +73,7 @@ export const Container = styled.div`
         border-right: solid black 1px;
         right: 0;
         background: transparent;
-        width: 10px;
+        width: 5px;
         height: 100%;
         position: absolute;
         top: 0;

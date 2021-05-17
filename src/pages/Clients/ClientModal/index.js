@@ -3,11 +3,13 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
-import GenericModal from '../../../components/GenericModal';
 
 import { Container } from './styles';
+
+import GenericModal from '../../../components/GenericModal';
 import Input from '../../../components/Input';
 import TextArea from '../../../components/TextArea';
+import utils from '../../../utils';
 
 function ClientModal({
   initialData = {},
@@ -24,7 +26,11 @@ function ClientModal({
 
   const isNameInUse = (name) => {
     if (!!name && clients?.length) {
-      if (clients.find((p) => p.name === name && p.id !== initialData?.id)) {
+      if (
+        clients.find(
+          (p) => utils.ciEquals(p.name, name) && p.id !== initialData?.id
+        )
+      ) {
         return true;
       }
     }

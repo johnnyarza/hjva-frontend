@@ -13,6 +13,7 @@ import ProviderModal from './ProviderModal';
 import { Container, Content } from './styles';
 
 import api from '../../services/api';
+import utils from '../../utils';
 
 function Providers() {
   const [providers, setProviders] = useState(null);
@@ -24,7 +25,7 @@ function Providers() {
     const loadAllProviders = async () => {
       const { data } = await api.get('providers');
       if (data) {
-        data.sort((a, b) => a.name.localeCompare(b.name));
+        data.sort((a, b) => utils.naturalSortCompare(a, b));
         setProviders(data);
       }
     };
@@ -83,7 +84,7 @@ function Providers() {
           }
           return p;
         });
-        newProviders.sort((a, b) => a.name.localeCompare(b.name));
+        newProviders.sort((a, b) => utils.naturalSortCompare(a, b));
         setProviders(newProviders);
       }
       toast.success(`Proveedor guardado con éxito`);

@@ -9,14 +9,15 @@ import { Container } from './styles';
 import GenericModal from '../../../components/GenericModal';
 import Input from '../../../components/Input';
 import TextArea from '../../../components/TextArea';
+
 import utils from '../../../utils';
 
-function ProviderModal({
+function CategoryModal({
   initialData = {},
   onEscPress,
-  onCancelButton,
+  onCancelClick,
   onSubmit,
-  providers = [],
+  categories,
   ...rest
 }) {
   const formRef = useRef(null);
@@ -26,9 +27,9 @@ function ProviderModal({
   }, [initialData]);
 
   const isNameInUse = (name) => {
-    if (!!name && providers?.length) {
+    if (!!name && categories?.length) {
       if (
-        providers.find(
+        categories.find(
           (p) => utils.ciEquals(p.name, name) && p.id !== initialData?.id
         )
       ) {
@@ -42,14 +43,15 @@ function ProviderModal({
     try {
       const schema = Yup.object().shape({
         name: Yup.string().required('Nombre vacío'),
-        email: Yup.string().email('Correo invalido'),
       });
       await schema.validate(data, { abortEarly: false });
+
       if (isNameInUse(data.name)) {
         formRef.current.setFieldError('name', 'Nombre en uso');
         return;
       }
-      onSubmit({ ...initialData, ...data });
+
+      onSubmit(utils.clean({ ...initialData, ...data }));
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {
@@ -76,30 +78,6 @@ function ProviderModal({
             onChange={() => formRef.current.setFieldError('name', '')}
             hasBorder={false}
           />
-          <Input
-            name="phone"
-            placeholder="Tel."
-            onChange={() => formRef.current.setFieldError('phone', '')}
-            hasBorder={false}
-          />
-          <Input
-            name="email"
-            placeholder="Correo E."
-            onChange={() => formRef.current.setFieldError('email', '')}
-            hasBorder={false}
-          />
-          <Input
-            name="address"
-            placeholder="Ubicación"
-            onChange={() => formRef.current.setFieldError('address', '')}
-            hasBorder={false}
-          />
-          <TextArea
-            name="notes"
-            placeholder="Observación"
-            maxLength={255}
-            onChange={() => formRef.current.setFieldError('notes', '')}
-          />
           <div
             style={{
               display: 'flex',
@@ -118,7 +96,7 @@ function ProviderModal({
               type="button"
               name="cancelar"
               style={{ backgroundColor: '#C0392B' }}
-              onClick={onCancelButton}
+              onClick={onCancelClick}
             >
               Cancelar
             </button>
@@ -129,12 +107,12 @@ function ProviderModal({
   );
 }
 
-export default ProviderModal;
+export default CategoryModal;
 
-ProviderModal.propTypes = {
+CategoryModal.propTypes = {
   initialData: PropTypes.shape({ name: PropTypes.string }).isRequired,
   onEscPress: PropTypes.func.isRequired,
-  onCancelButton: PropTypes.func.isRequired,
+  onCancelClick: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  providers: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  categories: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };

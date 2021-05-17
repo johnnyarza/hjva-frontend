@@ -38,6 +38,9 @@ export const Content = styled.div`
     &:hover {
       box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
     }
+    &:focus {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 8px;
+    }
     & + button {
       margin-left: 8px;
     }

@@ -9,14 +9,16 @@ import { Container } from './styles';
 import GenericModal from '../../../components/GenericModal';
 import Input from '../../../components/Input';
 import TextArea from '../../../components/TextArea';
+import Label from '../../../components/Label';
+
 import utils from '../../../utils';
 
-function ProviderModal({
+function MeasureModal({
   initialData = {},
   onEscPress,
-  onCancelButton,
+  onCancelClick,
   onSubmit,
-  providers = [],
+  measurements,
   ...rest
 }) {
   const formRef = useRef(null);
@@ -25,11 +27,13 @@ function ProviderModal({
     formRef.current.setData(initialData);
   }, [initialData]);
 
-  const isNameInUse = (name) => {
-    if (!!name && providers?.length) {
+  const isNameInUse = (abbreviation) => {
+    if (!!abbreviation && measurements?.length) {
       if (
-        providers.find(
-          (p) => utils.ciEquals(p.name, name) && p.id !== initialData?.id
+        measurements.find(
+          (p) =>
+            utils.ciEquals(p.abbreviation, abbreviation) &&
+            p.id !== initialData?.id
         )
       ) {
         return true;
@@ -41,15 +45,17 @@ function ProviderModal({
   const handleSubmit = async (data) => {
     try {
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nombre vacío'),
-        email: Yup.string().email('Correo invalido'),
+        abbreviation: Yup.string().required('Abreviatura vacía'),
       });
+
       await schema.validate(data, { abortEarly: false });
-      if (isNameInUse(data.name)) {
-        formRef.current.setFieldError('name', 'Nombre en uso');
+
+      if (isNameInUse(data.abbreviation)) {
+        formRef.current.setFieldError('abbreviation', 'Abreviatura en uso');
         return;
       }
-      onSubmit({ ...initialData, ...data });
+
+      onSubmit(utils.clean({ ...initialData, ...data }));
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {
@@ -58,7 +64,7 @@ function ProviderModal({
         });
         formRef.current.setErrors(validationErrors);
       } else {
-        toast.error('Erro ao criar o produto');
+        toast.error('Erro al crear unidad');
       }
     }
   };
@@ -70,36 +76,28 @@ function ProviderModal({
           <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
             {`${initialData?.id ? 'Editar' : 'Crear'} Proveedor`}
           </h2>
-          <Input
-            name="name"
-            placeholder="Nome"
-            onChange={() => formRef.current.setFieldError('name', '')}
-            hasBorder={false}
-          />
-          <Input
-            name="phone"
-            placeholder="Tel."
-            onChange={() => formRef.current.setFieldError('phone', '')}
-            hasBorder={false}
-          />
-          <Input
-            name="email"
-            placeholder="Correo E."
-            onChange={() => formRef.current.setFieldError('email', '')}
-            hasBorder={false}
-          />
-          <Input
-            name="address"
-            placeholder="Ubicación"
-            onChange={() => formRef.current.setFieldError('address', '')}
-            hasBorder={false}
-          />
-          <TextArea
-            name="notes"
-            placeholder="Observación"
-            maxLength={255}
-            onChange={() => formRef.current.setFieldError('notes', '')}
-          />
+          <Label
+            htmlFor="abbreviation"
+            label={initialData.abbreviation ? 'Abreviatura' : ''}
+          >
+            <Input
+              maxLength="3"
+              name="abbreviation"
+              placeholder="Abreviatura"
+              onChange={() => formRef.current.setFieldError('abreviatura', '')}
+              hasBorder={false}
+            />
+          </Label>
+          <Label
+            htmlFor="notes"
+            label={initialData.abbreviation ? 'Descripción' : ''}
+          >
+            <TextArea
+              name="notes"
+              placeholder="Descripción"
+              onChange={() => formRef.current.setFieldError('notes', '')}
+            />
+          </Label>
           <div
             style={{
               display: 'flex',
@@ -118,7 +116,7 @@ function ProviderModal({
               type="button"
               name="cancelar"
               style={{ backgroundColor: '#C0392B' }}
-              onClick={onCancelButton}
+              onClick={onCancelClick}
             >
               Cancelar
             </button>
@@ -129,12 +127,12 @@ function ProviderModal({
   );
 }
 
-export default ProviderModal;
+export default MeasureModal;
 
-ProviderModal.propTypes = {
+MeasureModal.propTypes = {
   initialData: PropTypes.shape({ name: PropTypes.string }).isRequired,
   onEscPress: PropTypes.func.isRequired,
-  onCancelButton: PropTypes.func.isRequired,
+  onCancelClick: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  providers: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  measurements: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };

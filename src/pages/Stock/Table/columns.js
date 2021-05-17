@@ -6,10 +6,25 @@ const COLUMNS = [
     accessor: 'name',
   },
   {
+    id: 'measurement',
+    Header: 'Unidad',
+    width: 20,
+    accessor: (u) => {
+      return u.measurement.abbreviation;
+    },
+  },
+  {
     id: 'provider',
-    Header: 'Proveedor.',
+    Header: 'Proveedor',
     accessor: (material) => {
       return material.provider.name;
+    },
+  },
+  {
+    id: 'category',
+    Header: 'Categoria',
+    accessor: (cat) => {
+      return cat.category.name;
     },
   },
   {
@@ -20,8 +35,8 @@ const COLUMNS = [
     id: 'updatedAt',
     Header: 'Actualizado',
     accessor: (provider) => {
-      if (provider.updatedAt) {
-        const parsedDate = parseISO(provider.updatedAt);
+      if (provider.updated_at) {
+        const parsedDate = parseISO(provider.updated_at);
         return format(parsedDate, 'dd/MM/yyyy');
       }
       return '';

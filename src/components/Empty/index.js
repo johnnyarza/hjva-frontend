@@ -3,7 +3,7 @@ import { MdClear } from 'react-icons/md';
 import PropTypes from 'prop-types';
 import { Container } from './style';
 
-export default function Empty({ text = 'Vazio' }) {
+export default function Empty({ text }) {
   return (
     <Container>
       <MdClear />
@@ -17,5 +17,5 @@ Empty.propTypes = {
 };
 
 Empty.defaultProps = {
-  text: 'Vazio',
+  text: 'Vacío',
 };

@@ -15,6 +15,8 @@ import CompresionTestHome from '../pages/CompresionTest/Home';
 import Clients from '../pages/Clients';
 import Providers from '../pages/Providers';
 import Stock from '../pages/Stock';
+import Category from '../pages/Category';
+import Measurements from '../pages/Measurements';
 
 export default function Routes() {
   return (
@@ -82,7 +84,17 @@ export default function Routes() {
         exact
         component={(props) => <Providers {...props} />}
       />
+      <Route
+        path="/category"
+        exact
+        component={(props) => <Category {...props} />}
+      />
       <Route path="/stock" exact component={(props) => <Stock {...props} />} />
+      <Route
+        path="/measurements"
+        exact
+        component={(props) => <Measurements {...props} />}
+      />
     </Switch>
   );
 }

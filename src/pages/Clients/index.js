@@ -10,6 +10,7 @@ import ClientsTable from '../../components/Table';
 import Spinner from '../../components/Spinner';
 import COLUMNS from './ClientTable/columns';
 import ClientModal from './ClientModal';
+import utils from '../../utils';
 
 function Clients() {
   const [clients, setClients] = useState(undefined);
@@ -21,7 +22,7 @@ function Clients() {
     const loadAllClients = async () => {
       const { data } = await api.get('clients');
       if (data?.length) {
-        data.sort((a, b) => a.name.localeCompare(b.name));
+        data.sort((a, b) => utils.naturalSortCompare(a, b));
       }
       setClients(data || []);
     };
@@ -76,7 +77,7 @@ function Clients() {
       const { data: newClient } = res;
       const oldClients = clients.filter((c) => c.id !== newClient.id);
       const newClients = [newClient, ...oldClients];
-      newClients.sort((a, b) => a.name.localeCompare(b.name));
+      newClients.sort((a, b) => utils.naturalSortCompare(a, b));
 
       setClients(newClients);
       setIsClientModalOpen(false);

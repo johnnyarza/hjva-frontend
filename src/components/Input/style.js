@@ -10,6 +10,7 @@ export const Container = styled.div`
     border: none;
     margin: 0;
     height: 40px;
+    width:100%;
   }
 
   .input-container{
@@ -20,7 +21,7 @@ export const Container = styled.div`
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    width: 200px;
+    min-width: 200px;
     font-size: 18px;
     margin-bottom: 10px;
 

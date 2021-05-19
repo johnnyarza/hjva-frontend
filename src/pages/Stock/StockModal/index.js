@@ -90,7 +90,6 @@ function StockModal({
     return false;
   };
 
-  // check submit with new measure field
   const handleSubmit = async (data) => {
     try {
       const schema = Yup.object().shape({
@@ -123,18 +122,15 @@ function StockModal({
 
   const selectProvider = useCallback(() => {
     if (material && providers) {
+      const id = material.provider?.id || '';
       return (
-        <Select
-          id="provider"
-          name="provider"
-          defaultValue={material.provider?.id || ''}
-        >
-          <option value={material.provider?.id || ''} disabled>
+        <Select id="provider" name="provider" defaultValue={id}>
+          <option value={id} disabled={!id}>
             {material.provider?.name || 'Proveedor'}
           </option>
 
           {providers
-            .filter((p) => material.provider?.id !== p.id)
+            .filter((p) => id !== p.id)
             .map((p) => {
               return (
                 <option value={p.id} key={uniqueId()}>
@@ -155,7 +151,7 @@ function StockModal({
 
       return (
         <Select id="measurement" name="measurement" defaultValue={id || ''}>
-          <option value={id || ''} disabled>
+          <option value={id || ''} disabled={!id}>
             {measurement || 'Unidad'}
           </option>
           {measurements
@@ -180,7 +176,7 @@ function StockModal({
 
       return (
         <Select id="category" name="category" defaultValue={id || ''}>
-          <option value={id || ''} disabled>
+          <option value={id || ''} disabled={!id}>
             {category || 'Categoria'}
           </option>
           {categories

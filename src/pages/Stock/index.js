@@ -172,11 +172,16 @@ function Stock() {
     try {
       const body = {
         ...data,
-        ...{ providerId: data.provider, categoryId: data.category },
+        ...{
+          providerId: data.provider,
+          categoryId: data.category,
+          measurementId: data.measurement,
+        },
       };
 
       delete body.provider;
       delete body.category;
+      delete data.measurement;
 
       if (body.id) {
         handleUpdateMaterial(body);
@@ -184,11 +189,10 @@ function Stock() {
       if (!body.id) {
         handleCreateMaterial(body);
       }
-
-      // setIsMaterialModalOpen(false);
     } catch (err) {
-      // setIsMaterialModalOpen(false);
       toast.error(err.message);
+    } finally {
+      setIsMaterialModalOpen(false);
     }
   };
 

@@ -17,6 +17,7 @@ import Providers from '../pages/Providers';
 import Stock from '../pages/Stock';
 import Category from '../pages/Category';
 import Measurements from '../pages/Measurements';
+import ConcreteDesigns from '../pages/ConcreteDesigns';
 
 export default function Routes() {
   return (
@@ -94,6 +95,11 @@ export default function Routes() {
         path="/measurements"
         exact
         component={(props) => <Measurements {...props} />}
+      />
+      <Route
+        path="/concreteDesigns"
+        exact
+        component={(props) => <ConcreteDesigns {...props} />}
       />
     </Switch>
   );

@@ -26,7 +26,7 @@ export const Container = styled.div`
 
     .tbody {
       ${'' /* These styles are required for a scrollable table body */}
-      overflow-y: scroll;
+      overflow-y: visible;
       overflow-x: hidden;
       max-height: 450px;
     }

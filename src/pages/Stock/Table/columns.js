@@ -10,7 +10,10 @@ const COLUMNS = [
     Header: 'Unidad',
     width: 20,
     accessor: (u) => {
-      return u.measurement.abbreviation;
+      if (u.measurement) {
+        return u.measurement.abbreviation;
+      }
+      return '';
     },
   },
   {

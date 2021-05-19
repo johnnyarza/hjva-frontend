@@ -7,7 +7,12 @@ import {
   MdLocalShipping,
   MdPerson,
 } from 'react-icons/md';
-import { FaDolly, FaTags, FaBalanceScale } from 'react-icons/fa';
+import {
+  FaDolly,
+  FaTags,
+  FaBalanceScale,
+  FaWeightHanging,
+} from 'react-icons/fa';
 
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
@@ -81,7 +86,7 @@ export default function SideBar() {
               userRole === 'laboratorio') && (
               <BarItem>
                 <Link to="/measurements">
-                  <FaBalanceScale />
+                  <FaWeightHanging />
                   <span>Unidades Medi.</span>
                 </Link>
               </BarItem>
@@ -102,6 +107,12 @@ export default function SideBar() {
               <Link to="/clients">
                 <MdPerson />
                 <span>Clientes</span>
+              </Link>
+            </BarItem>
+            <BarItem>
+              <Link to="/concreteDesigns">
+                <FaBalanceScale />
+                <span>Dosificaciones</span>
               </Link>
             </BarItem>
           </>

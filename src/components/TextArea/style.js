@@ -9,7 +9,7 @@ export const Content = styled.div`
   background-color: white;
   min-height: 100px;
   width: 100%;
-  padding: 10px;
+  padding: 15px 10px 10px 10px;
   transition: all 0.2s;
   position: relative;
 

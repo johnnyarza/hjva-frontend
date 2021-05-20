@@ -31,6 +31,7 @@ export const Container = styled.div`
 /* eslint-enable */
 
 export const Content = styled.div`
+  width: 100%;
   ${(props) =>
     props.hasBorder
       ? css`

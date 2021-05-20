@@ -1,7 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Form } from '@unform/web';
 
 import { MdDelete, MdEdit } from 'react-icons/md';
+import { toast } from 'react-toastify';
 import GenericModal from '../../../components/GenericModal';
 import Label from '../../../components/Label';
 import Input from '../../../components/Input';
@@ -10,9 +17,11 @@ import Table from '../../../components/Table';
 import { Content } from './styles';
 import COLUMNS from './Table/columns';
 import TextArea from '../../../components/TextArea';
+import AddMaterialModal from './AddMaterialModal';
 
 function ConcreteDesignModal({
-  initialData = {},
+  initialData,
+  materials,
   onSubmit,
   onCancelButton,
   onEscPress,
@@ -21,16 +30,46 @@ function ConcreteDesignModal({
   // const [initialConcreteDesign, setInitialConcreteDesign] = useState(null);
   const [concreteDesingMaterial, setConcreteDesingMaterial] = useState([]);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
+  const [currentMaterialRow, setCurrentMaterialRow] = useState({});
   const formRef = useRef(null);
 
   useEffect(() => {
     formRef.current.setData(initialData);
-    console.log(initialData);
   }, [initialData]);
 
   useEffect(() => {
-    setConcreteDesingMaterial(initialData.concreteDesignMaterial || []);
+    if (initialData.concreteDesignMaterial) {
+      const mats = initialData.concreteDesignMaterial.map((c) => {
+        c.toDelete = false;
+        c.isNew = false;
+        return c;
+      });
+
+      setConcreteDesingMaterial(mats);
+    }
   }, [initialData]);
+
+  const handleDelete = useCallback(
+    (concreteDesign) => {
+      try {
+        const { id } = concreteDesign;
+        if (!id) throw new Error('Dosifición sin id');
+        const a = [...concreteDesingMaterial];
+        const filteredDesigns = a
+          .map((c) => {
+            if (c.id === id) {
+              c.toDelete = true;
+            }
+            return c;
+          })
+          .filter((c) => c.id !== id && !c.toDelete);
+        setConcreteDesingMaterial(filteredDesigns);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    },
+    [concreteDesingMaterial]
+  );
 
   const columns = useMemo(() => {
     const newCol = {
@@ -50,14 +89,17 @@ function ConcreteDesignModal({
           <button
             className="edit-button"
             type="button"
-            onClick={() => console.log(original)}
+            onClick={() => {
+              setCurrentMaterialRow(original);
+              setIsMaterialModalOpen(true);
+            }}
           >
             <MdEdit />
           </button>
           <button
             className="delete-button"
             type="button"
-            onClick={() => console.log(original)}
+            onClick={() => handleDelete(original)}
           >
             <MdDelete />
           </button>
@@ -65,7 +107,7 @@ function ConcreteDesignModal({
       ),
     };
     return [...COLUMNS, newCol];
-  }, []);
+  }, [handleDelete]);
 
   return (
     <GenericModal
@@ -127,7 +169,10 @@ function ConcreteDesignModal({
             <button
               type="button"
               className="add-material-button"
-              onClick={() => setIsMaterialModalOpen(true)}
+              onClick={() => {
+                setIsMaterialModalOpen(true);
+                setCurrentMaterialRow({});
+              }}
             >
               Agregar Material
             </button>
@@ -150,9 +195,12 @@ function ConcreteDesignModal({
         </Content>
       </Form>
       {isMaterialModalOpen && (
-        <GenericModal isOpen onEscPress={() => setIsMaterialModalOpen(false)}>
-          a
-        </GenericModal>
+        <AddMaterialModal
+          onEscPress={() => setIsMaterialModalOpen(false)}
+          osCancelPress={() => setIsMaterialModalOpen(false)}
+          data={materials}
+          initialData={currentMaterialRow}
+        />
       )}
     </GenericModal>
   );

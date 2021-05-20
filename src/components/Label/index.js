@@ -8,6 +8,7 @@ function Label({ label, children, ...rest }) {
     <Container
       {...rest}
       style={{
+        whiteSpace: 'nowrap',
         position: 'relative',
         marginTop: label ? '5px' : '0',
       }}

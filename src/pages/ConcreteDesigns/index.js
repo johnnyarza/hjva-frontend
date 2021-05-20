@@ -15,6 +15,7 @@ import utils from '../../utils/index';
 
 function ConcreteDesigns() {
   const [concreteDesigns, setConcreteDesigns] = useState(null);
+  const [materials, setMaterials] = useState(null);
   const [currentConcreteDesign, setCurrentConcreteDesign] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConcreteModalOpen, setIsConcreteModalOpen] = useState(false);
@@ -26,11 +27,24 @@ function ConcreteDesigns() {
         setConcreteDesigns(
           data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
         );
-        setIsLoading(false);
+      }
+    };
+
+    const loadAllMaterials = async () => {
+      const { data } = await api.get('materials');
+      if (data) {
+        setMaterials(
+          data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
+        );
       }
     };
     loadAllConcreteDesigns();
+    loadAllMaterials();
   }, []);
+
+  useEffect(() => {
+    if (materials && concreteDesigns) setIsLoading(false);
+  }, [materials, concreteDesigns]);
 
   const handleEditClick = useCallback((data) => {
     setCurrentConcreteDesign(data);
@@ -103,6 +117,7 @@ function ConcreteDesigns() {
           initialData={currentConcreteDesign}
           onCancelButton={() => setIsConcreteModalOpen(false)}
           onSubmit={(data) => console.log(data)}
+          materials={materials}
         />
       )}
     </>

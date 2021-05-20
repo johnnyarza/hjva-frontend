@@ -1,12 +1,21 @@
-import { format, parseISO } from 'date-fns';
-
 const COLUMNS = [
   {
-    Header: 'Nombre',
+    Header: 'Material',
     id: 'name',
     accessor: (concreteDesign) => {
       if (concreteDesign.material.name) {
         return concreteDesign.material.name;
+      }
+      return '';
+    },
+  },
+  {
+    Header: 'Unidade',
+    id: 'measure',
+    width: 20,
+    accessor: (concreteDesign) => {
+      if (concreteDesign.material) {
+        return concreteDesign.material.measurement.abbreviation;
       }
       return '';
     },

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.label`
   .label-text {
+    display: block;
     position: absolute;
     z-index: 1;
     top: -8px;

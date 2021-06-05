@@ -9,12 +9,13 @@ export const Container = styled.div`
     '' /* These styles are required for a horizontaly scrollable table overflow */
   }
   overflow-x: auto;
-  background-color: white;
+  background-color: transparent;
   border-radius: 5px;
 
   .table {
     border-spacing: 0;
     border: none;
+    background-color: white;
 
     .thead {
       ${

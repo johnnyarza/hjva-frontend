@@ -10,20 +10,20 @@ const COLUMNS = [
     },
   },
   {
+    Header: 'Cantidad',
+    accessor: 'quantity_per_m3',
+    width: 20,
+  },
+  {
     Header: 'Unidade',
     id: 'measure',
     width: 20,
     accessor: (concreteDesign) => {
       if (concreteDesign.material) {
-        return concreteDesign.material.measurement.abbreviation;
+        return `${concreteDesign.material.measurement.abbreviation}/m³`;
       }
       return '';
     },
-  },
-  {
-    Header: 'Cantidad',
-    accessor: 'quantity_per_m3',
-    width: 20,
   },
 ];
 

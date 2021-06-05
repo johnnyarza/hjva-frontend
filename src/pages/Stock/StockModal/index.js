@@ -35,6 +35,7 @@ function StockModal({
 
   useEffect(() => {
     if (material) {
+      console.log(material);
       formRef.current.setData(material);
     }
   }, [material]);
@@ -123,6 +124,7 @@ function StockModal({
   const selectProvider = useCallback(() => {
     if (material && providers) {
       const id = material.provider?.id || '';
+      console.log(id);
       return (
         <Select id="provider" name="provider" defaultValue={id}>
           <option value={id} disabled={!id}>

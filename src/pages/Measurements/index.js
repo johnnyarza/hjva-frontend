@@ -183,7 +183,7 @@ function Measurements() {
       <SideBar />
       <Container>
         <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
-          Categorias
+          Unidades de Medida
         </h2>
         {isLoading ? (
           <Spinner />

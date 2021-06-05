@@ -25,6 +25,7 @@
   "rules": {
     "no-nested-ternary":"off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    "camelcase":"warn",
 
     "arrow-body-style": "off",
     "prefer-arrow-callback": "off",

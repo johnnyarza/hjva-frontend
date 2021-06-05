@@ -11,6 +11,8 @@ export const Container = styled.label`
 
     border-radius: 5px;
 
+    font: 14px;
+
     padding: 0 5px 0 5px;
     color: #95a5a6;
     background-color: #ebebeb;

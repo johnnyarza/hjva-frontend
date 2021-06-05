@@ -22,7 +22,7 @@ function Clients() {
     const loadAllClients = async () => {
       const { data } = await api.get('clients');
       if (data?.length) {
-        data.sort((a, b) => utils.naturalSortCompare(a, b));
+        data.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
       }
       setClients(data || []);
     };

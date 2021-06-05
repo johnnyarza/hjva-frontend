@@ -64,10 +64,20 @@ export const Tooltip = styled.div`
   border-radius: 15px;
 
   position: absolute;
-  left: 103%;
+  ${(props) =>
+    props.position === 'left'
+      ? css`
+          right: 103%;
+        `
+      : css`
+          left: 103%;
+        `}
+
   padding: 5px;
   min-height: 25px;
   width: 30px;
+
+  z-index: 2;
 
   transition: all 0.2s;
 

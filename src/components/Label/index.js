@@ -1,4 +1,4 @@
-import React, { useEffect, ReactText, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Container } from './styles';
@@ -13,7 +13,7 @@ function Label({ label, children, ...rest }) {
         marginTop: label ? '5px' : '0',
       }}
     >
-      {label && <text className="label-text">{label}</text>}
+      {label && <span className="label-text">{label}</span>}
       {children}
     </Container>
   );

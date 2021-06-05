@@ -5,7 +5,7 @@ import { useField } from '@unform/core';
 import { MdInfoOutline } from 'react-icons/md';
 import { Container, Content, Tooltip } from './style';
 
-export default function Input({ name, hasBorder, ...rest }) {
+export default function Input({ name, hasBorder, position, ...rest }) {
   const [hasError, setHasError] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const { fieldName, defaultValue, error, registerField } = useField(name);
@@ -42,7 +42,7 @@ export default function Input({ name, hasBorder, ...rest }) {
 
         {error && (
           <>
-            <Tooltip>
+            <Tooltip position={position}>
               <MdInfoOutline className="icon-error" />
               <span className="error-message">{error}</span>
             </Tooltip>
@@ -56,8 +56,10 @@ export default function Input({ name, hasBorder, ...rest }) {
 Input.propTypes = {
   name: PropTypes.string.isRequired,
   hasBorder: PropTypes.bool,
+  position: PropTypes.oneOf(['right', 'left']),
 };
 
 Input.defaultProps = {
   hasBorder: true,
+  position: 'right',
 };

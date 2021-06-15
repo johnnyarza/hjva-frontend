@@ -18,6 +18,7 @@ import Stock from '../pages/Stock';
 import Category from '../pages/Category';
 import Measurements from '../pages/Measurements';
 import ConcreteDesigns from '../pages/ConcreteDesigns';
+import MaterialTransaction from '../pages/Stock/MaterialTransaction';
 
 export default function Routes() {
   return (
@@ -100,6 +101,12 @@ export default function Routes() {
         path="/concreteDesigns"
         exact
         component={(props) => <ConcreteDesigns {...props} />}
+      />
+      <Route
+        path="/materialTransactions"
+        exact
+        component={(props) => <MaterialTransaction {...props} />}
+        isPrivate
       />
     </Switch>
   );

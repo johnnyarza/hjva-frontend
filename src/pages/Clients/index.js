@@ -67,7 +67,7 @@ function Clients() {
     try {
       let res;
       if (!client.id) {
-        res = await api.post('client', client);
+        res = await api.post('client', utils.clean(client));
       }
       if (client.id) {
         res = await api.put(`client/${client.id}`, client);
@@ -77,7 +77,8 @@ function Clients() {
       const { data: newClient } = res;
       const oldClients = clients.filter((c) => c.id !== newClient.id);
       const newClients = [newClient, ...oldClients];
-      newClients.sort((a, b) => utils.naturalSortCompare(a, b));
+
+      newClients.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
 
       setClients(newClients);
       setIsClientModalOpen(false);
@@ -86,7 +87,8 @@ function Clients() {
       );
     } catch (error) {
       setIsClientModalOpen(false);
-      toast.error('Erro ao deletar');
+      toast.error('Error al crear');
+      console.log(error);
     }
   };
 

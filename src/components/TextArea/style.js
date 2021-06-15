@@ -10,18 +10,19 @@ export const Content = styled.div`
   min-height: 100px;
   width: 100%;
   padding: 15px 10px 10px 10px;
-  transition: all 0.2s;
+  transition: width 0.1s;
   position: relative;
+  border: 1px solid transparent;
 
   ${(props) => {
     const hasError = props.hasError
       ? css`
-          border: 1px solid #e74c3c;
+          border-color: #e74c3c;
         `
       : '';
     const isFocused = props.isFocused
       ? css`
-          box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+          border-color: #3498db;
         `
       : '';
     return `${hasError} ${isFocused}`;

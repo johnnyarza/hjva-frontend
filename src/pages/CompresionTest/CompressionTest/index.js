@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu';
 import { Link } from 'react-router-dom';
-
-import { MdDelete, MdEdit, MdVisibility } from 'react-icons/md';
+import { useSelector } from 'react-redux';
+import { MdEdit, MdVisibility } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import SideBar from '../../../components/SideBar';
+
 import CompressionTestsTable from '../../../components/Table';
 
 import COLUMNS from '../Table/columns';
@@ -17,8 +17,10 @@ import CompresionTestModal from '../CompresionTestModal';
 import utils from '../../../utils';
 
 import api from '../../../services/api';
+import DeleteButton from '../../../components/DeleteButton';
 
 function CompresionTest({ handleViewCompressionTest }) {
+  const { locale } = useSelector((state) => state.locale);
   const [compressionTests, setCompressionTests] = useState(null);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
   const [currentCompressionTest, setCurrentCompressionTest] = useState(null);
@@ -47,7 +49,7 @@ function CompresionTest({ handleViewCompressionTest }) {
     loadAllCompressionTests();
     loadAllClients();
     loadAllConcreteDesigns();
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     if (compressionTests && clients && concreteDesigns) {
@@ -98,11 +100,38 @@ function CompresionTest({ handleViewCompressionTest }) {
     }
   };
 
+  const handleUpdateCompressionTest = async (compressionTest) => {
+    try {
+      const {
+        client: clientId,
+        concreteDesign: concreteDesignId,
+        concreteProvider: concreteProviderId,
+        notes,
+      } = compressionTest;
+      const { data } = await api.put(
+        `compressionTest/${compressionTest.id}`,
+        utils.clean({ clientId, concreteDesignId, concreteProviderId, notes })
+      );
+      if (data) {
+        const newCompressionTests = compressionTests.map((c) => {
+          if (c.id === data.id) {
+            return data;
+          }
+          return c;
+        });
+        setCompressionTests(newCompressionTests);
+      }
+      toast.success('Enasyo guardado con éxito');
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const handleSubmit = (compressionTest) => {
     try {
       const { id } = compressionTest;
       if (id) {
-        console.log(compressionTest);
+        handleUpdateCompressionTest(compressionTest);
       }
       if (!id) {
         handleCreateCompressionTest(compressionTest);
@@ -147,31 +176,28 @@ function CompresionTest({ handleViewCompressionTest }) {
             >
               <MdEdit />
             </button>
-            <button
+            <DeleteButton
               className="delete-button"
-              type="button"
               onClick={() => handleDelete(original)}
-            >
-              <MdDelete />
-            </button>
+            />
           </div>
         );
       },
     };
-    return [...COLUMNS, newCol];
-  }, [handleDelete]);
+    const formatedCols = COLUMNS(locale);
+    return [...formatedCols, newCol];
+  }, [handleDelete, handleViewCompressionTest, locale]);
+
   return (
     <>
       {isLoading ? (
         <Spinner />
       ) : (
         <Container>
-          <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
-            Probetas
-          </h2>
+          <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Ensayos</h2>
           <MenuContainer>
             <Menu
-              menuButton={<MenuButton>Documento</MenuButton>}
+              menuButton={<MenuButton>Ensayo</MenuButton>}
               arrow="arrow"
               direction="bottom"
               viewScroll="initial"
@@ -208,6 +234,7 @@ function CompresionTest({ handleViewCompressionTest }) {
             <CompressionTestsTable
               columns={columns}
               data={compressionTests || []}
+              showWarning
             />
           </Content>
         </Container>

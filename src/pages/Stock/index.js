@@ -1,8 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { MdDelete, MdEdit } from 'react-icons/md';
+import { useSelector } from 'react-redux';
+import {
+  MdAddCircleOutline,
+  MdDelete,
+  MdEdit,
+  MdRemoveCircleOutline,
+} from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 import SideBar from '../../components/SideBar';
+import DeleteButton from '../../components/DeleteButton';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/Table';
 import api from '../../services/api';
@@ -14,12 +21,20 @@ import { Container, Content } from './styles';
 import TopBar from './TopBar';
 import MaterialModal from './StockModal';
 import COLUMNS from './Table/columns';
+import MaterialTransactionModal from './MaterialTransactionModal';
 
 function Stock() {
+  const { locale } = useSelector((state) => state.locale);
   const [materials, setMaterials] = useState(null);
   const [currentMaterial, setCurrentMaterial] = useState(null);
+  const [transactionListType, setTransactionListType] = useState('clients');
+  const [transactionType, setTransactionType] = useState('in');
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
+  const [
+    isMaterialTransactionModalOpen,
+    setIsMaterialTransactionModalOpen,
+  ] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -82,7 +97,7 @@ function Stock() {
       Header: 'Editar',
       accessor: 'edit',
 
-      width: 20,
+      width: 25,
       disableResize: true,
       disableSort: true,
 
@@ -95,22 +110,45 @@ function Stock() {
           <button
             className="edit-button"
             type="button"
-            onClick={() => handleEditClick(original)}
+            onClick={() => {
+              setCurrentMaterial(original);
+              setTransactionListType('providers');
+              setTransactionType('in');
+              setIsMaterialTransactionModalOpen(true);
+            }}
           >
-            <MdEdit />
+            <MdAddCircleOutline />
           </button>
           <button
             className="delete-button"
             type="button"
-            onClick={() => handleDeleteClick(original)}
+            onClick={() => {
+              setCurrentMaterial(original);
+              setTransactionListType('clients');
+              setTransactionType('out');
+              setIsMaterialTransactionModalOpen(true);
+            }}
           >
-            <MdDelete />
+            <MdRemoveCircleOutline />
           </button>
+          <button
+            className="edit-button"
+            type="button"
+            onClick={() => handleEditClick(original)}
+          >
+            <MdEdit />
+          </button>
+          <DeleteButton
+            className="delete-button"
+            onClick={() => handleDeleteClick(original)}
+          />
         </div>
       ),
     };
-    return [...COLUMNS, newCol];
-  }, [handleDeleteClick, handleEditClick]);
+
+    const cols = COLUMNS(locale);
+    return [...cols, newCol];
+  }, [handleDeleteClick, handleEditClick, locale]);
 
   const handleNewButtonClick = () => {
     setCurrentMaterial({});
@@ -196,6 +234,18 @@ function Stock() {
     }
   };
 
+  const handleMaterialTransactionSubmit = async (formData) => {
+    try {
+      const { id: materialId } = currentMaterial;
+      await api.post('materialTransaction', { materialId, ...formData });
+      toast.success('Registro realizado con éxito');
+    } catch (error) {
+      toast.error('Error al registrar');
+    } finally {
+      setIsMaterialTransactionModalOpen(false);
+    }
+  };
+
   return (
     <>
       <SideBar />
@@ -226,6 +276,15 @@ function Stock() {
               initialData={currentMaterial}
               materials={materials}
               onSubmit={handleSubmit}
+            />
+          )}
+          {isMaterialTransactionModalOpen && (
+            <MaterialTransactionModal
+              onEscPress={() => setIsMaterialTransactionModalOpen(false)}
+              onCancelPress={() => setIsMaterialTransactionModalOpen(false)}
+              listContentType={transactionListType}
+              transactionType={transactionType}
+              onSubmit={handleMaterialTransactionSubmit}
             />
           )}
         </>

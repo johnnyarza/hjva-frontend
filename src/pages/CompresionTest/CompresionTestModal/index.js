@@ -40,7 +40,7 @@ function CompresionTestModal({
 
   const handleSubmit = (data) => {
     try {
-      onSubmit(data);
+      onSubmit({ ...initialData, ...data });
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {

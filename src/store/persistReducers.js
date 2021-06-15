@@ -6,7 +6,7 @@ export default (reducers) => {
     {
       key: 'hjva',
       storage,
-      whitelist: ['auth', 'user'],
+      whitelist: ['auth', 'user', 'locale'],
     },
     reducers
   );

@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { MdDelete, MdEdit } from 'react-icons/md';
 
 import { toast } from 'react-toastify';
-import { instanceOf } from 'prop-types';
 import SideBar from '../../components/SideBar';
 import Table from '../../components/Table';
 import Spinner from '../../components/Spinner';
@@ -16,6 +16,7 @@ import api from '../../services/api';
 import utils from '../../utils/index';
 
 function ConcreteDesigns() {
+  const { locale } = useSelector((state) => state.locale);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
   const [materials, setMaterials] = useState(null);
   const [currentConcreteDesign, setCurrentConcreteDesign] = useState(null);
@@ -233,8 +234,9 @@ function ConcreteDesigns() {
         </div>
       ),
     };
-    return [...COLUMNS, newCol];
-  }, [handleDeleteClick, handleEditClick]);
+    const formatedCols = COLUMNS(locale);
+    return [...formatedCols, newCol];
+  }, [handleDeleteClick, handleEditClick, locale]);
 
   return (
     <>
@@ -264,6 +266,7 @@ function ConcreteDesigns() {
           onCancelButton={() => setIsConcreteModalOpen(false)}
           onSubmit={handleSubmit}
           materials={materials}
+          locale={locale}
         />
       )}
     </>

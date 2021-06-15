@@ -14,4 +14,5 @@ export function* updateUser({ payload }) {
     toast.error('Erro ao atualizar os dados');
   }
 }
+
 export default all([takeLatest('@user/UPDATE_USER_REQUEST', updateUser)]);

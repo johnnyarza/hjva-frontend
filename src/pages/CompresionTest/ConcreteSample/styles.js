@@ -18,7 +18,7 @@ export const Container = styled.div`
       color: black;
       transition: color 0.2s;
       :hover {
-        color: #3498db;
+        height: #3498db;
       }
     }
     h2 {
@@ -31,6 +31,31 @@ export const Container = styled.div`
 export const Content = styled.div`
   .table {
     margin-bottom: 5px;
+  }
+  .edit-buttons-container {
+    display: flex;
+    justify-content: center;
+
+    button {
+      background: none;
+      border: none;
+      svg {
+        width: 18px;
+        height: auto;
+        transition: color 0.2s;
+      }
+    }
+    .delete-button {
+      :hover {
+        color: #e74c3c;
+      }
+    }
+
+    .edit-button {
+      :hover {
+        color: #3498db;
+      }
+    }
   }
 `;
 

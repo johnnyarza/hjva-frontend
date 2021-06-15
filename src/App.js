@@ -15,6 +15,7 @@ import history from './services/history';
 import GlobalStyle from './styles/global';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import '@szhsin/react-menu/dist/index.css';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 function App() {
   return (

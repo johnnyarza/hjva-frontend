@@ -7,6 +7,8 @@ import {
   useSortBy,
 } from 'react-table';
 import PropTypes from 'prop-types';
+import { isToday, isTomorrow } from 'date-fns';
+import { isPast } from 'date-fns/esm';
 
 import { Container } from './styles';
 
@@ -25,7 +27,7 @@ const headerProps = (props, { column }) => getStyles(props, column.align);
 
 const cellProps = (props, { cell }) => getStyles(props, cell.column.align);
 
-function Table({ columns, data, showWarning }) {
+function Table({ columns, data }) {
   const defaultColumn = React.useMemo(
     () => ({
       // When using the useFlexLayout:
@@ -35,6 +37,23 @@ function Table({ columns, data, showWarning }) {
     }),
     []
   );
+
+  const formatRowColor = (row) => {
+    if (!row) {
+      return '';
+    }
+    const { original } = row;
+    const rowProps = row.getRowProps();
+    if (original && rowProps) {
+      const { load, loadedAt } = original;
+      if (!Number(load)) {
+        if (isToday(loadedAt)) return '#e67e22';
+        if (isTomorrow(loadedAt)) return '#3498db';
+        if (isPast(loadedAt)) return '#e74c3c';
+      }
+    }
+    return '';
+  };
 
   const { getTableProps, headerGroups, rows, prepareRow } = useTable(
     {
@@ -95,17 +114,18 @@ function Table({ columns, data, showWarning }) {
           {rows.map((row) => {
             prepareRow(row);
             const rowProps = row.getRowProps();
-            const { original } = row;
-            const { hasWarning } = original;
-            if (original && hasWarning && showWarning) {
-              rowProps.style.color = '#e74c3c';
+            const background = formatRowColor(row);
+
+            if (background && rowProps) {
+              rowProps.style.color = background;
               rowProps.style.fontWeight = '600';
             }
             return (
               <div {...rowProps} className="tr">
                 {row.cells.map((cell) => {
+                  const props = cell.getCellProps(cellProps);
                   return (
-                    <div {...cell.getCellProps(cellProps)} className="td">
+                    <div {...props} className="td">
                       {cell.render('Cell')}
                     </div>
                   );
@@ -124,9 +144,4 @@ export default Table;
 Table.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   data: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  showWarning: PropTypes.bool,
-};
-
-Table.defaultProps = {
-  showWarning: false,
 };

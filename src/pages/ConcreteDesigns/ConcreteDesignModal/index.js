@@ -29,6 +29,7 @@ function ConcreteDesignModal({
   onSubmit,
   onCancelButton,
   onEscPress,
+  locale,
   ...rest
 }) {
   const [concreteDesignMaterial, setConcreteDesignMaterial] = useState([]);
@@ -191,8 +192,9 @@ function ConcreteDesignModal({
         </div>
       ),
     };
-    return [...COLUMNS, newCol];
-  }, [handleDelete]);
+    const formatedCols = COLUMNS(locale);
+    return [...formatedCols, newCol];
+  }, [handleDelete, locale]);
 
   return (
     <GenericModal

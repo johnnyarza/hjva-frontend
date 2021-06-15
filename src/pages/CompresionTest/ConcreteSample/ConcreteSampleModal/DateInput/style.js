@@ -4,6 +4,22 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
 
+  #date-input-calc-button{
+    background-color: transparent;
+    width: auto;
+    box-shadow: none;
+
+    :hover{
+      box-shadow: none;
+    }
+
+    svg{
+      display: block;
+      color: black;
+      width: 15px;
+    }
+  }
+
 
   .component-input {
     font: 15px 'Roboto';
@@ -32,24 +48,23 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   width: 100%;
-
   ${(props) =>
     props.hasBorder
       ? css`
           border: 1px solid black;
         `
       : css`
-          border: 1px solid transparent;
+          border: none;
         `}
   ${(props) => {
     const hasError = props.hasError
       ? css`
-          border-color: #e74c3c;
+          border: 1px solid #e74c3c;
         `
-      : '';
+      : css``;
     const isFocused = props.isFocused
       ? css`
-          border-color: #3498db;
+          border: 1px solid #3498db;
         `
       : '';
     return `${hasError} ${isFocused}`;
@@ -106,4 +121,28 @@ export const Tooltip = styled.div`
       display: block;
     }
   }
+`;
+
+export const CalcInput = styled.div`
+  display: flex;
+  position: absolute;
+  left: 103%;
+
+  font: 15px 'Roboto';
+  input {
+    padding: 5px 5px 5px 10px;
+    border-radius: 15px;
+    border: none;
+    max-width: 80px;
+    ${(props) => {
+      const isFocused = props.isFocused
+        ? css`
+            border: 1px solid #3498db;
+          `
+        : '';
+      return `${isFocused}`;
+    }}
+  }
+  margin: 0;
+  min-height: 50px;
 `;

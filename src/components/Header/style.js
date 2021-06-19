@@ -73,6 +73,20 @@ export const Content = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  * {
+    transition: color 0.1s;
+  }
+  .user-container {
+    display: flex;
+    align-items: center;
+
+    :hover {
+      svg,
+      span {
+        color: ${lighten(0.5, '#000')};
+      }
+    }
+  }
 
   nav {
     display: flex;
@@ -118,7 +132,6 @@ export const Content = styled.div`
       color: #000;
       height: 25px;
       width: 25px;
-      transition: color 0.2s;
 
       &:hover {
         color: ${lighten(0.5, '#000')};
@@ -146,7 +159,6 @@ export const MiddleContent = styled.div`
       margin-right: 5px;
       height: 20px;
       width: 20px;
-      transition: color 0.2s;
 
       &:hover {
         color: ${lighten(0.5, '#000')};

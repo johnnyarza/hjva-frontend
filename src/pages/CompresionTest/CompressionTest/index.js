@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MdEdit, MdVisibility } from 'react-icons/md';
 import { toast } from 'react-toastify';
@@ -19,7 +19,8 @@ import utils from '../../../utils';
 import api from '../../../services/api';
 import DeleteButton from '../../../components/DeleteButton';
 
-function CompresionTest({ handleViewCompressionTest }) {
+function CompresionTest() {
+  const history = useHistory();
   const { locale } = useSelector((state) => state.locale);
   const [compressionTests, setCompressionTests] = useState(null);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
@@ -162,7 +163,7 @@ function CompresionTest({ handleViewCompressionTest }) {
             <button
               className="edit-button"
               type="button"
-              onClick={() => handleViewCompressionTest(original)}
+              onClick={() => history.push(`${original.id}`)}
             >
               <MdVisibility />
             </button>
@@ -186,7 +187,7 @@ function CompresionTest({ handleViewCompressionTest }) {
     };
     const formatedCols = COLUMNS(locale);
     return [...formatedCols, newCol];
-  }, [handleDelete, handleViewCompressionTest, locale]);
+  }, [handleDelete, locale, history]);
 
   return (
     <>
@@ -198,7 +199,7 @@ function CompresionTest({ handleViewCompressionTest }) {
           <MenuContainer>
             <Menu
               menuButton={<MenuButton>Ensayo</MenuButton>}
-              arrow="arrow"
+              arrow
               direction="bottom"
               viewScroll="initial"
             >
@@ -217,8 +218,10 @@ function CompresionTest({ handleViewCompressionTest }) {
               direction="bottom"
               viewScroll="initial"
             >
-              <MenuItem onClick={() => console.log('clientes')}>
-                Clientes
+              <MenuItem>
+                <Link to="/stock" style={{ color: 'black' }}>
+                  Materiales
+                </Link>
               </MenuItem>
               <MenuItem>Dosagens</MenuItem>
               <MenuItem>

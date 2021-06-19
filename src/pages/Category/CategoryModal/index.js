@@ -8,7 +8,6 @@ import { Container } from './styles';
 
 import GenericModal from '../../../components/GenericModal';
 import Input from '../../../components/Input';
-import TextArea from '../../../components/TextArea';
 
 import utils from '../../../utils';
 

@@ -4,7 +4,6 @@ import { Form } from '@unform/web';
 
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-import SideBar from '../../components/SideBar';
 import Modal from '../../components/Modal';
 
 import {
@@ -168,7 +167,6 @@ export default function UsersDashboard() {
 
   return (
     <>
-      <SideBar />
       <Container>
         <Content>
           <GridContainer style={{ gridTemplateColumns: '45% 20% 25% 10%' }}>

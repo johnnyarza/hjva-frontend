@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MdNotifications } from 'react-icons/md';
 import Loader from 'react-loader-spinner';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import PropType from 'prop-types';
 
 import {
   NotificationContainer,
@@ -40,5 +41,10 @@ function Notifications({ isLoading, hasNotification }) {
     </NotificationContainer>
   );
 }
+
+Notifications.propTypes = {
+  isLoading: PropType.bool.isRequired,
+  hasNotification: PropType.bool.isRequired,
+};
 
 export default Notifications;

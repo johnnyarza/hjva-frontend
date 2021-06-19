@@ -1,13 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  MdAccountCircle,
-  MdCall,
-  MdPlace,
-  MdClose,
-  MdLanguage,
-} from 'react-icons/md';
+import { MdAccountCircle, MdCall, MdPlace, MdClose } from 'react-icons/md';
 
 import { Container, Content, MiddleContent, HeaderInput } from './style';
 import Notifications from './Notification';
@@ -37,12 +31,12 @@ export default function Header() {
 
       setIsLoading(false);
     };
-
-    const timer = setInterval(() => {
-      loadAllCompressionTests();
-    }, 5000);
+    loadAllCompressionTests();
+    // const timer = setInterval(() => {
+    //   loadAllCompressionTests();
+    // }, 5000);
     return () => {
-      clearInterval(timer);
+      // clearInterval(timer);
     };
   }, [user]);
 
@@ -80,8 +74,10 @@ export default function Header() {
               />
             )}
             <Link to="/login">
-              <MdAccountCircle />
-              <span>{user ? user.name : 'Fazer login'}</span>
+              <div className="user-container">
+                <MdAccountCircle />
+                <span>{user ? user.name : 'Fazer login'}</span>
+              </div>
             </Link>
             {user && (
               <button type="button" name="logout" onClick={handleSignOut}>

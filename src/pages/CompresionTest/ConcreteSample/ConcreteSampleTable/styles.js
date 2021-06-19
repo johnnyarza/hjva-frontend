@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 
 export const Container = styled.div`
   ${
@@ -45,7 +46,7 @@ export const Container = styled.div`
       border-bottom: none;
 
       :hover {
-        background-color: #ecf0f1 !important;
+        background-color: ${darken(0.1, '#bdc3c7')};
       }
     }
 

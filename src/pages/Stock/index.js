@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   MdAddCircleOutline,
-  MdDelete,
   MdEdit,
   MdRemoveCircleOutline,
 } from 'react-icons/md';
@@ -237,7 +236,23 @@ function Stock() {
   const handleMaterialTransactionSubmit = async (formData) => {
     try {
       const { id: materialId } = currentMaterial;
-      await api.post('materialTransaction', { materialId, ...formData });
+      const { data } = await api.post('materialTransaction', {
+        materialId,
+        ...formData,
+      });
+
+      if (data) {
+        const { material } = data;
+        const { id, stock_qty: stockQty } = material;
+        const newMaterials = materials.map((m) => {
+          if (m.id === id) {
+            return { ...m, stockQty };
+          }
+          return m;
+        });
+        setMaterials(newMaterials);
+      }
+
       toast.success('Registro realizado con éxito');
     } catch (error) {
       toast.error('Error al registrar');

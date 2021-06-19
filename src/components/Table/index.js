@@ -29,7 +29,7 @@ function Table({ columns, data, showWarning }) {
   const defaultColumn = React.useMemo(
     () => ({
       // When using the useFlexLayout:
-      minWidth: 20, // minWidth is only used as a limit for resizing
+      minWidth: 10, // minWidth is only used as a limit for resizing
       width: 50, // width is used for both the flex-basis and flex-grow
       maxWidth: 200, // maxWidth is only used as a limit for resizing
     }),

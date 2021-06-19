@@ -60,7 +60,8 @@ function AddMaterialModal({
       };
 
       const schema = Yup.object().shape({
-        quantity_per_m3: Yup.number('Insertar valor numerico')
+        quantity_per_m3: Yup.number()
+          .typeError('Insertar numero')
           .min(0.01, 'Debe ser mayor que 0.01')
           .required('Cantidad vacía'),
       });

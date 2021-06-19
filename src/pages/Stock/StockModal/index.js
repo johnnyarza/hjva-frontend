@@ -4,14 +4,14 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import { uniqueId } from 'lodash';
-import utils from '../../../utils';
 
+import utils from '../../../utils';
+import SearchbleList from '../../../components/SearchbleList';
 import GenericModal from '../../../components/GenericModal';
 
 import { Container, Content } from './styles';
 import Input from '../../../components/Input';
 import TextArea from '../../../components/TextArea';
-import Select from '../../../components/Select';
 import Label from '../../../components/Label';
 import api from '../../../services/api';
 
@@ -30,12 +30,28 @@ function StockModal({
   const [measurements, setMeasurements] = useState(null);
 
   useEffect(() => {
-    setMaterial(initialData);
+    if (initialData.id) {
+      const formatedData = {
+        ...initialData,
+        provider: {
+          label: initialData.provider.name,
+          value: initialData.provider.id,
+        },
+        measurement: {
+          label: initialData.measurement.abbreviation,
+          value: initialData.measurement.id,
+        },
+        category: {
+          label: initialData.category.name,
+          value: initialData.category.id,
+        },
+      };
+      setMaterial(formatedData);
+    } else setMaterial(initialData);
   }, [initialData]);
 
   useEffect(() => {
     if (material) {
-      console.log(material);
       formRef.current.setData(material);
     }
   }, [material]);
@@ -95,8 +111,27 @@ function StockModal({
     try {
       const schema = Yup.object().shape({
         name: Yup.string().required('Nombre es obligatorio'),
-        provider: Yup.string().required('Proveedor es obligatorio'),
-        category: Yup.string().required('Categoria es obligatoria'),
+        provider: Yup.object()
+          .shape({
+            label: Yup.string().required('vacío'),
+            value: Yup.string().required(),
+          })
+          .typeError('Elegir proveedor')
+          .required('vacío'),
+        measurement: Yup.object()
+          .shape({
+            label: Yup.string().required(),
+            value: Yup.string().required(),
+          })
+          .typeError('Elegir unidad')
+          .required(),
+        category: Yup.object()
+          .shape({
+            label: Yup.string().required(),
+            value: Yup.string().required(),
+          })
+          .typeError('Elegir categoria')
+          .required('Vacío'),
         notes: Yup.string(),
       });
       await schema.validate(data, { abortEarly: false });
@@ -106,8 +141,16 @@ function StockModal({
         return;
       }
 
+      const body = utils.clean({
+        ...material,
+        ...data,
+        provider: data.provider.value,
+        measurement: data.measurement.value,
+        category: data.category.value,
+      });
+
       formRef.current.setErrors({});
-      onSubmit(utils.clean({ ...material, ...data }));
+      onSubmit(body);
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {
@@ -121,80 +164,32 @@ function StockModal({
     }
   };
 
-  const selectProvider = useCallback(() => {
-    if (material && providers) {
-      const id = material.provider?.id || '';
-      console.log(id);
-      return (
-        <Select id="provider" name="provider" defaultValue={id}>
-          <option value={id} disabled={!id}>
-            {material.provider?.name || 'Proveedor'}
-          </option>
-
-          {providers
-            .filter((p) => id !== p.id)
-            .map((p) => {
-              return (
-                <option value={p.id} key={uniqueId()}>
-                  {p.name}
-                </option>
-              );
-            })}
-        </Select>
-      );
+  const formatProviders = () => {
+    if (providers) {
+      return providers.map(({ id, name }) => ({ value: id, label: name }));
     }
-    return null;
-  }, [material, providers]);
+    return [];
+  };
 
-  const selectMeasurement = useCallback(() => {
-    if (material && measurements) {
-      const id = material.measurement?.id || '';
-      const measurement = material.measurement?.abbreviation;
-
-      return (
-        <Select id="measurement" name="measurement" defaultValue={id || ''}>
-          <option value={id || ''} disabled={!id}>
-            {measurement || 'Unidad'}
-          </option>
-          {measurements
-            .filter((p) => id !== p.id)
-            .map((p) => {
-              return (
-                <option value={p.id} key={uniqueId()}>
-                  {p.abbreviation}
-                </option>
-              );
-            })}
-        </Select>
-      );
+  const formatMeasurement = () => {
+    if (measurements) {
+      return measurements.map(({ id, abbreviation }) => ({
+        value: id,
+        label: abbreviation,
+      }));
     }
-    return null;
-  }, [material, measurements]);
+    return [];
+  };
 
-  const selectCategory = useCallback(() => {
-    if (material && categories) {
-      const id = material.category?.id || '';
-      const category = material.category?.name;
-
-      return (
-        <Select id="category" name="category" defaultValue={id || ''}>
-          <option value={id || ''} disabled={!id}>
-            {category || 'Categoria'}
-          </option>
-          {categories
-            .filter((p) => id !== p.id)
-            .map((p) => {
-              return (
-                <option value={p.id} key={uniqueId()}>
-                  {p.name}
-                </option>
-              );
-            })}
-        </Select>
-      );
+  const formatCategory = () => {
+    if (categories) {
+      return categories.map(({ id, name }) => ({
+        value: id,
+        label: name,
+      }));
     }
-    return null;
-  }, [material, categories]);
+    return [];
+  };
 
   return (
     <Container>
@@ -208,7 +203,7 @@ function StockModal({
                 <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
                   {`${material?.id ? 'Editar' : 'Crear'} Material`}
                 </h2>
-                <Label htmlFor="name" label={material.name ? 'Nombre' : ''}>
+                <Label htmlFor="name" label="Nombre">
                   <Input
                     id="name"
                     name="name"
@@ -218,30 +213,42 @@ function StockModal({
                   />
                 </Label>
 
-                <Label
-                  htmlFor="provider"
-                  label={material.provider ? 'Proveedor' : ''}
-                >
-                  {selectProvider()}
+                <Label htmlFor="provider" label="Proveedor">
+                  <SearchbleList
+                    id="provider"
+                    name="provider"
+                    values={formatProviders()}
+                    onChange={() =>
+                      formRef.current.setFieldError('provider', '')
+                    }
+                  />
+                  {/* <>{selectProvider()}</> */}
                 </Label>
-                <Label
-                  htmlFor="measurement"
-                  label={material.measurement ? 'Unidad' : ''}
-                >
-                  {selectMeasurement()}
+                <Label htmlFor="measurement" label="Unidad">
+                  <SearchbleList
+                    id="measurement"
+                    name="measurement"
+                    values={formatMeasurement()}
+                    onChange={() =>
+                      formRef.current.setFieldError('measurement', '')
+                    }
+                  />
+                  {/* <>{selectMeasurement()}</> */}
                 </Label>
 
-                <Label
-                  htmlFor="category"
-                  label={material.category ? 'Categoria' : ''}
-                >
-                  {selectCategory()}
+                <Label htmlFor="category" label="Categoria">
+                  <SearchbleList
+                    id="category"
+                    name="category"
+                    values={formatCategory()}
+                    onChange={() =>
+                      formRef.current.setFieldError('category', '')
+                    }
+                  />
+                  {/* <>{selectCategory()}</> */}
                 </Label>
 
-                <Label
-                  htmlFor="notes"
-                  label={material.notes ? 'Observaciones' : ''}
-                >
+                <Label htmlFor="notes" label="Observaciones">
                   <TextArea
                     id="notes"
                     name="notes"
@@ -277,18 +284,16 @@ export default StockModal;
 StockModal.propTypes = {
   initialData: PropTypes.shape({
     id: PropTypes.string,
-    provider: PropTypes.shape({ name: PropTypes.string }),
-    category: PropTypes.shape({ name: PropTypes.string }),
+    provider: PropTypes.shape({ name: PropTypes.string, id: PropTypes.string }),
+    category: PropTypes.shape({ name: PropTypes.string, id: PropTypes.string }),
+    measurement: PropTypes.shape({
+      abbreviation: PropTypes.string,
+      id: PropTypes.string,
+    }),
   }),
   materials: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string,
-      id: PropTypes.string,
-    })
-  ).isRequired,
-  measurements: PropTypes.arrayOf(
-    PropTypes.shape({
-      abbreviation: PropTypes.string,
       id: PropTypes.string,
     })
   ).isRequired,

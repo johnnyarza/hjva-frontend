@@ -19,6 +19,7 @@ import Category from '../pages/Category';
 import Measurements from '../pages/Measurements';
 import ConcreteDesigns from '../pages/ConcreteDesigns';
 import MaterialTransaction from '../pages/Stock/MaterialTransaction';
+import ConcreteSample from '../pages/CompresionTest/ConcreteSample';
 
 export default function Routes() {
   return (
@@ -35,22 +36,25 @@ export default function Routes() {
       <Route
         path="/dashboard"
         exact
-        component={(props) => <Dashboard {...props} />}
         isPrivate
+        hasSideBar
+        component={(props) => <Dashboard {...props} />}
       />
 
       <Route
         path="/user"
         exact
-        component={(props) => <User {...props} />}
         isPrivate
+        hasSideBar
+        component={(props) => <User {...props} />}
       />
 
       <Route
         path="/users"
         exact
-        component={(props) => <UsersDashboard {...props} />}
         isPrivate
+        hasSideBar
+        component={(props) => <UsersDashboard {...props} />}
       />
 
       <Route
@@ -74,38 +78,67 @@ export default function Routes() {
       <Route
         path="/compresionTest/home"
         exact
+        isPrivate
+        hasSideBar
         component={(props) => <CompresionTestHome {...props} />}
+      />
+
+      <Route
+        path="/compresionTest/:id"
+        isPrivate
+        hasSideBar
+        component={(props) => <ConcreteSample {...props} />}
+        exact
       />
       <Route
         path="/clients"
         exact
+        isPrivate
+        hasSideBar
         component={(props) => <Clients {...props} />}
       />
       <Route
         path="/providers"
         exact
+        hasSideBar
+        isPrivate
         component={(props) => <Providers {...props} />}
       />
       <Route
         path="/category"
         exact
+        hasSideBar
+        isPrivate
         component={(props) => <Category {...props} />}
       />
-      <Route path="/stock" exact component={(props) => <Stock {...props} />} />
+
+      <Route
+        path="/stock"
+        exact
+        hasSideBar
+        isPrivate
+        component={(props) => <Stock {...props} />}
+      />
+
       <Route
         path="/measurements"
         exact
+        hasSideBar
+        isPrivate
         component={(props) => <Measurements {...props} />}
       />
       <Route
         path="/concreteDesigns"
         exact
+        hasSideBar
+        isPrivate
         component={(props) => <ConcreteDesigns {...props} />}
       />
       <Route
         path="/materialTransactions"
         exact
         component={(props) => <MaterialTransaction {...props} />}
+        hasSideBar
         isPrivate
       />
     </Switch>

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 
 import { Container } from './style';
 
+import SearchbleList from '../../../components/SearchbleList';
 import GenericModal from '../../../components/GenericModal';
 import Label from '../../../components/Label';
 import Select from '../../../components/Select';
@@ -54,34 +55,25 @@ function CompresionTestModal({
     }
   };
 
-  const selectClient = useCallback(() => {
-    if (compressionTest) {
-      const id = compressionTest?.client?.id || '';
-
-      return (
-        <Label htmlFor="client" label={compressionTest?.id ? 'Cliente.' : ''}>
-          <Select id="client" name="client" defaultValue={id}>
-            <>
-              <option value={id} disabled={!id}>
-                {compressionTest.client?.name || 'Cliente'}
-              </option>
-
-              {clients
-                .filter((p) => id !== p.id)
-                .map((p) => {
-                  return (
-                    <option value={p.id} key={uniqueId()}>
-                      {p.name}
-                    </option>
-                  );
-                })}
-            </>
-          </Select>
-        </Label>
-      );
+  const formatClients = () => {
+    if (clients) {
+      return clients.map(({ id, name }) => ({
+        value: id,
+        label: name,
+      }));
     }
-    return null;
-  }, [clients, compressionTest]);
+    return [];
+  };
+
+  const formatConcreteProvider = () => {
+    if (clients) {
+      return clients.map(({ id, name }) => ({
+        value: id,
+        label: name,
+      }));
+    }
+    return [];
+  };
 
   const selectConcreteProvider = useCallback(() => {
     if (compressionTest) {
@@ -159,8 +151,19 @@ function CompresionTestModal({
             compressionTest?.id ? 'Guardar' : 'Crear'
           } Ensayo`}</h3>
           <Form ref={formRef} onSubmit={handleSubmit}>
-            {selectClient()}
-            {selectConcreteProvider()}
+            <Label htmlFor="client" label="Cliente">
+              <SearchbleList values={formatClients()} name="client" />
+            </Label>
+            <Label htmlFor="client" label="Prov. Horm.">
+              <SearchbleList
+                placeholder="Prov. Hormigón"
+                values={formatClients()}
+                name="concreteProvider"
+              />
+            </Label>
+
+            {/* {selectClient()} */}
+            {/* {selectConcreteProvider()} */}
             {selectConcreteDesign()}
             <Label
               htmlFor="notes"

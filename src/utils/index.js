@@ -1,5 +1,3 @@
-import NumberFormat from 'react-number-format';
-
 const utils = {
   clean: (obj) => {
     const propNames = Object.getOwnPropertyNames(obj);

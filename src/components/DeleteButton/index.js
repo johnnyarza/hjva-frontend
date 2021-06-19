@@ -12,7 +12,7 @@ function DeleteButton({ onClick, delay, ...rest }) {
     return () => {
       clearTimeout(timer);
     };
-  }, [wasClicked]);
+  }, [wasClicked, delay]);
 
   const handleClick = () => {
     setWasClicked(true);

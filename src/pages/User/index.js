@@ -5,7 +5,6 @@ import * as Yup from 'yup';
 import { updateUserRequest } from '../../store/modules/user/actions';
 
 import AuthLayout from '../_layouts/Auth';
-import SideBar from '../../components/SideBar';
 import Input from '../../components/Input';
 import Spinner from '../../components/Spinner';
 import { Container, Content } from './style';
@@ -135,8 +134,6 @@ export default function User() {
             </Content>
           </Container>
         )}
-
-      <SideBar />
     </>
   );
 }

@@ -7,7 +7,6 @@ import api from '../../services/api';
 import { Container, Content } from './styles';
 import COLUMNS from './Table/columns';
 
-import SideBar from '../../components/SideBar';
 import Spinner from '../../components/Spinner';
 import CategoryTable from '../../components/Table';
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
@@ -172,7 +171,6 @@ function Category() {
 
   return (
     <>
-      <SideBar />
       <Container>
         <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
           Categorias

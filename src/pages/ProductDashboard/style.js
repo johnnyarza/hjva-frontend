@@ -1,21 +1,4 @@
 import styled from 'styled-components';
-// import { Form as form } from '@rocketseat/unform';
-
-// export const Form = styled(form)`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   span {
-//     font-size: 16px;
-//   }
-//   input {
-//     border-radius: 15px;
-//     border: none;
-//     padding: 5px;
-//     font-size: 16px;
-//   }
-// `;
 
 export const Container = styled.div``;
 

@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { MdContentCopy, MdEdit, MdKeyboardBackspace } from 'react-icons/md';
+import { MdContentCopy, MdKeyboardBackspace } from 'react-icons/md';
 import { MenuButton } from '@szhsin/react-menu';
 import { toast } from 'react-toastify';
 import { startOfDay } from 'date-fns';
 import { useSelector } from 'react-redux';
+import PropType from 'prop-types';
 
+import { Link, useParams } from 'react-router-dom';
 import Spinner from '../../../components/Spinner';
 import Table from '../../../components/Table';
 import Empty from '../../../components/Empty';
@@ -20,21 +22,47 @@ import api from '../../../services/api';
 import CONCRETESAMPLECOLUMNS from './ConcreteSampleTable/columns';
 import COMPRESSIONTESTCOLUMNS from '../Table/columns';
 import utils from '../../../utils';
-import DeleteButton from '../../../components/DeleteButton';
+import TableEditColumn from '../../../components/TableEditColumn';
 
-function ConcreteSample({ handleBackClick, compressionTest }) {
+function ConcreteSample() {
   const { locale } = useSelector((state) => state.locale);
   const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState('');
+  const [compressionTest, setCompressionTest] = useState('');
   const [isConcreteSampleModalOpen, setIsConcreteSampleModalOpen] = useState(
     false
   );
   const [concreteSamples, setConcreteSamples] = useState(null);
   const [currentConcreteSample, setCurrentConcreteSample] = useState({});
+  const { id: urlId } = useParams();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data } = await api.get('user');
+      const { role } = data;
+      if (role) setUserRole(role);
+    };
+    loadUser();
+  }, []);
+
+  useEffect(() => {
+    const loadCompressionTest = async () => {
+      if (urlId) {
+        const { data } = await api.get('compressionTests', null, {
+          params: { urlId },
+        });
+        if (data) {
+          setCompressionTest(data[0]);
+        }
+      }
+    };
+    loadCompressionTest();
+  }, [urlId]);
 
   useEffect(() => {
     const loadAllConcreteSamples = async () => {
       const { data } = await api.get(
-        `concreteSamples/?compressionTestId=${compressionTest.id}`
+        `concreteSamples/?compressionTestId=${urlId}`
       );
       if (data) {
         data.forEach((c) => {
@@ -47,7 +75,7 @@ function ConcreteSample({ handleBackClick, compressionTest }) {
       setConcreteSamples(data);
     };
     loadAllConcreteSamples();
-  }, [compressionTest]);
+  }, [compressionTest, urlId]);
 
   useEffect(() => {
     if (concreteSamples) setIsLoading(false);
@@ -208,20 +236,16 @@ function ConcreteSample({ handleBackClick, compressionTest }) {
             >
               <MdContentCopy />
             </button>
-            <button
-              className="edit-button"
-              type="button"
-              onClick={() => {
+            <TableEditColumn
+              userRole={userRole}
+              original={original}
+              hasEdit
+              hasDelete
+              onEditClick={() => {
                 setCurrentConcreteSample(original);
                 setIsConcreteSampleModalOpen(true);
               }}
-            >
-              <MdEdit />
-            </button>
-            <DeleteButton
-              className="delete-button"
-              type="button"
-              onClick={() => handleDeleteConcreteSample(original)}
+              onDeleteClick={handleDeleteConcreteSample}
             />
           </div>
         );
@@ -229,7 +253,9 @@ function ConcreteSample({ handleBackClick, compressionTest }) {
     };
     const cols = CONCRETESAMPLECOLUMNS(locale);
     return [...cols, newCol];
-  }, [handleDeleteConcreteSample, locale, handleCopy]);
+  }, [handleDeleteConcreteSample, locale, handleCopy, userRole]);
+
+  const columns = useCallback(COMPRESSIONTESTCOLUMNS, []);
 
   return (
     <>
@@ -238,13 +264,10 @@ function ConcreteSample({ handleBackClick, compressionTest }) {
       ) : (
         <Container>
           <div className="title-container">
-            <button
-              type="button"
-              onClick={() => handleBackClick()}
-              className="back-button"
-            >
+            <Link to="/compresionTest/home">
               <MdKeyboardBackspace />
-            </button>
+            </Link>
+
             <h2>Probetas</h2>
           </div>
           <MenuContainer>
@@ -258,11 +281,14 @@ function ConcreteSample({ handleBackClick, compressionTest }) {
             </MenuButton>
           </MenuContainer>
           <Content>
-            <Table
-              showWarning={false}
-              columns={COMPRESSIONTESTCOLUMNS(locale)}
-              data={[compressionTest]}
-            />
+            {compressionTest && (
+              <Table
+                showWarning={false}
+                columns={columns(locale)}
+                data={[compressionTest]}
+              />
+            )}
+
             <ConcreteSampleContainer>
               {!concreteSamples.length ? (
                 <Empty />
@@ -288,5 +314,16 @@ function ConcreteSample({ handleBackClick, compressionTest }) {
     </>
   );
 }
+
+ConcreteSample.propTypes = {
+  compressionTest: PropType.shape({
+    id: PropType.string,
+    concreteDesign: PropType.shape({ id: PropType.string }),
+  }),
+};
+
+ConcreteSample.defaultProps = {
+  compressionTest: {},
+};
 
 export default ConcreteSample;

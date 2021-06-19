@@ -17,6 +17,7 @@ const COLUMNS = (locale = 'pt-BR') => {
     {
       Header: 'Slump (cm)',
       id: 'slump',
+      width: 15,
       accessor: ({ slump }) => {
         if (slump) {
           return formater.format(slump);
@@ -91,6 +92,17 @@ const COLUMNS = (locale = 'pt-BR') => {
       accessor: ({ load }) => {
         if (load) {
           return formater.format(load);
+        }
+        return '';
+      },
+    },
+    {
+      Header: 'Rotura (MPa)',
+      id: 'mPa',
+      width: 25,
+      accessor: ({ mPa }) => {
+        if (mPa) {
+          return formater.format(mPa);
         }
         return '';
       },

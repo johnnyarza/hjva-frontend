@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { darken } from 'polished';
 /* eslint-disable */
 export const Container = styled.div`
   display: flex;
@@ -46,10 +47,14 @@ export const Content = styled.div`
       ? css`
           border-color: #e74c3c;
         `
-      : '';
+      : css`
+          &:hover {
+            border-color: ${darken(0.2, '#EBEBEB')};
+          }
+        `;
     const isFocused = props.isFocused
       ? css`
-          border-color: #3498db;
+          border-color: #3498db !important;
         `
       : '';
     return `${hasError} ${isFocused}`;

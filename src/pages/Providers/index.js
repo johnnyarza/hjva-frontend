@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import SideBar from '../../components/SideBar';
 
 import ProviderTable from '../../components/Table';
 import Spinner from '../../components/Spinner';
@@ -177,7 +176,6 @@ function Providers() {
 
   return (
     <>
-      <SideBar />
       <Container>
         <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
           Proveedores

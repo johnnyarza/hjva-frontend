@@ -22,11 +22,26 @@ function MaterialTransactionModal({
   ...rest
 }) {
   const [listContent, setListContent] = useState(null);
+  const [transaction, setTransaction] = useState(null);
   const formRef = useRef(null);
 
   useEffect(() => {
-    formRef.current.setData(initialData);
+    if (initialData.id) {
+      const person = initialData.client || initialData.provider;
+      const formatedData = {
+        ...initialData,
+        person: { value: person.id, label: person.name },
+      };
+      setTransaction(formatedData);
+    }
+    setTransaction({});
   }, [initialData]);
+
+  useEffect(() => {
+    if (transaction) {
+      formRef.current.setData(transaction);
+    }
+  }, [transaction]);
 
   useEffect(() => {
     const loadList = async () => {
@@ -50,15 +65,21 @@ function MaterialTransactionModal({
           .notOneOf([0], 'Debe ser diferente de cero')
           .typeError('Insertar numero')
           .required(),
-        person: Yup.string().required('Elegir persona'),
+        person: Yup.object()
+          .shape({
+            value: Yup.string().required(),
+            label: Yup.string().required(),
+          })
+          .required('Selecionar'),
       });
+
+      console.log(await schema.isValid(formData));
 
       await schema.validate(formData, { abortEarly: false });
 
-      if (transactionType === 'in') formData.providerId = person;
-      if (transactionType === 'out') formData.clientId = person;
+      if (transactionType === 'in') formData.providerId = person.value;
+      if (transactionType === 'out') formData.clientId = person.value;
       delete formData.person;
-
       onSubmit(formData);
     } catch (err) {
       const validationErrors = {};
@@ -72,7 +93,15 @@ function MaterialTransactionModal({
       }
     }
   };
-
+  const formatValues = () => {
+    if (listContent) {
+      return listContent?.map(({ name, id }) => ({
+        label: name,
+        value: id,
+      }));
+    }
+    return [];
+  };
   const inputRange = () => {
     if (transactionType === 'out') return { max: '0' };
     return { min: '0' };
@@ -83,7 +112,7 @@ function MaterialTransactionModal({
         <h3 style={{ textAlign: 'center', marginBottom: '15px' }}>
           {`Registrar ${transactionType === 'in' ? 'Entrada' : 'Salida'}`}
         </h3>
-        <Form ref={formRef} onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit} id="teste">
           <Label
             label={`${transactionType === 'in' ? 'Entrada' : 'Salida'}`}
             htmlFor="quantity_per_m3"
@@ -104,9 +133,8 @@ function MaterialTransactionModal({
           >
             <SearchbleList
               name="person"
-              id="person"
-              values={listContent || []}
-              hasSearch
+              values={formatValues()}
+              onChange={() => formRef.current.setFieldError('person', '')}
             />
           </Label>
           <Label label="Observación" htmlFor="notes">
@@ -141,7 +169,25 @@ MaterialTransactionModal.propTypes = {
   onSubmit: PropType.func.isRequired,
   onCancelPress: PropType.func,
   transactionType: PropType.oneOf(['in', 'out']),
-  initialData: PropType.shape({ id: PropType.string, name: PropType.string }),
+  initialData: PropType.objectOf(
+    PropType.oneOf([
+      {
+        id: PropType.string,
+        entry: PropType.string,
+        notes: PropType.string,
+        client: PropType.shape({ id: PropType.string, name: PropType.string }),
+      },
+      {
+        id: PropType.string,
+        entry: PropType.string,
+        notes: PropType.string,
+        provider: PropType.shape({
+          id: PropType.string,
+          name: PropType.string,
+        }),
+      },
+    ])
+  ),
   listContentType: PropType.oneOf(['clients', 'providers']),
 };
 

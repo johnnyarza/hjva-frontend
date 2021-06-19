@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { MdLanguage } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 

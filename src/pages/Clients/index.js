@@ -88,7 +88,6 @@ function Clients() {
     } catch (error) {
       setIsClientModalOpen(false);
       toast.error('Error al crear');
-      console.log(error);
     }
   };
 
@@ -126,8 +125,6 @@ function Clients() {
 
   return (
     <>
-      <SideBar />
-
       <Container>
         <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Clientes</h2>
         {!isLoading && (

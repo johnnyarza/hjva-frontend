@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { MdDelete, MdEdit } from 'react-icons/md';
 
 import { toast } from 'react-toastify';
-import SideBar from '../../components/SideBar';
 import Table from '../../components/Table';
 import Spinner from '../../components/Spinner';
 
@@ -240,7 +239,6 @@ function ConcreteDesigns() {
 
   return (
     <>
-      <SideBar />
       {isLoading ? (
         <Spinner />
       ) : (

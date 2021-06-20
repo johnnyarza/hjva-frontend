@@ -24,7 +24,7 @@ function CompresionTest() {
   const { locale } = useSelector((state) => state.locale);
   const [compressionTests, setCompressionTests] = useState(null);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
-  const [currentCompressionTest, setCurrentCompressionTest] = useState(null);
+  const [currentCompressionTest, setCurrentCompressionTest] = useState('');
   const [clients, setClients] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCompresionTestModalOpen, setIsCompresionTestModalOpen] = useState(
@@ -109,9 +109,15 @@ function CompresionTest() {
         concreteProvider: concreteProviderId,
         notes,
       } = compressionTest;
+      const body = utils.clean({
+        clientId,
+        concreteDesignId,
+        concreteProviderId,
+        notes,
+      });
       const { data } = await api.put(
         `compressionTest/${compressionTest.id}`,
-        utils.clean({ clientId, concreteDesignId, concreteProviderId, notes })
+        body
       );
       if (data) {
         const newCompressionTests = compressionTests.map((c) => {
@@ -122,7 +128,7 @@ function CompresionTest() {
         });
         setCompressionTests(newCompressionTests);
       }
-      toast.success('Enasyo guardado con éxito');
+      toast.success('Ensayo guardado con éxito');
     } catch (error) {
       toast.error(error.message);
     }
@@ -143,6 +149,11 @@ function CompresionTest() {
       setIsCompresionTestModalOpen(false);
     }
   };
+
+  const handleEditClick = useCallback((original) => {
+    setCurrentCompressionTest(original);
+    setIsCompresionTestModalOpen(true);
+  }, []);
 
   const columns = useMemo(() => {
     const newCol = {
@@ -170,10 +181,7 @@ function CompresionTest() {
             <button
               className="edit-button"
               type="button"
-              onClick={() => {
-                setCurrentCompressionTest(original);
-                setIsCompresionTestModalOpen(true);
-              }}
+              onClick={() => handleEditClick(original)}
             >
               <MdEdit />
             </button>
@@ -187,7 +195,7 @@ function CompresionTest() {
     };
     const formatedCols = COLUMNS(locale);
     return [...formatedCols, newCol];
-  }, [handleDelete, locale, history]);
+  }, [handleDelete, locale, history, handleEditClick]);
 
   return (
     <>
@@ -246,9 +254,7 @@ function CompresionTest() {
         <CompresionTestModal
           onEscPress={() => setIsCompresionTestModalOpen(false)}
           onCancelClick={() => setIsCompresionTestModalOpen(false)}
-          clients={clients}
           initialData={currentCompressionTest}
-          concreteDesigns={concreteDesigns}
           onSubmit={handleSubmit}
         />
       )}

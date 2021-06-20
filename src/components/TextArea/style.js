@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { darken } from 'polished';
 
 export const Container = styled.div`
   width: 100%;
@@ -13,16 +14,19 @@ export const Content = styled.div`
   transition: width 0.1s;
   position: relative;
   border: 1px solid transparent;
+  &:hover {
+    border-color: ${darken(0.2, '#EBEBEB')};
+  }
 
   ${(props) => {
     const hasError = props.hasError
       ? css`
-          border-color: #e74c3c;
+          border-color: #e74c3c !important;
         `
       : '';
     const isFocused = props.isFocused
       ? css`
-          border-color: #3498db;
+          border-color: #3498db !important;
         `
       : '';
     return `${hasError} ${isFocused}`;

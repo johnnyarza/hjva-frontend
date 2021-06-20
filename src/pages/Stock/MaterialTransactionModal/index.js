@@ -73,8 +73,6 @@ function MaterialTransactionModal({
           .required('Selecionar'),
       });
 
-      console.log(await schema.isValid(formData));
-
       await schema.validate(formData, { abortEarly: false });
 
       if (transactionType === 'in') formData.providerId = person.value;

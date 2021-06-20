@@ -1,47 +1,127 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Form } from '@unform/web';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { Form } from '@unform/web';
-import { uniqueId } from 'lodash';
 import { toast } from 'react-toastify';
 
-import { Container } from './style';
+import { Content } from './style';
 
-import SearchbleList from '../../../components/SearchbleList';
-import GenericModal from '../../../components/GenericModal';
 import Label from '../../../components/Label';
-import Select from '../../../components/Select';
+import GenericModal from '../../../components/GenericModal';
+import SearchableList from '../../../components/SearchbleList';
+import Spinner from '../../../components/Spinner';
+import api from '../../../services/api';
 import TextArea from '../../../components/TextArea';
 
-function CompresionTestModal({
+function CompressionTestModal({
   onSubmit,
-  concreteDesigns,
-  clients,
   initialData,
   onCancelClick,
   ...rest
 }) {
   const formRef = useRef(null);
-  const [compressionTest, setCompressionTest] = useState(null);
+  const [clients, setClients] = useState(null);
+  const [concreteDesigns, setConcreteDesigns] = useState(null);
+  const [isLoading, setIsloading] = useState(true);
+  const [compressionTest, setCompressionTest] = useState('');
 
   useEffect(() => {
-    setCompressionTest(initialData);
-  }, [initialData]);
+    setIsloading(!(clients && concreteDesigns));
+  }, [clients, concreteDesigns]);
+
+  useEffect(() => {
+    const loadAllCLients = async () => {
+      const { data } = await api.get('clients');
+      const formatedData = data.map(({ id, name }) => ({
+        label: name,
+        value: id,
+      }));
+      setClients(formatedData);
+    };
+    loadAllCLients();
+  }, []);
+
+  useEffect(() => {
+    const loadAllConcreteDesigns = async () => {
+      const { data } = await api.get('concreteDesigns');
+      const formatedData = data.map(({ id, name }) => ({
+        label: name,
+        value: id,
+      }));
+      setConcreteDesigns(formatedData);
+    };
+    loadAllConcreteDesigns();
+  }, []);
+
+  useEffect(() => {
+    if (initialData.id) {
+      const formatedData = {
+        id: initialData.id,
+        notes: initialData.notes,
+        client: {
+          value: initialData.client.id,
+          label: initialData.client.name,
+        },
+        concreteProvider: {
+          value: initialData.concreteProvider.id,
+          label: initialData.concreteProvider.name,
+        },
+        concreteDesign: {
+          value: initialData.concreteDesign.id,
+          label: initialData.concreteDesign.name,
+        },
+      };
+      setCompressionTest(formatedData);
+    }
+  }, [initialData, isLoading]);
 
   useEffect(() => {
     if (compressionTest) {
-      formRef.current.setData({
-        ...compressionTest,
-        client: compressionTest.client?.id,
-        concreteProvider: compressionTest.concreteProvider?.id,
-        concreteDesign: compressionTest.concreteDesign?.id,
-      });
+      formRef.current?.setData(compressionTest);
     }
-  }, [compressionTest]);
+  }, [compressionTest, isLoading]);
 
-  const handleSubmit = (data) => {
+  useEffect(() => {
+    setIsloading(!(clients && concreteDesigns));
+  }, [clients, concreteDesigns]);
+
+  const handleSubmit = async (formData) => {
     try {
-      onSubmit({ ...initialData, ...data });
+      const schema = Yup.object().shape({
+        id: Yup.string(),
+        notes: Yup.string(),
+        client: Yup.object()
+          .typeError('Vacío')
+          .shape({
+            label: Yup.string(),
+            value: Yup.string(),
+          })
+          .required('Cliente es obligatorio'),
+        concreteDesign: Yup.object()
+          .typeError('Vacío')
+          .shape({
+            label: Yup.string(),
+            value: Yup.string(),
+          })
+          .required('Cliente es obligatorio'),
+        concreteProvider: Yup.object()
+          .typeError('Vacío')
+          .shape({
+            label: Yup.string(),
+            value: Yup.string(),
+          })
+          .required('Cliente es obligatorio'),
+      });
+      await schema.validate(formData, { abortEarly: false });
+      formRef.current.setErrors({});
+      const body = {
+        ...compressionTest,
+        client: formData.client.value,
+        concreteDesign: formData.concreteDesign.value,
+        concreteProvider: formData.concreteProvider.value,
+        notes: formData.notes,
+      };
+      onSubmit(body);
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {
@@ -54,182 +134,93 @@ function CompresionTestModal({
       }
     }
   };
-
-  const formatClients = () => {
-    if (clients) {
-      return clients.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      }));
-    }
-    return [];
-  };
-
-  const formatConcreteProvider = () => {
-    if (clients) {
-      return clients.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      }));
-    }
-    return [];
-  };
-
-  const selectConcreteProvider = useCallback(() => {
-    if (compressionTest) {
-      const id = compressionTest?.concreteProvider?.id || '';
-
-      return (
-        <Label
-          htmlFor="concreteProvider"
-          label={compressionTest?.id ? 'Prov. Hormig.' : ''}
-        >
-          <Select
-            id="concreteProvider"
-            name="concreteProvider"
-            defaultValue={id}
-          >
-            <>
-              <option value={id} disabled={!id}>
-                {compressionTest.client?.name || 'Prov. Hormig.'}
-              </option>
-
-              {clients
-                .filter((p) => id !== p.id)
-                .map((p) => {
-                  return (
-                    <option value={p.id} key={uniqueId()}>
-                      {p.name}
-                    </option>
-                  );
-                })}
-            </>
-          </Select>
-        </Label>
-      );
-    }
-    return null;
-  }, [clients, compressionTest]);
-
-  const selectConcreteDesign = useCallback(() => {
-    if (compressionTest) {
-      const id = compressionTest?.concreteDesign?.id || '';
-
-      return (
-        <Label
-          htmlFor="concreteDesign"
-          label={compressionTest?.id ? 'Dosificación' : ''}
-        >
-          <Select id="concreteDesign" name="concreteDesign" defaultValue={id}>
-            <>
-              <option value={id} disabled={!id}>
-                {compressionTest.concreteDesign?.name || 'Dosificación'}
-              </option>
-
-              {concreteDesigns
-                .filter((p) => id !== p.id)
-                .map((p) => {
-                  return (
-                    <option value={p.id} key={uniqueId()}>
-                      {p.name}
-                    </option>
-                  );
-                })}
-            </>
-          </Select>
-        </Label>
-      );
-    }
-    return null;
-  }, [compressionTest, concreteDesigns]);
-
   return (
-    <>
-      <GenericModal isOpen {...rest}>
-        <>
-          <h3 style={{ marginBottom: '15px' }}>{`${
-            compressionTest?.id ? 'Guardar' : 'Crear'
-          } Ensayo`}</h3>
+    <GenericModal isOpen {...rest}>
+      <Content>
+        <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
+          {`${compressionTest?.id ? 'Guardar' : 'Crear'} Ensayo`}
+        </h2>
+        {isLoading ? (
+          <Spinner />
+        ) : (
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <Label htmlFor="client" label="Cliente">
-              <SearchbleList values={formatClients()} name="client" />
-            </Label>
-            <Label htmlFor="client" label="Prov. Horm.">
-              <SearchbleList
-                placeholder="Prov. Hormigón"
-                values={formatClients()}
-                name="concreteProvider"
+            <Label label="Cliente" htmlFor="client">
+              <SearchableList
+                name="client"
+                id="client"
+                values={clients}
+                onChange={() => formRef.current.setFieldError('client', '')}
               />
             </Label>
-
-            {/* {selectClient()} */}
-            {/* {selectConcreteProvider()} */}
-            {selectConcreteDesign()}
-            <Label
-              htmlFor="notes"
-              label={compressionTest?.notes ? 'Descripción' : ''}
-            >
+            <Label label="Prov. Hormigón" htmlFor="concreteProvider">
+              <SearchableList
+                id="concreteProvider"
+                name="concreteProvider"
+                values={clients}
+                onChange={() =>
+                  formRef.current.setFieldError('concreteProvider', '')
+                }
+              />
+            </Label>
+            <Label label="Dosificación" htmlFor="concreteDesign">
+              <SearchableList
+                id="concreteDesign"
+                name="concreteDesign"
+                values={concreteDesigns}
+                onChange={() =>
+                  formRef.current.setFieldError('concreteDesign', '')
+                }
+              />
+            </Label>
+            <Label htmlFor="notes" label="Observaciones">
               <TextArea
                 id="notes"
                 name="notes"
-                placeholder="Descripción"
+                placeholder="Observación"
                 maxLength={255}
                 onChange={() => formRef.current.setFieldError('notes', '')}
               />
             </Label>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginTop: '10px',
-              }}
-            >
-              <button
-                type="submit"
-                name="inserir"
-                style={{ backgroundColor: '#2ecc71' }}
-              >
-                Ok
+            <div className="btn-container">
+              <button type="submit" className="btn-ok">
+                {`${compressionTest.id ? 'Guardar' : 'Crear'}`}
               </button>
               <button
+                className="btn-cancel"
                 type="button"
-                name="cancelar"
-                style={{ backgroundColor: '#C0392B' }}
                 onClick={onCancelClick}
               >
                 Cancelar
               </button>
             </div>
           </Form>
-        </>
-      </GenericModal>
-    </>
+        )}
+      </Content>
+    </GenericModal>
   );
 }
 
-CompresionTestModal.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-  onCancelClick: PropTypes.func.isRequired,
+CompressionTestModal.propTypes = {
   initialData: PropTypes.shape({
     id: PropTypes.string,
     notes: PropTypes.string,
+    client: PropTypes.shape({ id: PropTypes.string, name: PropTypes.string }),
+    concreteProvider: PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+    }),
+    concreteDesign: PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+    }),
   }),
-  clients: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-    })
-  ).isRequired,
-  concreteDesigns: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-    })
-  ).isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  onCancelClick: PropTypes.func,
 };
 
-CompresionTestModal.defaultProps = {
+CompressionTestModal.defaultProps = {
   initialData: {},
+  onCancelClick: () => {},
 };
 
-export default CompresionTestModal;
+export default CompressionTestModal;

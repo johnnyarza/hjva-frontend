@@ -22,6 +22,7 @@ function AddMaterialModal({
 }) {
   const formRef = useRef(null);
   const [currentMaterial, setCurrentMaterial] = useState({});
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [materialListHasError, setMaterialListHasError] = useState({
@@ -121,10 +122,13 @@ function AddMaterialModal({
             <ListContainer
               id="materialList"
               hasError={materialListHasError.hasError}
+              isFocused={isInputFocused}
             >
-              <SearchContainer>
+              <SearchContainer isFocused={isInputFocused}>
                 <div>
                   <input
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
                     onChange={(d) => {
                       hadleSearchInputChange(d.target.value);
                       setMaterialListHasError({ hasError: false });

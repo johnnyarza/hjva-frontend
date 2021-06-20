@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
-import { uniqueId } from 'lodash';
 
 import utils from '../../../utils';
 import SearchbleList from '../../../components/SearchbleList';

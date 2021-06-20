@@ -1,19 +1,34 @@
 import styled, { css } from 'styled-components';
+import { darken } from 'polished';
 
 export const ListContainer = styled.div`
   background-color: white;
   min-width: 200px;
   padding: 10px 0px 5px 0px;
   border-radius: 10px;
-
+  border: 1px solid transparent;
   max-height: 300px;
   overflow: auto;
   overflow-x: hidden;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: ${darken(0.2, '#EBEBEB')};
+  }
+
+  ${(props) =>
+    props.isFocused
+      ? css`
+          border-color: var(--focusedInput) !important;
+        `
+      : css`
+          border-color: transparent;
+        `}
 
   ${(props) => {
     const hasError = props.hasError
       ? css`
-          border: 1px solid #e74c3c;
+          border: 1px solid var(--errorColor) !important;
         `
       : css``;
     return `${hasError}`;
@@ -81,15 +96,18 @@ export const SearchContainer = styled.div`
   align-items: center;
 
   div {
-    border-bottom: 1px solid #ebebeb;
+    border-bottom: ${(props) =>
+      `1px solid ${props.isFocused ? 'black' : '#ebebeb'}`};
+    transition: border-bottom 0.2s;
   }
 
   input {
     border: none;
   }
   svg {
-    color: #bdc3c7;
+    color: ${(props) => (props.isFocused ? 'black' : '#bdc3c7')};
     margin-left: 10px;
+    transition: color 0.2s;
   }
 `;
 

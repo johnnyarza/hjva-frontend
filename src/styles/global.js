@@ -4,6 +4,11 @@ import 'react-toastify/dist/ReactToastify.css';
 export default createGlobalStyle`
 
 * {
+  --okButton: #2ecc71;
+  --hoverButtonColor: #2ecc71;
+  --cancelButton: #c0392b;
+  --focusedInput: #3498db;
+  --errorColor:#e74c3c;
   margin:0;
   padding:0;
   outline: 0;

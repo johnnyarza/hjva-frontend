@@ -33,7 +33,9 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   width: 100%;
-
+  &:hover {
+    border-color: ${darken(0.2, '#EBEBEB')};
+  }
   ${(props) =>
     props.hasBorder
       ? css`
@@ -45,13 +47,9 @@ export const Content = styled.div`
   ${(props) => {
     const hasError = props.hasError
       ? css`
-          border-color: #e74c3c;
+          border-color: #e74c3c !important;
         `
-      : css`
-          &:hover {
-            border-color: ${darken(0.2, '#EBEBEB')};
-          }
-        `;
+      : css``;
     const isFocused = props.isFocused
       ? css`
           border-color: #3498db !important;

@@ -3,7 +3,7 @@ import { darken } from 'polished';
 
 export const Container = styled.div`
   border-radius: 5px;
-  padding: 0px 10px 0px 10px;
+  padding: 5px 10px 5px 10px;
   background-color: white;
   min-height: 40px;
   width: 100%;
@@ -23,7 +23,7 @@ export const Container = styled.div`
     height: 25px;
     margin-left: 10px;
     padding: 0px 10px 0px 10px;
-    transition: border-color 0.2s;
+    transition: border-color box-shadow 0.2s;
 
     :focus {
       border-color: var(--focusedInput) !important;
@@ -35,7 +35,7 @@ export const Container = styled.div`
 
   button {
     border: none;
-    height: 25px;
+    min-height: 25px;
     border-radius: 5px;
     min-width: 100px;
     margin-left: 10px;
@@ -45,6 +45,10 @@ export const Container = styled.div`
 
     :hover {
       background-color: var(--hoverButtonColor);
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+    }
+    &:active {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 10px;
     }
   }
 

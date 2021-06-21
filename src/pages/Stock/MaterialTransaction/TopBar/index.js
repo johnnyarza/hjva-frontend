@@ -4,7 +4,7 @@ import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 
 import { Container } from './styles';
 
-function TopBar({ onInputChange, ...rest }) {
+function TopBar({ onCleanButton, onInputChange, ...rest }) {
   const inputRef = useRef(null);
   const firstDateInputRef = useRef(null);
   const secondDateInputRef = useRef(null);
@@ -30,7 +30,7 @@ function TopBar({ onInputChange, ...rest }) {
     setSearchField(data.value);
   };
 
-  const handleInputChange = ({ value, name }) => {
+  const handleInputChange = ({ value }) => {
     if (searchField) {
       const data = {};
       if (searchField !== 'createdAt') {
@@ -44,6 +44,19 @@ function TopBar({ onInputChange, ...rest }) {
       }
       onInputChange(data);
     }
+  };
+  const handleCleanButton = () => {
+    switch (searchField) {
+      case 'material' || 'category':
+        inputRef.current.value = '';
+        break;
+      case 'createdAt':
+        firstDateInputRef.current.value = '';
+        secondDateInputRef.current.value = '';
+        break;
+      default:
+    }
+    onCleanButton();
   };
 
   const prepareInput = () => {
@@ -77,6 +90,9 @@ function TopBar({ onInputChange, ...rest }) {
       <input
         ref={inputRef}
         onChange={() => handleInputChange(inputRef.current)}
+        placeholder={
+          searchLabel?.charAt(0).toUpperCase() + searchLabel.slice(1)
+        }
       />
     );
   };
@@ -100,7 +116,7 @@ function TopBar({ onInputChange, ...rest }) {
         </MenuItem>
       </Menu>
       {prepareInput()}
-      <MenuButton>Limpiar Consulta</MenuButton>
+      <MenuButton onClick={handleCleanButton}>Limpiar Consulta</MenuButton>
     </Container>
   );
 }
@@ -109,4 +125,5 @@ export default TopBar;
 
 TopBar.propTypes = {
   onInputChange: PropTypes.func.isRequired,
+  onCleanButton: PropTypes.func.isRequired,
 };

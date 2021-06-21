@@ -14,6 +14,7 @@ import TableEditColumn from '../../../components/TableEditColumn';
 import { Container, Content } from './styles';
 
 import api from '../../../services/api';
+import utils from '../../../utils';
 
 function MaterialTransaction() {
   let timeout;
@@ -76,11 +77,10 @@ function MaterialTransaction() {
   );
 
   const handleSearch = (searchInput) => {
-    console.log(searchInput);
-    console.log(transactions);
-    let foundTransactions = [];
+    let foundTransactions = transactions;
     const { material: searchMaterial } = searchInput;
     const { category } = searchInput;
+    const { createdAt } = searchInput;
     if (searchMaterial) {
       foundTransactions = transactions.filter(({ material }) => {
         const currentName = material.name.toLowerCase();
@@ -94,6 +94,14 @@ function MaterialTransaction() {
         const newName = category.name.toLowerCase();
         return currentName.includes(newName);
       });
+    }
+    if (createdAt) {
+      const { from, to } = createdAt;
+      if (from && to) {
+        foundTransactions = transactions.filter(({ createdAt: date }) => {
+          return utils.isBetweenDates(from, to, date);
+        });
+      }
     }
     timeout = setTimeout(() => setFilteredTransactions(foundTransactions), 350);
   };
@@ -141,7 +149,10 @@ function MaterialTransaction() {
 
             <h2>Registros Entradas/Salidas</h2>
           </div>
-          <TopBar onInputChange={handleSearch} />
+          <TopBar
+            onInputChange={handleSearch}
+            onCleanButton={() => setFilteredTransactions(transactions)}
+          />
           <Content>
             <Table columns={columns} data={filteredTransactions} />
           </Content>

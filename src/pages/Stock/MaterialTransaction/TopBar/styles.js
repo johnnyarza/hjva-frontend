@@ -23,7 +23,7 @@ export const Container = styled.div`
     height: 25px;
     margin-left: 10px;
     padding: 0px 10px 0px 10px;
-    transition: border-color box-shadow 0.2s;
+    transition: border-color 0.2s;
 
     :focus {
       border-color: var(--focusedInput) !important;

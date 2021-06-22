@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 import COLUMNS from './columns';
 
-import TopBar from './TopBar';
+import MaterialTransactionTopBar from './TopBar';
 import Spinner from '../../../components/Spinner';
 import Table from '../../../components/Table';
 import TableEditColumn from '../../../components/TableEditColumn';
@@ -149,7 +149,7 @@ function MaterialTransaction() {
 
             <h2>Registros Entradas/Salidas</h2>
           </div>
-          <TopBar
+          <MaterialTransactionTopBar
             onInputChange={handleSearch}
             onCleanButton={() => setFilteredTransactions(transactions)}
           />

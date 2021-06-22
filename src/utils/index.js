@@ -1,10 +1,14 @@
-import { getTime, startOfDay, parseISO } from 'date-fns';
+import { getTime, startOfDay, parseISO, isDate } from 'date-fns';
 
 const utils = {
   isBetweenDates: (fromDate, toDate, dateToCompare) => {
     const parsedFrom = getTime(startOfDay(parseISO(fromDate)));
     const parsedTo = getTime(startOfDay(parseISO(toDate)));
-    const parsedDate = getTime(startOfDay(parseISO(dateToCompare)));
+    const parsedDate = getTime(
+      startOfDay(
+        isDate(dateToCompare) ? dateToCompare : parseISO(dateToCompare)
+      )
+    );
     const interval = [parsedFrom, parsedTo];
     interval.sort((a, b) => {
       if (a < b) {

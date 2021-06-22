@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MdEdit, MdVisibility } from 'react-icons/md';
 import { toast } from 'react-toastify';
@@ -8,9 +7,9 @@ import { toast } from 'react-toastify';
 import CompressionTestsTable from '../../../components/Table';
 
 import COLUMNS from '../Table/columns';
+import TopBar from './CompressionTestTopBar';
 
 import { Container, Content } from './style';
-import { MenuContainer } from '../styles';
 
 import Spinner from '../../../components/Spinner';
 import CompresionTestModal from '../CompresionTestModal';
@@ -21,8 +20,10 @@ import DeleteButton from '../../../components/DeleteButton';
 
 function CompresionTest() {
   const history = useHistory();
+  const [searchInput, setSearchInput] = useState('');
   const { locale } = useSelector((state) => state.locale);
   const [compressionTests, setCompressionTests] = useState(null);
+  const [filteredCompressionTests, setFilteredCompressionTests] = useState([]);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
   const [currentCompressionTest, setCurrentCompressionTest] = useState('');
   const [clients, setClients] = useState(null);
@@ -35,6 +36,7 @@ function CompresionTest() {
     const loadAllCompressionTests = async () => {
       const { data } = await api.get('compressionTests');
       setCompressionTests(data || []);
+      setFilteredCompressionTests(data || []);
     };
 
     const loadAllClients = async () => {
@@ -197,6 +199,49 @@ function CompresionTest() {
     return [...formatedCols, newCol];
   }, [handleDelete, locale, history, handleEditClick]);
 
+  const handleSearch = useCallback(() => {
+    let foundCompressionTests = compressionTests;
+    const { client } = searchInput;
+    const { tracker } = searchInput;
+    const { updatedAt } = searchInput;
+
+    if (client) {
+      foundCompressionTests = compressionTests.filter(
+        ({ client: currentClient }) => {
+          const currentName = currentClient.name.toLowerCase();
+          const newName = client.name.toLowerCase();
+          return currentName.includes(newName);
+        }
+      );
+    }
+
+    if (tracker && tracker > 0) {
+      foundCompressionTests = compressionTests.filter(
+        ({ tracker: currentTracker }) => {
+          const currentName = String(currentTracker);
+          const newName = String(tracker);
+          return currentName.includes(newName);
+        }
+      );
+    }
+
+    if (updatedAt) {
+      const { from, to } = updatedAt;
+      if (from && to) {
+        foundCompressionTests = compressionTests.filter(
+          ({ updatedAt: date }) => {
+            return utils.isBetweenDates(from, to, date);
+          }
+        );
+      }
+    }
+    setTimeout(() => setFilteredCompressionTests(foundCompressionTests), 350);
+  }, [compressionTests, searchInput]);
+
+  useEffect(() => {
+    if (searchInput) handleSearch();
+  }, [searchInput, handleSearch]);
+
   return (
     <>
       {isLoading ? (
@@ -204,47 +249,18 @@ function CompresionTest() {
       ) : (
         <Container>
           <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Ensayos</h2>
-          <MenuContainer>
-            <Menu
-              menuButton={<MenuButton>Ensayo</MenuButton>}
-              arrow
-              direction="bottom"
-              viewScroll="initial"
-            >
-              <MenuItem
-                onClick={() => {
-                  setCurrentCompressionTest({});
-                  setIsCompresionTestModalOpen(true);
-                }}
-              >
-                Crear
-              </MenuItem>
-            </Menu>
-            <Menu
-              menuButton={<MenuButton>Registro</MenuButton>}
-              arrow
-              direction="bottom"
-              viewScroll="initial"
-            >
-              <MenuItem>
-                <Link to="/stock" style={{ color: 'black' }}>
-                  Materiales
-                </Link>
-              </MenuItem>
-              <MenuItem>Dosagens</MenuItem>
-              <MenuItem>
-                <Link to="/stock" style={{ color: 'black' }}>
-                  Materiales
-                </Link>
-              </MenuItem>
-              <MenuItem>Fornecedores</MenuItem>
-            </Menu>
-          </MenuContainer>
-
+          <TopBar
+            onNewButton={() => {
+              setCurrentCompressionTest({});
+              setIsCompresionTestModalOpen(true);
+            }}
+            onInputChange={(data) => setSearchInput(data)}
+            onCleanButton={() => setFilteredCompressionTests(compressionTests)}
+          />
           <Content>
             <CompressionTestsTable
               columns={columns}
-              data={compressionTests || []}
+              data={filteredCompressionTests || []}
               showWarning
             />
           </Content>

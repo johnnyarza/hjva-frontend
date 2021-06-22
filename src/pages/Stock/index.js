@@ -7,24 +7,28 @@ import {
 } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
+import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
 import SideBar from '../../components/SideBar';
 import DeleteButton from '../../components/DeleteButton';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/Table';
-import api from '../../services/api';
+import Empty from '../../components/Empty';
 
-import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
+import api from '../../services/api';
+import utils from '../../utils';
 
 import { Container, Content } from './styles';
-
-import TopBar from './TopBar';
+import StockTopBar from './TopBar';
 import MaterialModal from './StockModal';
 import COLUMNS from './Table/columns';
 import MaterialTransactionModal from './MaterialTransactionModal';
 
 function Stock() {
+  let timeout;
   const { locale } = useSelector((state) => state.locale);
   const [materials, setMaterials] = useState(null);
+  const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [searchInput, setSeachInput] = useState('');
   const [currentMaterial, setCurrentMaterial] = useState(null);
   const [transactionListType, setTransactionListType] = useState('clients');
   const [transactionType, setTransactionType] = useState('in');
@@ -37,17 +41,23 @@ function Stock() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [timeout]);
+
+  useEffect(() => {
     const loadAllMaterials = async () => {
       const { data } = await api.get('materials');
       if (data) {
-        setMaterials(
-          data.sort((a, b) =>
-            a.name.localeCompare(b.name, undefined, {
-              numeric: true,
-              sensitivity: 'base',
-            })
-          )
+        const sortedData = data.sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          })
         );
+        setMaterials(sortedData);
+        setFilteredMaterials(sortedData);
       }
     };
 
@@ -261,6 +271,40 @@ function Stock() {
     }
   };
 
+  const handleSearch = useCallback(() => {
+    let foundMaterials = materials;
+    const { material: searchMaterial } = searchInput;
+    const { category } = searchInput;
+    const { createdAt } = searchInput;
+    if (searchMaterial) {
+      foundMaterials = materials.filter(({ name }) => {
+        const currentName = name.toLowerCase();
+        const newName = searchInput.material.name.toLowerCase();
+        return currentName.includes(newName);
+      });
+    }
+    if (category) {
+      foundMaterials = materials.filter(({ material }) => {
+        const currentName = material.category.name.toLowerCase();
+        const newName = category.name.toLowerCase();
+        return currentName.includes(newName);
+      });
+    }
+    if (createdAt) {
+      const { from, to } = createdAt;
+      if (from && to) {
+        foundMaterials = materials.filter(({ updated_at: date }) => {
+          return utils.isBetweenDates(from, to, date);
+        });
+      }
+    }
+    setTimeout(() => setFilteredMaterials(foundMaterials), 350);
+  }, [materials, searchInput]);
+
+  useEffect(() => {
+    if (searchInput) handleSearch(searchInput);
+  }, [searchInput, handleSearch]);
+
   return (
     <>
       <SideBar />
@@ -273,9 +317,17 @@ function Stock() {
             <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
               Estoque
             </h2>
-            <TopBar onNewButton={handleNewButtonClick} />
+            <StockTopBar
+              onNewButton={handleNewButtonClick}
+              onInputChange={(data) => setSeachInput(data)}
+              onCleanButton={() => setFilteredMaterials(materials)}
+            />
             <Content>
-              <Table columns={columns} data={materials} />
+              {filteredMaterials.length ? (
+                <Table columns={columns} data={filteredMaterials} />
+              ) : (
+                <Empty />
+              )}
             </Content>
           </Container>
           <SimpleConfirmationModal

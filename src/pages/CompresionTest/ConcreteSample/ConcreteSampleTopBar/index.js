@@ -1,10 +1,14 @@
 import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 
 import TopBar from '../../../../components/TopBar';
 
-function MaterialTransactionTopBar({ onCleanButton, onInputChange, ...rest }) {
+function ConcreteSampleTopBar({
+  onNewButton,
+  onCleanButton,
+  onInputChange,
+  ...rest
+}) {
   const inputRef = useRef(null);
   const firstDateInputRef = useRef(null);
   const secondDateInputRef = useRef(null);
@@ -14,14 +18,17 @@ function MaterialTransactionTopBar({ onCleanButton, onInputChange, ...rest }) {
   const handleSearchFieldChange = (data) => {
     let label = '';
     switch (data.value) {
-      case 'material':
-        label = 'material';
+      case 'tracker':
+        label = 'numero';
         break;
-      case 'category':
-        label = 'categoria';
+      case 'sampledAt':
+        label = 'fecha moldeo';
         break;
-      case 'createdAt':
-        label = 'fecha';
+      case 'loadedAt':
+        label = 'fecha rotura';
+        break;
+      case 'days':
+        label = 'días';
         break;
       default:
         label = '';
@@ -33,35 +40,40 @@ function MaterialTransactionTopBar({ onCleanButton, onInputChange, ...rest }) {
   const handleInputChange = ({ value }) => {
     if (searchField) {
       const data = {};
-      if (searchField !== 'createdAt') {
-        data[searchField] = { name: value };
-      }
-      if (searchField === 'createdAt') {
-        data.createdAt = {
-          from: firstDateInputRef.current.value,
-          to: secondDateInputRef.current.value,
-        };
+      switch (searchField) {
+        case 'tracker':
+          data[searchField] = value;
+          break;
+        case 'sampledAt':
+          data[searchField] = {
+            from: firstDateInputRef.current.value,
+            to: secondDateInputRef.current.value,
+          };
+          break;
+        case 'loadedAt':
+          data[searchField] = {
+            from: firstDateInputRef.current.value,
+            to: secondDateInputRef.current.value,
+          };
+          break;
+        case 'days':
+          data[searchField] = value;
+          break;
+        default:
       }
       onInputChange(data);
     }
   };
 
-  const handleCleanButton = () => {
-    switch (searchField) {
-      case 'material' || 'category':
-        inputRef.current.value = '';
-        break;
-      case 'createdAt':
-        firstDateInputRef.current.value = '';
-        secondDateInputRef.current.value = '';
-        break;
-      default:
+  const inputType = () => {
+    if (searchField === 'tracker' || searchField === 'days') {
+      return { type: 'number', min: '0' };
     }
-    onCleanButton();
+    return { type: 'text' };
   };
 
   const prepareInput = () => {
-    if (searchLabel === 'fecha') {
+    if (searchField === 'loadedAt' || searchField === 'sampledAt') {
       return (
         <div
           style={{
@@ -90,6 +102,7 @@ function MaterialTransactionTopBar({ onCleanButton, onInputChange, ...rest }) {
     return (
       <input
         disabled={!searchField}
+        {...inputType()}
         ref={inputRef}
         onChange={() => handleInputChange(inputRef.current)}
         placeholder={
@@ -99,22 +112,40 @@ function MaterialTransactionTopBar({ onCleanButton, onInputChange, ...rest }) {
     );
   };
 
+  const handleCleanButton = () => {
+    switch (searchField) {
+      case 'days' || 'tracker':
+        inputRef.current.value = '';
+        break;
+      case 'loadedAt' || 'sampledAt':
+        firstDateInputRef.current.value = '';
+        secondDateInputRef.current.value = '';
+        break;
+      default:
+    }
+    onCleanButton();
+  };
+
   return (
     <TopBar {...rest}>
+      <MenuButton onClick={onNewButton}>Crear</MenuButton>
       <Menu
         menuButton={<MenuButton>{`Consultar por ${searchLabel}`}</MenuButton>}
         arrow
         direction="bottom"
         viewScroll="initial"
       >
-        <MenuItem value="material" onClick={handleSearchFieldChange}>
-          Material
+        <MenuItem value="tracker" onClick={handleSearchFieldChange}>
+          Numero
         </MenuItem>
-        <MenuItem value="category" onClick={handleSearchFieldChange}>
-          Categoria
+        <MenuItem value="sampledAt" onClick={handleSearchFieldChange}>
+          Fecha Moldeo
         </MenuItem>
-        <MenuItem value="createdAt" onClick={handleSearchFieldChange}>
-          Fecha
+        <MenuItem value="loadedAt" onClick={handleSearchFieldChange}>
+          Fecha Rotura
+        </MenuItem>
+        <MenuItem value="days" onClick={handleSearchFieldChange}>
+          Días
         </MenuItem>
       </Menu>
       {prepareInput()}
@@ -123,9 +154,4 @@ function MaterialTransactionTopBar({ onCleanButton, onInputChange, ...rest }) {
   );
 }
 
-export default MaterialTransactionTopBar;
-
-MaterialTransactionTopBar.propTypes = {
-  onInputChange: PropTypes.func.isRequired,
-  onCleanButton: PropTypes.func.isRequired,
-};
+export default ConcreteSampleTopBar;

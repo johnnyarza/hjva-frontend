@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MdContentCopy, MdKeyboardBackspace } from 'react-icons/md';
-import { MenuButton } from '@szhsin/react-menu';
 import { toast } from 'react-toastify';
 import { startOfDay } from 'date-fns';
 import { useSelector } from 'react-redux';
@@ -14,8 +13,7 @@ import Empty from '../../../components/Empty';
 import { Container, Content, ConcreteSampleContainer } from './styles';
 import ConcreteSampleTable from './ConcreteSampleTable/index';
 import ConcreteSampleModal from './ConcreteSampleModal';
-
-import { MenuContainer } from '../styles';
+import TopBar from './ConcreteSampleTopBar';
 
 import api from '../../../services/api';
 
@@ -27,12 +25,14 @@ import TableEditColumn from '../../../components/TableEditColumn';
 function ConcreteSample() {
   const { locale } = useSelector((state) => state.locale);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState('');
   const [userRole, setUserRole] = useState('');
   const [compressionTest, setCompressionTest] = useState('');
   const [isConcreteSampleModalOpen, setIsConcreteSampleModalOpen] = useState(
     false
   );
   const [concreteSamples, setConcreteSamples] = useState(null);
+  const [filteredConcreteSamples, setFilteredConcreteSamples] = useState([]);
   const [currentConcreteSample, setCurrentConcreteSample] = useState({});
   const { id: urlId } = useParams();
 
@@ -72,7 +72,8 @@ function ConcreteSample() {
         });
       }
 
-      setConcreteSamples(data);
+      setConcreteSamples(data || []);
+      setFilteredConcreteSamples(data || []);
     };
     loadAllConcreteSamples();
   }, [compressionTest, urlId]);
@@ -257,6 +258,44 @@ function ConcreteSample() {
 
   const columns = useCallback(COMPRESSIONTESTCOLUMNS, []);
 
+  const handleSearch = useCallback(() => {
+    let foundConcreteSamples = concreteSamples;
+    const {
+      days: inputDays,
+      sampledAt,
+      loadedAt,
+      tracker: trackerInput,
+    } = searchInput;
+    if (trackerInput && trackerInput > 0) {
+      foundConcreteSamples = concreteSamples.filter(({ tracker }) => {
+        const currentName = String(tracker);
+        const newName = String(trackerInput);
+        return currentName.includes(newName);
+      });
+    }
+    if (inputDays) {
+      foundConcreteSamples = concreteSamples.filter(({ days }) => {
+        return Number(inputDays) === days;
+      });
+    }
+    if (sampledAt || loadedAt) {
+      const fieldName = sampledAt ? 'sampledAt' : 'loadedAt';
+      const field = searchInput[fieldName];
+      const { from, to } = field;
+      if (from && to) {
+        foundConcreteSamples = concreteSamples.filter((concreteSample) => {
+          const date = concreteSample[fieldName];
+          return utils.isBetweenDates(from, to, date);
+        });
+      }
+    }
+    setTimeout(() => setFilteredConcreteSamples(foundConcreteSamples), 350);
+  }, [concreteSamples, searchInput]);
+
+  useEffect(() => {
+    if (searchInput) handleSearch(searchInput);
+  }, [searchInput, handleSearch]);
+
   return (
     <>
       {isLoading ? (
@@ -270,16 +309,15 @@ function ConcreteSample() {
 
             <h2>Probetas</h2>
           </div>
-          <MenuContainer>
-            <MenuButton
-              onClick={() => {
-                setCurrentConcreteSample({});
-                setIsConcreteSampleModalOpen(true);
-              }}
-            >
-              Crear
-            </MenuButton>
-          </MenuContainer>
+          <TopBar
+            onNewButton={() => {
+              setCurrentConcreteSample({});
+              setIsConcreteSampleModalOpen(true);
+            }}
+            onInputChange={(data) => setSearchInput(data)}
+            onCleanButton={() => setFilteredConcreteSamples(concreteSamples)}
+          />
+
           <Content>
             {compressionTest && (
               <Table
@@ -295,7 +333,7 @@ function ConcreteSample() {
               ) : (
                 <ConcreteSampleTable
                   columns={concreteSampleColumns}
-                  data={concreteSamples}
+                  data={filteredConcreteSamples}
                 />
               )}
             </ConcreteSampleContainer>

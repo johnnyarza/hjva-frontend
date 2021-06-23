@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { all, takeLatest, select } from 'redux-saga/effects';
 import api from '../../../services/api';
 
@@ -8,7 +9,7 @@ export function changeLocale({ payload }) {
       api.defaults.headers.locale = locale;
     }
   } catch (error) {
-    console.log(error);
+    toast.error(error.message);
   }
 }
 

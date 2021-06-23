@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { MdDelete, MdEdit } from 'react-icons/md';
-import SideBar from '../../components/SideBar';
 import api from '../../services/api';
 
 import { Container, Content } from './styles';

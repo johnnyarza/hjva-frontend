@@ -98,6 +98,7 @@ export default function Input({
 
 Input.propTypes = {
   name: PropTypes.string.isRequired,
+  onCalcClick: PropTypes.func.isRequired,
   hasBorder: PropTypes.bool,
   position: PropTypes.oneOf(['right', 'left']),
 };

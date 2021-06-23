@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu';
 
@@ -166,5 +167,9 @@ function CompressionTestTopBar({ onInputChange, onCleanButton, onNewButton }) {
     </TopBar>
   );
 }
-
+CompressionTestTopBar.propTypes = {
+  onInputChange: PropTypes.func.isRequired,
+  onCleanButton: PropTypes.func.isRequired,
+  onNewButton: PropTypes.func.isRequired,
+};
 export default CompressionTestTopBar;

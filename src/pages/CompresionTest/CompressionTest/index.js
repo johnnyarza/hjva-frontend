@@ -176,6 +176,7 @@ function CompresionTest() {
             <button
               className="edit-button"
               type="button"
+              // eslint-disable-next-line react/prop-types
               onClick={() => history.push(`${original.id}`)}
             >
               <MdVisibility />

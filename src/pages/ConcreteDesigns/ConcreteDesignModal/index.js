@@ -339,10 +339,12 @@ ConcreteDesignModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onCancelButton: PropTypes.func.isRequired,
   onEscPress: PropTypes.func.isRequired,
+  locale: PropTypes.string,
 };
 
 ConcreteDesignModal.defaultProps = {
   initialData: {},
+  locale: 'pt-BR',
 };
 
 export default ConcreteDesignModal;

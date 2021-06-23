@@ -7,6 +7,11 @@ function TopBar({ children, ...rest }) {
   return <Container {...rest}>{children}</Container>;
 }
 
-TopBar.propTypes = {};
+TopBar.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element,
+  ]).isRequired,
+};
 
 export default TopBar;

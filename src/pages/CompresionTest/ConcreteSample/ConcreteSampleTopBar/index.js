@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 
 import TopBar from '../../../../components/TopBar';
@@ -154,4 +155,9 @@ function ConcreteSampleTopBar({
   );
 }
 
+ConcreteSampleTopBar.propTypes = {
+  onNewButton: PropTypes.func.isRequired,
+  onCleanButton: PropTypes.func.isRequired,
+  onInputChange: PropTypes.func.isRequired,
+};
 export default ConcreteSampleTopBar;

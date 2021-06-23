@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-
-import SideBar from '../../../components/SideBar';
+import React from 'react';
 
 import CompressionTest from '../CompressionTest';
 

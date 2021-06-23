@@ -17,6 +17,8 @@ import utils from '../../utils/index';
 function ConcreteDesigns() {
   const { locale } = useSelector((state) => state.locale);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
+  const [filteredConcreteDesigns, setFilteredConcreteDesigns] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
   const [materials, setMaterials] = useState(null);
   const [currentConcreteDesign, setCurrentConcreteDesign] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +28,11 @@ function ConcreteDesigns() {
     const loadAllConcreteDesigns = async () => {
       const { data } = await api.get('concreteDesigns');
       if (data) {
+        console.log(data);
         setConcreteDesigns(
+          data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
+        );
+        setFilteredConcreteDesigns(
           data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
         );
       }
@@ -40,6 +46,7 @@ function ConcreteDesigns() {
         );
       }
     };
+
     loadAllConcreteDesigns();
     loadAllMaterials();
   }, []);
@@ -237,6 +244,56 @@ function ConcreteDesigns() {
     return [...formatedCols, newCol];
   }, [handleDeleteClick, handleEditClick, locale]);
 
+  const handleSearch = useCallback(() => {
+    let foundCompressionTests = concreteDesigns;
+    const { slump } = searchInput;
+    const { name } = searchInput;
+    const { createdAt } = searchInput;
+    const { notes } = searchInput;
+
+    if (notes) {
+      foundCompressionTests = concreteDesigns.filter((current) => {
+        const currentName = current.notes.toLowerCase();
+        const newName = notes.toLowerCase();
+        return currentName.includes(newName);
+      });
+    }
+
+    if (name) {
+      foundCompressionTests = concreteDesigns.filter((current) => {
+        const currentName = current.name.toLowerCase();
+        const newName = name.toLowerCase();
+        return currentName.includes(newName);
+      });
+    }
+
+    if (slump && slump > 0) {
+      foundCompressionTests = concreteDesigns.filter(
+        ({ slump: currentSlump }) => {
+          const currentName = String(currentSlump);
+          const newName = String(slump);
+          return currentName.includes(newName);
+        }
+      );
+    }
+
+    if (createdAt) {
+      const { from, to } = createdAt;
+      if (from && to) {
+        foundCompressionTests = concreteDesigns.filter(
+          ({ updatedAt: date }) => {
+            return utils.isBetweenDates(from, to, date);
+          }
+        );
+      }
+    }
+    setTimeout(() => setFilteredConcreteDesigns(foundCompressionTests), 350);
+  }, [concreteDesigns, searchInput]);
+
+  useEffect(() => {
+    if (searchInput) handleSearch(searchInput);
+  }, [searchInput, handleSearch]);
+
   return (
     <>
       {isLoading ? (
@@ -251,9 +308,11 @@ function ConcreteDesigns() {
               setCurrentConcreteDesign({});
               setIsConcreteModalOpen(true);
             }}
+            onInputChange={(data) => setSearchInput(data)}
+            onCleanButton={() => setFilteredConcreteDesigns(concreteDesigns)}
           />
           <Content>
-            <Table columns={columns} data={concreteDesigns} />
+            <Table columns={columns} data={filteredConcreteDesigns} />
           </Content>
         </Container>
       )}

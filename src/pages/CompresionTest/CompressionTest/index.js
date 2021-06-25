@@ -202,13 +202,12 @@ function CompresionTest() {
 
   const handleSearch = useCallback(() => {
     let foundCompressionTests = compressionTests;
-    const { client } = searchInput;
-    const { tracker } = searchInput;
-    const { updatedAt } = searchInput;
+    const { client, tracker, updatedAt } = searchInput;
 
     if (client) {
       foundCompressionTests = compressionTests.filter(
         ({ client: currentClient }) => {
+          if (!currentClient.name) return false;
           const currentName = currentClient.name.toLowerCase();
           const newName = client.name.toLowerCase();
           return currentName.includes(newName);

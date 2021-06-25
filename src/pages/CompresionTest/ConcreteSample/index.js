@@ -275,6 +275,7 @@ function ConcreteSample() {
     }
     if (inputDays) {
       foundConcreteSamples = concreteSamples.filter(({ days }) => {
+        if (!days) return false;
         return Number(inputDays) === days;
       });
     }

@@ -12,10 +12,21 @@ import ClientModal from './ClientModal';
 import utils from '../../utils';
 
 function Clients() {
+  let timeout;
   const [clients, setClients] = useState(undefined);
+  const [filteredClients, setFilteredClients] = useState([]);
+  const [inputSearch, setInputSearch] = useState(undefined);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [currentClient, setCurrentClient] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  });
 
   useEffect(() => {
     const loadAllClients = async () => {
@@ -24,6 +35,7 @@ function Clients() {
         data.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
       }
       setClients(data || []);
+      setFilteredClients(data || []);
     };
 
     loadAllClients();
@@ -122,6 +134,52 @@ function Clients() {
     return [...COLUMNS, newCol];
   }, [deleteClient]);
 
+  const handleSearch = useCallback(
+    (searchInput) => {
+      let foundClients = clients;
+      const { name, email, phone, updatedAt } = searchInput;
+
+      if (name) {
+        foundClients = clients.filter(({ name: clientName }) => {
+          if (!clientName) return false;
+          const currentName = clientName.toLowerCase();
+          const newName = name.toLowerCase();
+          return currentName.includes(newName);
+        });
+      }
+      if (email) {
+        foundClients = clients.filter(({ email: clientEmail }) => {
+          if (!clientEmail) return false;
+          const currentName = clientEmail.toLowerCase();
+          const newName = email.toLowerCase();
+          return currentName.includes(newName);
+        });
+      }
+      if (phone) {
+        foundClients = clients.filter(({ phone: clientPhone }) => {
+          if (!clientPhone) return false;
+          const currentName = clientPhone.toLowerCase();
+          const newName = phone.toLowerCase();
+          return currentName.includes(newName);
+        });
+      }
+      if (updatedAt) {
+        const { from, to } = updatedAt;
+        if (from && to) {
+          foundClients = clients.filter(({ updatedAt: date }) => {
+            return utils.isBetweenDates(from, to, date);
+          });
+        }
+      }
+      setTimeout(() => setFilteredClients(foundClients), 350);
+    },
+    [clients]
+  );
+
+  useEffect(() => {
+    if (inputSearch) handleSearch(inputSearch);
+  }, [inputSearch, handleSearch]);
+
   return (
     <>
       <Container>
@@ -132,13 +190,15 @@ function Clients() {
               setCurrentClient({});
               setIsClientModalOpen(true);
             }}
+            onInputChange={(data) => setInputSearch(data)}
+            onCleanButton={() => setFilteredClients(clients)}
           />
         )}
         <Content>
           {isLoading ? (
             <Spinner />
           ) : (
-            <ClientsTable data={clients} columns={columns} />
+            <ClientsTable data={filteredClients} columns={columns} />
           )}
         </Content>
       </Container>

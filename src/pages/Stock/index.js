@@ -278,6 +278,7 @@ function Stock() {
     const { createdAt } = searchInput;
     if (searchMaterial) {
       foundMaterials = materials.filter(({ name }) => {
+        if (!name) return false;
         const currentName = name.toLowerCase();
         const newName = searchInput.material.name.toLowerCase();
         return currentName.includes(newName);
@@ -285,6 +286,7 @@ function Stock() {
     }
     if (category) {
       foundMaterials = materials.filter(({ material }) => {
+        if (!material.category?.name) return false;
         const currentName = material.category.name.toLowerCase();
         const newName = category.name.toLowerCase();
         return currentName.includes(newName);

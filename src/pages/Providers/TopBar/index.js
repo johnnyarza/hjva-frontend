@@ -2,19 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Container } from './styles';
+import TopBar from '../../../components/DinTopBar';
 
-function TopBar({ onNewButton, ...rest }) {
+function ProvidersTopBar({ onNewButton, ...rest }) {
   return (
-    <Container {...rest}>
+    <TopBar {...rest}>
       <button type="button" onClick={onNewButton}>
         Crear
       </button>
-    </Container>
+    </TopBar>
   );
 }
 
-export default TopBar;
+export default ProvidersTopBar;
 
-TopBar.propTypes = {
+ProvidersTopBar.propTypes = {
   onNewButton: PropTypes.func.isRequired,
 };

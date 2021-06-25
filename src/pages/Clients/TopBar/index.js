@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import { MenuButton, MenuItem, Menu } from '@szhsin/react-menu';
 
 import TopBar from '../../../components/TopBar';
 
@@ -13,11 +14,14 @@ function ClientsTopBar({ onNewButton, onCleanButton, onInputChange, ...rest }) {
   const handleSearchFieldChange = (data) => {
     let label = '';
     switch (data.value) {
-      case 'tracker':
-        label = 'numero';
+      case 'name':
+        label = 'nombre';
         break;
-      case 'client':
-        label = 'cliente';
+      case 'email':
+        label = 'Correo E.';
+        break;
+      case 'phone':
+        label = 'Telefono';
         break;
       case 'updatedAt':
         label = 'fecha';
@@ -33,11 +37,14 @@ function ClientsTopBar({ onNewButton, onCleanButton, onInputChange, ...rest }) {
     if (searchField) {
       const data = {};
       switch (searchField) {
-        case 'tracker':
+        case 'name':
           data[searchField] = value;
           break;
-        case 'client':
-          data[searchField] = { name: value };
+        case 'email':
+          data[searchField] = value;
+          break;
+        case 'phone':
+          data[searchField] = value;
           break;
         case 'updatedAt':
           data[searchField] = {
@@ -99,15 +106,12 @@ function ClientsTopBar({ onNewButton, onCleanButton, onInputChange, ...rest }) {
   };
 
   const handleCleanButton = () => {
-    switch (searchField) {
-      case 'name':
-        inputRef.current.value = '';
-        break;
-      case 'updatedAt':
-        firstDateInputRef.current.value = '';
-        secondDateInputRef.current.value = '';
-        break;
-      default:
+    if (searchField !== 'updatedAt') {
+      inputRef.current.value = '';
+    }
+    if (searchField === 'updatedAt') {
+      firstDateInputRef.current.value = '';
+      secondDateInputRef.current.value = '';
     }
     onCleanButton();
   };
@@ -117,6 +121,29 @@ function ClientsTopBar({ onNewButton, onCleanButton, onInputChange, ...rest }) {
       <button type="button" onClick={onNewButton}>
         Crear
       </button>
+      <Menu
+        menuButton={
+          <MenuButton>{`Consultar por ${searchLabel || '?'}`}</MenuButton>
+        }
+        arrow
+        direction="bottom"
+        viewScroll="initial"
+      >
+        <MenuItem value="name" onClick={handleSearchFieldChange}>
+          Nombre
+        </MenuItem>
+        <MenuItem value="phone" onClick={handleSearchFieldChange}>
+          Telefono
+        </MenuItem>
+        <MenuItem value="email" onClick={handleSearchFieldChange}>
+          Correro E.
+        </MenuItem>
+        <MenuItem value="updatedAt" onClick={handleSearchFieldChange}>
+          Fecha
+        </MenuItem>
+      </Menu>
+      {prepareInput()}
+      <MenuButton onClick={handleCleanButton}>Limpiar Consulta</MenuButton>
     </TopBar>
   );
 }
@@ -125,4 +152,6 @@ export default ClientsTopBar;
 
 ClientsTopBar.propTypes = {
   onNewButton: PropTypes.func.isRequired,
+  onCleanButton: PropTypes.func.isRequired,
+  onInputChange: PropTypes.func.isRequired,
 };

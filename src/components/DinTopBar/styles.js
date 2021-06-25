@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 
 export const Container = styled.div`
   min-height: 40px;
@@ -6,9 +7,24 @@ export const Container = styled.div`
   border-radius: 5px;
   display: flex;
   align-items: center;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 5px 10px 5px 10px;
   margin-bottom: 15px;
+
+  input {
+    border: 1px solid #ebebeb;
+    border-radius: 5px;
+    height: 25px;
+    margin-left: 10px;
+    padding: 0px 10px 0px 10px;
+    transition: border-color 0.2s;
+
+    :focus {
+      border-color: var(--focusedInput) !important;
+    }
+    :hover {
+      border-color: ${darken(0.2, '#ebebeb')};
+    }
+  }
 
   button {
     min-height: 25px;

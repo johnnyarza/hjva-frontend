@@ -246,13 +246,11 @@ function ConcreteDesigns() {
 
   const handleSearch = useCallback(() => {
     let foundCompressionTests = concreteDesigns;
-    const { slump } = searchInput;
-    const { name } = searchInput;
-    const { createdAt } = searchInput;
-    const { notes } = searchInput;
+    const { slump, name, notes, createdAt } = searchInput;
 
     if (notes) {
       foundCompressionTests = concreteDesigns.filter((current) => {
+        if (!current.notes) return false;
         const currentName = current.notes.toLowerCase();
         const newName = notes.toLowerCase();
         return currentName.includes(newName);
@@ -261,6 +259,7 @@ function ConcreteDesigns() {
 
     if (name) {
       foundCompressionTests = concreteDesigns.filter((current) => {
+        if (!current.name) return false;
         const currentName = current.name.toLowerCase();
         const newName = name.toLowerCase();
         return currentName.includes(newName);
@@ -270,6 +269,7 @@ function ConcreteDesigns() {
     if (slump && slump > 0) {
       foundCompressionTests = concreteDesigns.filter(
         ({ slump: currentSlump }) => {
+          if (!currentSlump) return false;
           const currentName = String(currentSlump);
           const newName = String(slump);
           return currentName.includes(newName);

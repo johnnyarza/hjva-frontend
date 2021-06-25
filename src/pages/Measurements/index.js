@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
@@ -11,14 +11,16 @@ import Spinner from '../../components/Spinner';
 import MeasureTable from '../../components/Table';
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
 
-import TopBar from './TopBar';
+import TopBar from '../../components/DinTopBar';
 import MeasureModal from './MeasurementModal';
 
 import utils from '../../utils';
 
 function Measurements() {
   const [isLoading, setIsLoading] = useState(true);
+  const [searchField, setSearchField] = useState('');
   const [measurements, setMeasurements] = useState(null);
+  const [filteredMeasurements, setFilteredMeasurements] = useState([]);
   const [currentMeasure, setCurrentMeasure] = useState(null);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [isMeasureModalOpenOpen, setIsMeasureModalOpenOpen] = useState(false);
@@ -31,6 +33,7 @@ function Measurements() {
           utils.naturalSortCompare(a.abbreviation, b.abbreviation)
         );
         setMeasurements(data);
+        setFilteredMeasurements(data);
       }
     };
     loadAllMeasurements();
@@ -79,7 +82,9 @@ function Measurements() {
         return c;
       });
       setMeasurements(
-        updatedMeasurements.sort((a, b) => utils.naturalSortCompare(a, b))
+        updatedMeasurements.sort((a, b) =>
+          utils.naturalSortCompare(a.abbreviation, b.abbreviation)
+        )
       );
       toast.success(`Unidad guardada con éxito`);
     } catch (error) {
@@ -177,6 +182,34 @@ function Measurements() {
     return [...COLUMNS, newCol];
   }, []);
 
+  const handleSearch = useCallback(() => {
+    let filtered = measurements;
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      filtered = measurements.filter((provider) => {
+        const valueToCompare = provider[field];
+        if (!valueToCompare) return false;
+        if (field === 'updatedAt') {
+          const { from, to } = value;
+          if (from && to) {
+            return utils.isBetweenDates(from, to, valueToCompare);
+          }
+          return true;
+        }
+
+        return valueToCompare.toLowerCase().includes(value.toLowerCase());
+      });
+    }
+
+    setFilteredMeasurements(filtered);
+  }, [measurements, searchField]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch, measurements]);
+
   return (
     <>
       <Container>
@@ -188,13 +221,37 @@ function Measurements() {
         ) : (
           <>
             <TopBar
-              onNewButton={() => {
-                setCurrentMeasure({});
-                setIsMeasureModalOpenOpen(true);
-              }}
+              onSearchInputChange={(data) => setSearchField(data)}
+              onCleanSearchButton={() => setFilteredMeasurements(measurements)}
+              buttons={[
+                {
+                  label: 'Crear',
+                  onClick: () => {
+                    setCurrentMeasure({});
+                    setIsMeasureModalOpenOpen(true);
+                  },
+                },
+              ]}
+              fields={[
+                {
+                  field: 'abbreviation',
+                  label: 'Abreviatura',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'notes',
+                  label: 'Descripción',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'updatedAt',
+                  label: 'Fecha',
+                  inputProps: { type: 'date' },
+                },
+              ]}
             />
             <Content>
-              <MeasureTable data={measurements} columns={columns} />
+              <MeasureTable data={filteredMeasurements} columns={columns} />
             </Content>
           </>
         )}

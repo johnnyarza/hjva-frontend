@@ -7,8 +7,7 @@ export const Container = styled.div`
   border-radius: 5px;
   display: flex;
   align-items: center;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 5px 10px 5px 10px;
   margin-bottom: 15px;
 
   input {

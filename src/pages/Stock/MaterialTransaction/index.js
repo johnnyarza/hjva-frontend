@@ -56,8 +56,8 @@ function MaterialTransaction() {
     };
   }, [timeout]);
 
-  const handleEdit = useCallback((original) => {
-    console.log(original);
+  const handleEdit = useCallback(() => {
+    // console.log(original);
   }, []);
 
   const handleDelete = useCallback(
@@ -83,6 +83,7 @@ function MaterialTransaction() {
     const { createdAt } = searchInput;
     if (searchMaterial) {
       foundTransactions = transactions.filter(({ material }) => {
+        if (!material.name) return false;
         const currentName = material.name.toLowerCase();
         const newName = searchInput.material.name.toLowerCase();
         return currentName.includes(newName);
@@ -90,6 +91,7 @@ function MaterialTransaction() {
     }
     if (category) {
       foundTransactions = transactions.filter(({ material }) => {
+        if (!material.category?.name) return false;
         const currentName = material.category.name.toLowerCase();
         const newName = category.name.toLowerCase();
         return currentName.includes(newName);

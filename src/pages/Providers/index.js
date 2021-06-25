@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { MdDelete, MdEdit } from 'react-icons/md';
+import { MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 import ProviderTable from '../../components/Table';
 import Spinner from '../../components/Spinner';
 
-import TopBar from './TopBar';
+import TopBar from '../../components/DinTopBar';
 
 import COLUMNS from './ProviderTable/columns';
 import ProviderModal from './ProviderModal';
@@ -13,9 +13,12 @@ import { Container, Content } from './styles';
 
 import api from '../../services/api';
 import utils from '../../utils';
+import DeleteButton from '../../components/DeleteButton';
 
 function Providers() {
+  const [searchField, setSearchField] = useState('');
   const [providers, setProviders] = useState(null);
+  const [filteredProviders, setFilteredProviders] = useState([]);
   const [currentProvider, setCurrentProvider] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isModalProviderShow, setIsModalProviderShow] = useState(false);
@@ -23,9 +26,11 @@ function Providers() {
   useEffect(() => {
     const loadAllProviders = async () => {
       const { data } = await api.get('providers');
+
       if (data) {
-        data.sort((a, b) => utils.naturalSortCompare(a, b));
+        data.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
         setProviders(data);
+        setFilteredProviders(data);
       }
     };
     loadAllProviders();
@@ -59,7 +64,7 @@ function Providers() {
       const { data: newProvider } = await storeProvider(cleanedProvider);
       if (newProvider) {
         const newProviders = [...providers, newProvider];
-        newProviders.sort((a, b) => a.name.localeCompare(b.name));
+        newProviders.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
         setProviders(newProviders);
       }
       toast.success(`Proveedor creado con éxito`);
@@ -83,7 +88,7 @@ function Providers() {
           }
           return p;
         });
-        newProviders.sort((a, b) => utils.naturalSortCompare(a, b));
+        newProviders.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
         setProviders(newProviders);
       }
       toast.success(`Proveedor guardado con éxito`);
@@ -140,13 +145,7 @@ function Providers() {
           >
             <MdEdit />
           </button>
-          <button
-            className="delete-button"
-            type="button"
-            onClick={() => handleDeleteClick(original)}
-          >
-            <MdDelete />
-          </button>
+          <DeleteButton onClick={() => handleDeleteClick(original)} />
         </div>
       ),
     };
@@ -174,6 +173,34 @@ function Providers() {
     }
   };
 
+  const handleSearch = useCallback(() => {
+    let filtered = providers;
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      filtered = providers.filter((provider) => {
+        const valueToCompare = provider[field];
+        if (!valueToCompare) return false;
+        if (field === 'updatedAt') {
+          const { from, to } = value;
+          if (from && to) {
+            return utils.isBetweenDates(from, to, valueToCompare);
+          }
+          return false;
+        }
+
+        return valueToCompare.toLowerCase().includes(value.toLowerCase());
+      });
+    }
+
+    setFilteredProviders(filtered);
+  }, [providers, searchField]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchField, handleSearch, providers]);
+
   return (
     <>
       <Container>
@@ -184,9 +211,40 @@ function Providers() {
           <Spinner />
         ) : (
           <>
-            <TopBar onNewButton={handleNewButton} />
+            <TopBar
+              onCleanSearchButton={() => setFilteredProviders(providers)}
+              onSearchInputChange={(data) => setSearchField(data)}
+              buttons={[{ label: 'Crear', onClick: handleNewButton }]}
+              fields={[
+                {
+                  field: 'name',
+                  label: 'Nombre',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'updatedAt',
+                  label: 'Fecha',
+                  inputProps: { type: 'date' },
+                },
+                {
+                  field: 'phone',
+                  label: 'Telefono',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'email',
+                  label: 'Correo E.',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'address',
+                  label: 'Ubicación',
+                  inputProps: { type: 'text' },
+                },
+              ]}
+            />
             <Content>
-              <ProviderTable data={providers} columns={columns} />
+              <ProviderTable data={filteredProviders} columns={columns} />
             </Content>
           </>
         )}

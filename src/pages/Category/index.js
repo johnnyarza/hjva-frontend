@@ -11,7 +11,8 @@ import Spinner from '../../components/Spinner';
 import CategoryTable from '../../components/Table';
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
 
-import TopBar from './TopBar';
+import TopBar from '../../components/DinTopBar';
+
 import CategoryModal from './CategoryModal';
 
 import utils from '../../utils';
@@ -19,6 +20,8 @@ import utils from '../../utils';
 function Category() {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState(null);
+  const [searchField, setSearchField] = useState('');
+  const [filteredCategories, setFilteredCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [isCatModalOpenOpen, setIsCatModalOpenOpen] = useState(false);
@@ -26,9 +29,11 @@ function Category() {
   useEffect(() => {
     const loadAllCategories = async () => {
       const { data } = await api.get('categories');
+      console.log(data);
       if (data) {
         data.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
         setCategories(data);
+        setFilteredCategories(data);
       }
     };
     loadAllCategories();
@@ -180,10 +185,24 @@ function Category() {
         ) : (
           <>
             <TopBar
-              onNewButton={() => {
-                setCurrentCategory({});
-                setIsCatModalOpenOpen(true);
-              }}
+              onSearchInputChange={(data) => setSearchField(data)}
+              onCleanSearchButton={() => setFilteredCategories(categories)}
+              fields={[
+                {
+                  field: 'name',
+                  label: 'Nombre',
+                  inputProps: { type: 'text' },
+                },
+              ]}
+              buttons={[
+                {
+                  label: 'Crear',
+                  onClick: () => {
+                    setCurrentCategory({});
+                    setIsCatModalOpenOpen(true);
+                  },
+                },
+              ]}
             />
             <Content>
               <CategoryTable data={categories} columns={columns} />

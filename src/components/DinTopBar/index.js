@@ -109,13 +109,15 @@ function TopBar({
       })}
       <Menu
         menuButton={
-          <MenuButton>{`Consultar por ${searchField.label || '?'}`}</MenuButton>
+          <MenuButton>{`Consultar por ${
+            searchField?.label || '?'
+          }`}</MenuButton>
         }
         arrow
         direction="bottom"
         viewScroll="initial"
       >
-        {fields.map(({ field, label, inputProps }) => {
+        {fields?.map(({ field, label, inputProps }) => {
           return (
             <MenuItem
               onClick={handleSearchFieldClick}

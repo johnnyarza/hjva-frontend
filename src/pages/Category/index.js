@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
@@ -138,6 +138,33 @@ function Category() {
     setCurrentCategory(data);
     setIsConfirmDeleteOpen(true);
   };
+  const handleSearch = useCallback(() => {
+    let filtered = categories;
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      filtered = categories.filter((provider) => {
+        const valueToCompare = provider[field];
+        if (!valueToCompare) return false;
+        if (field === 'updatedAt') {
+          const { from, to } = value;
+          if (from && to) {
+            return utils.isBetweenDates(from, to, valueToCompare);
+          }
+          return true;
+        }
+
+        return valueToCompare.toLowerCase().includes(value.toLowerCase());
+      });
+    }
+
+    setFilteredCategories(filtered);
+  }, [categories, searchField]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch, categories]);
 
   const columns = useMemo(() => {
     const newCol = {
@@ -193,6 +220,11 @@ function Category() {
                   label: 'Nombre',
                   inputProps: { type: 'text' },
                 },
+                {
+                  field: 'updatedAt',
+                  label: 'Fecha',
+                  inputProps: { type: 'date' },
+                },
               ]}
               buttons={[
                 {
@@ -205,7 +237,7 @@ function Category() {
               ]}
             />
             <Content>
-              <CategoryTable data={categories} columns={columns} />
+              <CategoryTable data={filteredCategories} columns={columns} />
             </Content>
           </>
         )}

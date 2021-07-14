@@ -66,8 +66,9 @@ export default function Routes() {
       <Route
         path="/product/edit"
         exact
-        component={(props) => <ProductDashboard {...props} />}
         isPrivate
+        hasSideBar
+        component={(props) => <ProductDashboard {...props} />}
       />
 
       <Route

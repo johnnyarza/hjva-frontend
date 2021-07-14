@@ -13,6 +13,7 @@ import ConcreteModal from './ConcreteDesignModal';
 
 import api from '../../services/api';
 import utils from '../../utils/index';
+import DeleteButton from '../../components/DeleteButton';
 
 function ConcreteDesigns() {
   const { locale } = useSelector((state) => state.locale);
@@ -28,7 +29,6 @@ function ConcreteDesigns() {
     const loadAllConcreteDesigns = async () => {
       const { data } = await api.get('concreteDesigns');
       if (data) {
-        console.log(data);
         setConcreteDesigns(
           data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
         );
@@ -230,13 +230,7 @@ function ConcreteDesigns() {
           >
             <MdEdit />
           </button>
-          <button
-            className="delete-button"
-            type="button"
-            onClick={() => handleDeleteClick(original)}
-          >
-            <MdDelete />
-          </button>
+          <DeleteButton onClick={() => handleDeleteClick(original)} />
         </div>
       ),
     };

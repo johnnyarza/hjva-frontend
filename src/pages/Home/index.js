@@ -15,7 +15,7 @@ export default function Home() {
 
   useEffect(() => {
     async function loadAllProducts() {
-      const res = await api.get('product')
+      const res = await api.get('products')
       setProducts(res.data)
       if (res.data[0]) {
         const categoriesSet = new Set(res.data.map((p) => p.category))

@@ -70,10 +70,13 @@ function Stock() {
     }
   }, [materials]);
 
-  const handleEditClick = useCallback((data) => {
-    setCurrentMaterial(data);
-    setIsMaterialModalOpen(true);
-  }, []);
+  const handleEditClick = useCallback(
+    (data) => {
+      setCurrentMaterial(materials.find((mat) => mat.id === data.id));
+      setIsMaterialModalOpen(true);
+    },
+    [materials]
+  );
 
   const handleDeleteClick = useCallback((data) => {
     setCurrentMaterial(data);
@@ -168,9 +171,35 @@ function Stock() {
     return api.put(`material/${body.id}`, body);
   };
 
+  const handleMaterialFilesChanges = (materialId, files) => {
+    const filesToCreate = files.filter((file) => !!file.auxId);
+    const filesToDelete = files.filter((file) => file.id && file.toDelete);
+    console.log(filesToCreate);
+    console.log(filesToDelete);
+
+    const promises = Promise.all(
+      filesToCreate.map(({ file }) => {
+        const data = new FormData();
+        data.append('file', file);
+        return api.post(`material/${materialId}/file`, data);
+      }),
+      filesToDelete.map(({ id }) => {
+        return api.delete(`material/${id}/file`);
+      })
+    );
+
+    return promises;
+  };
+
   const handleUpdateMaterial = async (body) => {
     try {
+      const { file: filesToChange } = body;
+      if (filesToChange) {
+        await handleMaterialFilesChanges(body.id, filesToChange);
+      }
+
       const newMaterial = (await updateMaterial(body)).data;
+
       if (newMaterial) {
         const newMaterials = materials.map((m) => {
           if (m.id === newMaterial.id) {

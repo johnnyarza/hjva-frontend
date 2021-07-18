@@ -12,6 +12,8 @@ import { Container, Content } from './styles';
 import Input from '../../../components/Input';
 import TextArea from '../../../components/TextArea';
 import Label from '../../../components/Label';
+import ImagesSlide from '../../../components/ImagesSlide';
+
 import api from '../../../services/api';
 
 function StockModal({
@@ -24,6 +26,7 @@ function StockModal({
 }) {
   const formRef = useRef(null);
   const [material, setMaterial] = useState(null);
+  const [files, setFiles] = useState('');
   const [providers, setProviders] = useState(null);
   const [categories, setCategories] = useState(null);
   const [measurements, setMeasurements] = useState(null);
@@ -45,9 +48,14 @@ function StockModal({
           value: initialData.category.id,
         },
       };
+
       setMaterial(formatedData);
     } else setMaterial(initialData);
   }, [initialData]);
+
+  useEffect(() => {
+    console.log(material);
+  }, [material]);
 
   useEffect(() => {
     if (material) {
@@ -146,6 +154,7 @@ function StockModal({
         provider: data.provider.value,
         measurement: data.measurement.value,
         category: data.category.value,
+        file: files,
       });
 
       formRef.current.setErrors({});
@@ -202,72 +211,98 @@ function StockModal({
                 <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
                   {`${material?.id ? 'Editar' : 'Crear'} Material`}
                 </h2>
-                <Label htmlFor="name" label="Nombre">
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="Nome"
-                    onChange={() => formRef.current.setFieldError('name', '')}
-                    hasBorder={false}
-                  />
-                </Label>
-
-                <Label htmlFor="provider" label="Proveedor">
-                  <SearchbleList
-                    id="provider"
-                    name="provider"
-                    values={formatProviders()}
-                    onChange={() =>
-                      formRef.current.setFieldError('provider', '')
-                    }
-                  />
-                  {/* <>{selectProvider()}</> */}
-                </Label>
-                <Label htmlFor="measurement" label="Unidad">
-                  <SearchbleList
-                    id="measurement"
-                    name="measurement"
-                    values={formatMeasurement()}
-                    onChange={() =>
-                      formRef.current.setFieldError('measurement', '')
-                    }
-                  />
-                  {/* <>{selectMeasurement()}</> */}
-                </Label>
-
-                <Label htmlFor="category" label="Categoria">
-                  <SearchbleList
-                    id="category"
-                    name="category"
-                    values={formatCategory()}
-                    onChange={() =>
-                      formRef.current.setFieldError('category', '')
-                    }
-                  />
-                  {/* <>{selectCategory()}</> */}
-                </Label>
-
-                <Label htmlFor="notes" label="Observaciones">
-                  <TextArea
-                    id="notes"
-                    name="notes"
-                    placeholder="Observación"
-                    maxLength={255}
-                    onChange={() => formRef.current.setFieldError('notes', '')}
-                  />
-                </Label>
-
-                <div className="btn-container">
-                  <button type="submit" className="btn-ok">
-                    {`${material?.id ? 'Guardar' : 'Crear'}`}
-                  </button>
-                  <button
-                    className="btn-cancel"
-                    type="button"
-                    onClick={onCancelButton}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'auto auto',
+                    columnGap: '10px',
+                  }}
+                >
+                  <div
+                    style={{
+                      gridColumn: 1,
+                      display: 'block',
+                      placeSelf: 'center',
+                    }}
                   >
-                    Cancelar
-                  </button>
+                    <ImagesSlide
+                      images={material.file}
+                      setImages={(images) => setFiles(images)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="name" label="Nombre">
+                      <Input
+                        id="name"
+                        name="name"
+                        placeholder="Nome"
+                        onChange={() =>
+                          formRef.current.setFieldError('name', '')
+                        }
+                        hasBorder={false}
+                      />
+                    </Label>
+
+                    <Label htmlFor="provider" label="Proveedor">
+                      <SearchbleList
+                        id="provider"
+                        name="provider"
+                        values={formatProviders()}
+                        onChange={() =>
+                          formRef.current.setFieldError('provider', '')
+                        }
+                      />
+                      {/* <>{selectProvider()}</> */}
+                    </Label>
+                    <Label htmlFor="measurement" label="Unidad">
+                      <SearchbleList
+                        id="measurement"
+                        name="measurement"
+                        values={formatMeasurement()}
+                        onChange={() =>
+                          formRef.current.setFieldError('measurement', '')
+                        }
+                      />
+                      {/* <>{selectMeasurement()}</> */}
+                    </Label>
+
+                    <Label htmlFor="category" label="Categoria">
+                      <SearchbleList
+                        id="category"
+                        name="category"
+                        values={formatCategory()}
+                        onChange={() =>
+                          formRef.current.setFieldError('category', '')
+                        }
+                      />
+                      {/* <>{selectCategory()}</> */}
+                    </Label>
+
+                    <Label htmlFor="notes" label="Observaciones">
+                      <TextArea
+                        id="notes"
+                        name="notes"
+                        placeholder="Observación"
+                        maxLength={255}
+                        onChange={() =>
+                          formRef.current.setFieldError('notes', '')
+                        }
+                      />
+                    </Label>
+
+                    <div className="btn-container">
+                      <button type="submit" className="btn-ok">
+                        {`${material?.id ? 'Guardar' : 'Crear'}`}
+                      </button>
+                      <button
+                        className="btn-cancel"
+                        type="button"
+                        onClick={onCancelButton}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </Content>
             </Form>

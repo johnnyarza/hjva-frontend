@@ -139,6 +139,20 @@ TopBar.propTypes = {
     PropTypes.arrayOf(PropTypes.element),
     PropTypes.element,
   ]).isRequired,
+  fields: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      label: PropTypes.string,
+    })
+  ).isRequired,
+  buttons: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      onClick: PropTypes.func,
+    })
+  ).isRequired,
+  onCleanSearchButton: PropTypes.func.isRequired,
+  onSearchInputChange: PropTypes.func.isRequired,
 };
 
 export default TopBar;

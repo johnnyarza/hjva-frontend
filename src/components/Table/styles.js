@@ -1,5 +1,5 @@
 import { darken } from 'polished';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   ${
@@ -57,6 +57,10 @@ export const Container = styled.div`
 
     .th,
     .td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
       margin: 0;
       padding: 0.5rem;
       border-right: none;
@@ -91,3 +95,5 @@ export const Container = styled.div`
     }
   }
 `;
+
+export const Td = styled.div``;

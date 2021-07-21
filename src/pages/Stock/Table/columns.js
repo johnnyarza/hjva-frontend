@@ -46,7 +46,7 @@ const COLUMNS = (locale = 'pt-BR') => {
     },
 
     {
-      Header: 'Observación',
+      Header: 'Descripción',
       accessor: 'notes',
     },
     {

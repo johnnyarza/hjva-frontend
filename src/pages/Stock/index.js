@@ -302,39 +302,41 @@ function Stock() {
 
   const handleSearch = useCallback(() => {
     let foundMaterials = materials;
-    const { material: searchMaterial } = searchInput;
-    const { category } = searchInput;
-    const { createdAt } = searchInput;
-    if (searchMaterial) {
-      foundMaterials = materials.filter(({ name }) => {
-        if (!name) return false;
-        const currentName = name.toLowerCase();
-        const newName = searchInput.material.name.toLowerCase();
-        return currentName.includes(newName);
-      });
-    }
-    if (category) {
-      foundMaterials = materials.filter(({ material }) => {
-        if (!material.category?.name) return false;
-        const currentName = material.category.name.toLowerCase();
-        const newName = category.name.toLowerCase();
-        return currentName.includes(newName);
-      });
-    }
-    if (createdAt) {
-      const { from, to } = createdAt;
-      if (from && to) {
-        foundMaterials = materials.filter(({ updated_at: date }) => {
-          return utils.isBetweenDates(from, to, date);
+    if (searchInput) {
+      const { material: searchMaterial } = searchInput;
+      const { category } = searchInput;
+      const { createdAt } = searchInput;
+      if (searchMaterial) {
+        foundMaterials = materials.filter(({ name }) => {
+          if (!name) return false;
+          const currentName = name.toLowerCase();
+          const newName = searchInput.material.name.toLowerCase();
+          return currentName.includes(newName);
         });
+      }
+      if (category) {
+        foundMaterials = materials.filter(({ material }) => {
+          if (!material.category?.name) return false;
+          const currentName = material.category.name.toLowerCase();
+          const newName = category.name.toLowerCase();
+          return currentName.includes(newName);
+        });
+      }
+      if (createdAt) {
+        const { from, to } = createdAt;
+        if (from && to) {
+          foundMaterials = materials.filter(({ updated_at: date }) => {
+            return utils.isBetweenDates(from, to, date);
+          });
+        }
       }
     }
     setTimeout(() => setFilteredMaterials(foundMaterials), 350);
   }, [materials, searchInput]);
 
   useEffect(() => {
-    if (searchInput) handleSearch(searchInput);
-  }, [searchInput, handleSearch]);
+    handleSearch();
+  }, [searchInput, handleSearch, filteredMaterials]);
 
   return (
     <>
@@ -354,7 +356,7 @@ function Stock() {
               onCleanButton={() => setFilteredMaterials(materials)}
             />
             <Content>
-              {filteredMaterials.length ? (
+              {filteredMaterials?.length ? (
                 <Table columns={columns} data={filteredMaterials} />
               ) : (
                 <Empty />

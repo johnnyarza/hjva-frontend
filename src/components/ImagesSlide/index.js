@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaImage } from 'react-icons/fa';
+import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import { uniqueId } from 'lodash';
 
 import { Container, Content, Arrow, Empty, ImageControls } from './styles';

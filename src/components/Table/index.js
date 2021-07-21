@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 import {
   useFlexLayout,
   useResizeColumns,
@@ -8,7 +9,7 @@ import {
 } from 'react-table';
 import PropTypes from 'prop-types';
 
-import { Container } from './styles';
+import { Container, Td } from './styles';
 
 const getStyles = (props) => [
   props,
@@ -26,12 +27,42 @@ const headerProps = (props, { column }) => getStyles(props, column.align);
 const cellProps = (props, { cell }) => getStyles(props, cell.column.align);
 
 function Table({ columns, data, showWarning }) {
+  const tBodyRef = useRef(null);
+
+  const cont = useCallback((props, children) => {
+    return <Td {...props}>{children}</Td>;
+  }, []);
+
+  useEffect(() => {
+    if (tBodyRef.current) {
+      const rows = tBodyRef.current.children;
+      if (rows) {
+        for (let i = 0; i < rows.length; i++) {
+          const cells = rows[i].children;
+          for (let j = 0; j < cells.length; j++) {
+            const cell = cells[j];
+            const { clientWidth, scrollWidth } = cell;
+            if (clientWidth < scrollWidth) {
+              cell.style.overflowX = 'auto';
+              cell.style.justifyContent = 'start';
+            }
+            if (clientWidth === scrollWidth) {
+              cell.style.justifyContent = 'center';
+              cell.style.overflow = 'hidden';
+            }
+          }
+        }
+      }
+    }
+  }, [data]);
+
   const defaultColumn = React.useMemo(
     () => ({
       // When using the useFlexLayout:
       minWidth: 10, // minWidth is only used as a limit for resizing
       width: 50, // width is used for both the flex-basis and flex-grow
       maxWidth: 200, // maxWidth is only used as a limit for resizing
+      height: 40,
     }),
     []
   );
@@ -91,7 +122,7 @@ function Table({ columns, data, showWarning }) {
             </div>
           ))}
         </div>
-        <div className="tbody">
+        <div className="tbody" ref={tBodyRef}>
           {rows.map((row) => {
             prepareRow(row);
             const rowProps = row.getRowProps();
@@ -104,11 +135,17 @@ function Table({ columns, data, showWarning }) {
             return (
               <div {...rowProps} className="tr">
                 {row.cells.map((cell) => {
-                  return (
-                    <div {...cell.getCellProps(cellProps)} className="td">
-                      {cell.render('Cell')}
-                    </div>
+                  return cont(
+                    { className: 'td', ...cell.getCellProps(cellProps) },
+                    cell.render('Cell')
                   );
+                  // <div
+                  //   {...cell.getCellProps(cellProps)}
+                  //   className="td"
+                  //   ref={tdRef}
+                  // >
+                  //   {cell.render('Cell')}
+                  // </div>
                 })}
               </div>
             );

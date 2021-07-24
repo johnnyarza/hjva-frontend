@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
 import { MdDelete, MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import api from '../../services/api';
 
 import { Container, Content } from './styles';
 import COLUMNS from './Table/columns';
@@ -10,12 +8,12 @@ import COLUMNS from './Table/columns';
 import Spinner from '../../components/Spinner';
 import CategoryTable from '../../components/Table';
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
-
 import TopBar from '../../components/DinTopBar';
 
 import CategoryModal from './CategoryModal';
 
 import utils from '../../utils';
+import api from '../../services/api';
 
 function Category() {
   const [isLoading, setIsLoading] = useState(true);

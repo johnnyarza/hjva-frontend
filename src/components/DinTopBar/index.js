@@ -9,6 +9,7 @@ function TopBar({
   fields,
   onCleanSearchButton,
   onSearchInputChange,
+  children,
   ...rest
 }) {
   const inputRef = useRef(null);
@@ -130,6 +131,7 @@ function TopBar({
       </Menu>
       {prepareInput()}
       <MenuButton onClick={handleCleanButton}>Limpiar Consulta</MenuButton>
+      {children}
     </Container>
   );
 }

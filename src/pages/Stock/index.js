@@ -5,6 +5,9 @@ import {
   MdEdit,
   MdRemoveCircleOutline,
 } from 'react-icons/md';
+import { Link } from 'react-router-dom';
+import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
+
 import { toast } from 'react-toastify';
 
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
@@ -13,6 +16,7 @@ import DeleteButton from '../../components/DeleteButton';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/Table';
 import Empty from '../../components/Empty';
+import TopBar from '../../components/DinTopBar';
 
 import api from '../../services/api';
 import utils from '../../utils';
@@ -28,7 +32,7 @@ function Stock() {
   const { locale } = useSelector((state) => state.locale);
   const [materials, setMaterials] = useState(null);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
-  const [searchInput, setSeachInput] = useState('');
+  const [searchField, setSearchField] = useState('');
   const [currentMaterial, setCurrentMaterial] = useState(null);
   const [transactionListType, setTransactionListType] = useState('clients');
   const [transactionType, setTransactionType] = useState('in');
@@ -301,42 +305,31 @@ function Stock() {
   };
 
   const handleSearch = useCallback(() => {
-    let foundMaterials = materials;
-    if (searchInput) {
-      const { material: searchMaterial } = searchInput;
-      const { category } = searchInput;
-      const { createdAt } = searchInput;
-      if (searchMaterial) {
-        foundMaterials = materials.filter(({ name }) => {
-          if (!name) return false;
-          const currentName = name.toLowerCase();
-          const newName = searchInput.material.name.toLowerCase();
-          return currentName.includes(newName);
-        });
-      }
-      if (category) {
-        foundMaterials = materials.filter(({ material }) => {
-          if (!material.category?.name) return false;
-          const currentName = material.category.name.toLowerCase();
-          const newName = category.name.toLowerCase();
-          return currentName.includes(newName);
-        });
-      }
-      if (createdAt) {
-        const { from, to } = createdAt;
-        if (from && to) {
-          foundMaterials = materials.filter(({ updated_at: date }) => {
-            return utils.isBetweenDates(from, to, date);
-          });
+    let filtered = materials;
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      filtered = materials.filter((material) => {
+        const valueToCompare = material[field];
+        if (!valueToCompare) return false;
+        if (field === 'updatedAt') {
+          const { from, to } = value;
+          if (from && to) {
+            return utils.isBetweenDates(from, to, valueToCompare);
+          }
+          return true;
         }
-      }
+
+        return valueToCompare.toLowerCase().includes(value.toLowerCase());
+      });
     }
-    setTimeout(() => setFilteredMaterials(foundMaterials), 350);
-  }, [materials, searchInput]);
+    setTimeout(() => setFilteredMaterials(filtered), 350);
+  }, [materials, searchField]);
 
   useEffect(() => {
     handleSearch();
-  }, [searchInput, handleSearch, filteredMaterials]);
+  }, [searchField, handleSearch, materials]);
 
   return (
     <>
@@ -350,11 +343,41 @@ function Stock() {
             <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
               Estoque
             </h2>
-            <StockTopBar
-              onNewButton={handleNewButtonClick}
-              onInputChange={(data) => setSeachInput(data)}
-              onCleanButton={() => setFilteredMaterials(materials)}
-            />
+            <TopBar
+              onSearchInputChange={(data) => setSearchField(data)}
+              onCleanSearchButton={() => setFilteredMaterials(materials)}
+              fields={[
+                {
+                  field: 'name',
+                  label: 'Nombre',
+                  inputProps: { type: 'text' },
+                },
+              ]}
+              buttons={[
+                {
+                  label: 'Crear',
+                  onClick: handleNewButtonClick,
+                },
+              ]}
+            >
+              <Menu
+                menuButton={<MenuButton>Registro</MenuButton>}
+                arrow
+                direction="bottom"
+                viewScroll="initial"
+              >
+                <MenuItem>
+                  <Link to="/clients" style={{ color: 'black' }}>
+                    Clientes
+                  </Link>
+                </MenuItem>
+                <MenuItem>
+                  <Link to="/providers" style={{ color: 'black' }}>
+                    Proveedores
+                  </Link>
+                </MenuItem>
+              </Menu>
+            </TopBar>
             <Content>
               {filteredMaterials?.length ? (
                 <Table columns={columns} data={filteredMaterials} />

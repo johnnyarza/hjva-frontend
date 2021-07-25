@@ -22,7 +22,6 @@ import api from '../../services/api';
 import utils from '../../utils';
 
 import { Container, Content } from './styles';
-import StockTopBar from './TopBar';
 import MaterialModal from './StockModal';
 import COLUMNS from './Table/columns';
 import MaterialTransactionModal from './MaterialTransactionModal';
@@ -30,7 +29,7 @@ import MaterialTransactionModal from './MaterialTransactionModal';
 function Stock() {
   let timeout;
   const { locale } = useSelector((state) => state.locale);
-  const [materials, setMaterials] = useState(null);
+  const [materials, setMaterials] = useState('');
   const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [searchField, setSearchField] = useState('');
   const [currentMaterial, setCurrentMaterial] = useState(null);
@@ -178,8 +177,6 @@ function Stock() {
   const handleMaterialFilesChanges = (materialId, files) => {
     const filesToCreate = files.filter((file) => !!file.auxId);
     const filesToDelete = files.filter((file) => file.id && file.toDelete);
-    console.log(filesToCreate);
-    console.log(filesToDelete);
 
     const promises = Promise.all(
       filesToCreate.map(({ file }) => {
@@ -231,7 +228,14 @@ function Stock() {
 
   const handleCreateMaterial = async (body) => {
     try {
-      const newMaterial = (await storeMaterial(body)).data;
+      const { file: filesToCreate } = body;
+      let newMaterial = (await storeMaterial(body)).data;
+      const { id } = newMaterial;
+      if (filesToCreate && filesToCreate.length && id) {
+        await handleMaterialFilesChanges(id, filesToCreate);
+        newMaterial = (await api.get(`material/${id}`)).data;
+      }
+
       if (newMaterial) {
         const newMaterials = [...materials, newMaterial];
         newMaterials.sort((a, b) =>
@@ -311,9 +315,15 @@ function Stock() {
       const [field, value] = entries[0];
 
       filtered = materials.filter((material) => {
-        const valueToCompare = material[field];
+        const newMaterial = { ...material };
+
+        newMaterial.category = material.category.name;
+        newMaterial.provider = material.provider.name;
+        newMaterial.measurement = material.measurement.abbreviation;
+
+        const valueToCompare = newMaterial[field];
         if (!valueToCompare) return false;
-        if (field === 'updatedAt') {
+        if (field === 'updatedAt' || field === 'updated_at') {
           const { from, to } = value;
           if (from && to) {
             return utils.isBetweenDates(from, to, valueToCompare);
@@ -351,6 +361,26 @@ function Stock() {
                   field: 'name',
                   label: 'Nombre',
                   inputProps: { type: 'text' },
+                },
+                {
+                  field: 'category',
+                  label: 'Categoria',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'provider',
+                  label: 'Proveedor',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'measurement',
+                  label: 'Unidad',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'updated_at',
+                  label: 'Actualizado',
+                  inputProps: { type: 'date' },
                 },
               ]}
               buttons={[

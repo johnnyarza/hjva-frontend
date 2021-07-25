@@ -207,7 +207,7 @@ function Measurements() {
   }, [measurements, searchField]);
 
   useEffect(() => {
-    if (searchField) handleSearch();
+    handleSearch();
   }, [handleSearch, measurements, searchField]);
 
   return (

@@ -13,6 +13,7 @@ import Input from '../../../components/Input';
 import TextArea from '../../../components/TextArea';
 import Label from '../../../components/Label';
 import ImagesSlide from '../../../components/ImagesSlide';
+import ToggleSwitch from '../../../components/ToggleSwitch';
 
 import api from '../../../services/api';
 
@@ -290,6 +291,7 @@ function StockModal({
                         }
                       />
                     </Label>
+                    <ToggleSwitch />
 
                     <div className="btn-container">
                       <button type="submit" className="btn-ok">

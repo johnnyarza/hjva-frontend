@@ -23,10 +23,14 @@
     "prettier"
   ],
   "rules": {
+    "jsx-a11y/label-has-associated-control":["error", {
+      "required": {
+        "some": ["nesting", "id"]
+      }
+    }],
     "no-nested-ternary":"off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
     "camelcase":"warn",
-
     "arrow-body-style": "off",
     "prefer-arrow-callback": "off",
     "no-console": [

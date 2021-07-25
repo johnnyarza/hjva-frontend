@@ -128,6 +128,7 @@ function Table({ columns, data, showWarning }) {
             const rowProps = row.getRowProps();
             const { original } = row;
             const { hasWarning } = original;
+
             if (original && hasWarning && showWarning) {
               rowProps.style.color = '#e74c3c';
               rowProps.style.fontWeight = '600';

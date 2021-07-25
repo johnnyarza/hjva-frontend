@@ -341,6 +341,20 @@ function Stock() {
     handleSearch();
   }, [searchField, handleSearch, materials]);
 
+  const materialsHasWarnings = (materialsParam = []) => {
+    let newMaterials = [...materialsParam];
+    if (materialsParam && materialsParam.length) {
+      newMaterials = materialsParam.map((mat) => {
+        const { stockQty } = mat;
+        if (stockQty <= 0) {
+          return { ...mat, hasWarning: true };
+        }
+        return mat;
+      });
+    }
+    return newMaterials;
+  };
+
   return (
     <>
       <SideBar />
@@ -409,11 +423,11 @@ function Stock() {
               </Menu>
             </TopBar>
             <Content>
-              {filteredMaterials?.length ? (
-                <Table columns={columns} data={filteredMaterials} />
-              ) : (
-                <Empty />
-              )}
+              <Table
+                showWarning
+                columns={columns}
+                data={materialsHasWarnings(filteredMaterials) || []}
+              />
             </Content>
           </Container>
           <SimpleConfirmationModal

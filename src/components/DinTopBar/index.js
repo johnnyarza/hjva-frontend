@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 
+import { uniqueId } from 'lodash';
 import { Container } from './styles';
 
 function TopBar({
@@ -103,7 +104,7 @@ function TopBar({
     <Container {...rest}>
       {buttons.map(({ label, onClick }) => {
         return (
-          <button type="button" onClick={onClick}>
+          <button type="button" onClick={onClick} key={uniqueId()}>
             {label}
           </button>
         );
@@ -123,6 +124,7 @@ function TopBar({
             <MenuItem
               onClick={handleSearchFieldClick}
               value={{ field, label, inputProps }}
+              key={uniqueId()}
             >
               {label}
             </MenuItem>

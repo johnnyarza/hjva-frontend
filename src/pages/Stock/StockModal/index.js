@@ -158,6 +158,7 @@ function StockModal({
       });
 
       formRef.current.setErrors({});
+
       onSubmit(body);
     } catch (err) {
       const validationErrors = {};

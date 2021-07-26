@@ -166,7 +166,7 @@ function Stock() {
   }, [handleDeleteClick, handleEditClick, locale]);
 
   const handleNewButtonClick = () => {
-    setCurrentMaterial({});
+    setCurrentMaterial();
     setIsMaterialModalOpen(true);
   };
 
@@ -254,6 +254,7 @@ function Stock() {
 
   const handleSubmit = (data) => {
     try {
+      // TO-DO terminar toSell field
       const body = {
         ...data,
         ...{

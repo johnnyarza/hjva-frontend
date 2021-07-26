@@ -156,6 +156,7 @@ function StockModal({
         measurement: data.measurement.value,
         category: data.category.value,
         file: files,
+        toSell: data.toSell.checked,
       });
 
       formRef.current.setErrors({});
@@ -291,7 +292,7 @@ function StockModal({
                         }
                       />
                     </Label>
-                    <ToggleSwitch />
+                    <ToggleSwitch name="toSell" isChecked={!!material.toSell} />
 
                     <div className="btn-container">
                       <button type="submit" className="btn-ok">

@@ -5,7 +5,7 @@ import Toggle from 'react-toggle';
 
 import { Container } from './Styles';
 
-function ToggleSwitch({ name, isChecked }) {
+function ToggleSwitch({ name, isChecked, label }) {
   const [checked, setChecked] = useState(isChecked || false);
   const { fieldName, registerField } = useField(name);
   const inputRef = useRef(null);
@@ -26,7 +26,7 @@ function ToggleSwitch({ name, isChecked }) {
         checked={checked}
         onChange={() => setChecked(!checked)}
       />
-      <label htmlFor="cheese-status">Adjacent label tag</label>
+      <label htmlFor="cheese-status">{label}</label>
     </Container>
   );
 }
@@ -34,10 +34,12 @@ function ToggleSwitch({ name, isChecked }) {
 ToggleSwitch.propTypes = {
   name: PropTypes.string.isRequired,
   isChecked: PropTypes.bool,
+  label: PropTypes.string,
 };
 
 ToggleSwitch.defaultProps = {
   isChecked: false,
+  label: 'Toggle label',
 };
 
 export default ToggleSwitch;

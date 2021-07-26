@@ -55,10 +55,6 @@ function StockModal({
   }, [initialData]);
 
   useEffect(() => {
-    console.log(material);
-  }, [material]);
-
-  useEffect(() => {
     if (material) {
       formRef.current.setData(material);
     }
@@ -156,12 +152,11 @@ function StockModal({
         measurement: data.measurement.value,
         category: data.category.value,
         file: files,
-        toSell: data.toSell.checked,
       });
 
       formRef.current.setErrors({});
 
-      onSubmit(body);
+      onSubmit({ ...body, toSell: !!data.toSell.checked });
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {
@@ -292,7 +287,11 @@ function StockModal({
                         }
                       />
                     </Label>
-                    <ToggleSwitch name="toSell" isChecked={!!material.toSell} />
+                    <ToggleSwitch
+                      name="toSell"
+                      isChecked={!!material.toSell}
+                      label="En venta"
+                    />
 
                     <div className="btn-container">
                       <button type="submit" className="btn-ok">

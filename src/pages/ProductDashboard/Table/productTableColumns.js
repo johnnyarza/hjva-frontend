@@ -8,31 +8,53 @@ const COLUMNS = (locale = 'pt-BR') => {
       accessor: 'name',
     },
     {
-      Header: 'Descripción',
-      accessor: 'description',
-    },
-    {
+      id: 'category',
       Header: 'Categoria',
-      accessor: 'category',
+      accessor: (cat) => {
+        return cat.category.name;
+      },
     },
     {
-      Header: 'Precio',
-      id: 'price',
-      width: 20,
-      accessor: ({ price }) => {
-        if (price) {
-          return formater.format(price);
+      id: 'stockQty',
+      Header: 'Saldo',
+      width: 30,
+      accessor: (material) => {
+        const { stockQty } = material;
+        if (stockQty) {
+          return formater.format(stockQty);
         }
         return '';
       },
     },
     {
+      id: 'measurement',
+      Header: 'Unidad',
+      width: 20,
+      accessor: (u) => {
+        if (u.measurement) {
+          return u.measurement.abbreviation;
+        }
+        return '';
+      },
+    },
+    {
+      id: 'provider',
+      Header: 'Proveedor',
+      accessor: (material) => {
+        return material.provider.name;
+      },
+    },
+
+    {
+      Header: 'Descripción',
+      accessor: 'notes',
+    },
+    {
       id: 'updatedAt',
       Header: 'Actualizado',
-      width: 20,
       accessor: (provider) => {
-        if (provider.updatedAt) {
-          const parsedDate = parseISO(provider.updatedAt);
+        if (provider.updated_at) {
+          const parsedDate = parseISO(provider.updated_at);
           return format(parsedDate, 'dd/MM/yyyy');
         }
         return '';

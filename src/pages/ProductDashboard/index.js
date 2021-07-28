@@ -1,96 +1,47 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-
-import { Container } from './styles';
-
-import Table from '../../components/Table';
-import TableEditColumn from '../../components/TableEditColumn';
-import TopBar from '../../components/DinTopBar';
-
 import api from '../../services/api';
 
+import { Container, Content } from './styles';
 import COLUMNS from './Table/productTableColumns';
+
+import Table from '../../components/Table';
+import TopBar from '../../components/DinTopBar';
 import Spinner from '../../components/Spinner';
-import utils from '../../utils';
+import EditColumn from '../../components/TableEditColumn';
 
 function ProductDashboard() {
+  // TODO terminar
   const { locale } = useSelector((state) => state.locale);
-  const [products, setProducts] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [currentProduct, setCurrentProduct] = useState('');
-  const [userRole, setUserRole] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [materials, setMaterials] = useState('');
+  const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [searchField, setSearchField] = useState('');
+  const [currentMaterial, setCurrentMaterial] = useState(null);
 
   useEffect(() => {
-    const loadUser = async () => {
-      const { data } = await api.get('user');
-      const { role } = data;
-      if (role) setUserRole(role);
-    };
-    loadUser();
-  }, []);
-
-  useEffect(() => {
-    const loadAllProducts = async () => {
-      const { data } = await api.get('products');
+    const getAllMaterialsToSell = async () => {
+      const { data } = await api.get('materialsToSell');
       if (data) {
-        const sorted = data.sort((a, b) => {
-          if (a.name > b.name) {
-            return 1;
-          }
-          if (a.name < b.name) {
-            return -1;
-          }
-          return 0;
-        });
-        console.table(sorted);
-        setProducts(sorted);
-        setFilteredProducts(sorted);
+        setMaterials(data);
       }
     };
-    loadAllProducts();
-    setIsLoading(false);
+    getAllMaterialsToSell();
   }, []);
 
-  const handleCreateProduct = () => {
-    console.log('new');
-  };
-
-  const handleSearch = useCallback(() => {
-    let filtered = products;
-    if (searchField) {
-      const entries = Object.entries(searchField);
-      const [field, value] = entries[0];
-
-      filtered = products.filter((provider) => {
-        const valueToCompare = provider[field];
-        if (!valueToCompare) return false;
-        if (field === 'updatedAt') {
-          const { from, to } = value;
-          if (from && to) {
-            return utils.isBetweenDates(from, to, valueToCompare);
-          }
-          return true;
-        }
-
-        return valueToCompare.toLowerCase().includes(value.toLowerCase());
-      });
-    }
-
-    setFilteredProducts(filtered);
-  }, [searchField, products]);
-
   useEffect(() => {
-    if (searchField) handleSearch();
-  }, [handleSearch, products, searchField]);
+    if (materials) {
+      setFilteredMaterials(materials);
+    }
+    setIsLoading(false);
+  }, [materials]);
 
   const columns = useMemo(() => {
     const newCol = {
       Header: 'Editar',
       accessor: 'edit',
 
-      width: 20,
+      width: 25,
       disableResize: true,
       disableSort: true,
 
@@ -100,35 +51,24 @@ function ProductDashboard() {
           className="edit-buttons-container"
           style={{ justifyContent: 'center' }}
         >
-          <TableEditColumn
-            userRole={userRole}
-            original={original}
-            hasEdit
-            hasDelete
-            onEditClick={() => {
-              setCurrentProduct(original);
-            }}
-            onDeleteClick={() => console.log(original)}
-          />
+          <EditColumn hasDelete hasEdit />
         </div>
       ),
     };
-    const formatedCols = COLUMNS(locale);
-    return [...formatedCols, newCol];
-  }, [userRole, locale]);
+
+    const cols = COLUMNS(locale);
+    return [...cols, newCol];
+  }, [locale]);
+
   return (
     <>
       {isLoading ? (
         <Spinner />
       ) : (
         <Container>
-          <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
-            Dosificaciones
-          </h2>
           <TopBar
-            buttons={[{ label: 'Crear', onClick: handleCreateProduct }]}
-            onCleanSearchButton={() => setFilteredProducts(products)}
             onSearchInputChange={(data) => setSearchField(data)}
+            onCleanSearchButton={() => setFilteredMaterials(materials)}
             fields={[
               {
                 field: 'name',
@@ -136,13 +76,36 @@ function ProductDashboard() {
                 inputProps: { type: 'text' },
               },
               {
-                field: 'updatedAt',
-                label: 'Fecha',
+                field: 'category',
+                label: 'Categoria',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'provider',
+                label: 'Proveedor',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'measurement',
+                label: 'Unidad',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'updated_at',
+                label: 'Actualizado',
                 inputProps: { type: 'date' },
               },
             ]}
+            buttons={[
+              {
+                label: 'Crear',
+                onClick: () => console.log('crear'),
+              },
+            ]}
           />
-          <Table data={filteredProducts} columns={columns} />
+          <Content>
+            <Table columns={columns} data={filteredMaterials || []} />
+          </Content>
         </Container>
       )}
     </>

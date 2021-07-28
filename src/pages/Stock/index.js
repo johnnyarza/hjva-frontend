@@ -15,7 +15,6 @@ import SideBar from '../../components/SideBar';
 import DeleteButton from '../../components/DeleteButton';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/Table';
-import Empty from '../../components/Empty';
 import TopBar from '../../components/DinTopBar';
 
 import api from '../../services/api';
@@ -254,7 +253,7 @@ function Stock() {
 
   const handleSubmit = (data) => {
     try {
-      // TO-DO terminar toSell field
+      // TODO terminar toSell field
       const body = {
         ...data,
         ...{

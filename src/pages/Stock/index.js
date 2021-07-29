@@ -22,7 +22,7 @@ import COLUMNS from './Table/columns';
 import MaterialTransactionModal from './MaterialTransactionModal';
 
 function Stock() {
-  // TODO fix blinking table
+  // TODO adicionar transação não renderiza a tabela novamente
   let timeout;
   const { locale } = useSelector((state) => state.locale);
   const location = useLocation();
@@ -58,7 +58,7 @@ function Stock() {
     };
   }, [timeout]);
 
-  const isToSell = useCallback(() => {
+  const isMaterialToSellPageShowing = useCallback(() => {
     const { pathname } = location;
     const paths = pathname.split('/');
     const last = paths[paths.length - 1];
@@ -67,7 +67,7 @@ function Stock() {
 
   useEffect(() => {
     const loadAllMaterials = async () => {
-      const toSell = isToSell();
+      const toSell = isMaterialToSellPageShowing();
       const { data } = await api.get(
         `${toSell ? 'materialsToSell' : 'materials'}`
       );
@@ -84,7 +84,7 @@ function Stock() {
     };
 
     loadAllMaterials();
-  }, [location, isToSell]);
+  }, [location, isMaterialToSellPageShowing]);
 
   useEffect(() => {
     if (materials) {
@@ -323,39 +323,41 @@ function Stock() {
   };
 
   const handleSearch = useCallback(() => {
-    let filtered = [];
-    if (!isToSell()) {
-      filtered = [...materials];
-    }
-    if (isToSell() && materials) {
+    let filtered = materials;
+
+    if (isMaterialToSellPageShowing() && materials) {
       filtered = materials.filter((mat) => !!mat.toSell);
     }
+
     if (searchField) {
       const entries = Object.entries(searchField);
       const [field, value] = entries[0];
 
-      filtered = materials.filter((material) => {
-        const newMaterial = { ...material };
+      if (value) {
+        filtered = materials.filter((material) => {
+          const newMaterial = { ...material };
 
-        newMaterial.category = material.category.name;
-        newMaterial.provider = material.provider.name;
-        newMaterial.measurement = material.measurement.abbreviation;
+          newMaterial.category = material.category.name;
+          newMaterial.provider = material.provider.name;
+          newMaterial.measurement = material.measurement.abbreviation;
 
-        const valueToCompare = newMaterial[field];
-        if (!valueToCompare) return false;
-        if (field === 'updatedAt' || field === 'updated_at') {
-          const { from, to } = value;
-          if (from && to) {
-            return utils.isBetweenDates(from, to, valueToCompare);
+          const valueToCompare = newMaterial[field];
+          if (!valueToCompare) return false;
+          if (field === 'updatedAt' || field === 'updated_at') {
+            const { from, to } = value;
+            if (from && to) {
+              return utils.isBetweenDates(from, to, valueToCompare);
+            }
+            return true;
           }
-          return true;
-        }
 
-        return valueToCompare.toLowerCase().includes(value.toLowerCase());
-      });
+          return valueToCompare.toLowerCase().includes(value.toLowerCase());
+        });
+      }
+
+      setTimeout(() => setFilteredMaterials(filtered), 350);
     }
-    setTimeout(() => setFilteredMaterials(filtered), 350);
-  }, [materials, searchField, isToSell]);
+  }, [materials, searchField, isMaterialToSellPageShowing]);
 
   useEffect(() => {
     handleSearch();
@@ -451,7 +453,7 @@ function Stock() {
               <Table
                 showWarning
                 columns={columns}
-                data={materialsHasWarnings(filteredMaterials) || []}
+                data={materialsHasWarnings(filteredMaterials)}
               />
             </Content>
           </Container>

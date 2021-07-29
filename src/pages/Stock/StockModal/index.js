@@ -155,7 +155,6 @@ function StockModal({
       });
 
       formRef.current.setErrors({});
-
       onSubmit({ ...body, toSell: !!data.toSell.checked });
     } catch (err) {
       const validationErrors = {};

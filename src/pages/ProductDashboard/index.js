@@ -13,11 +13,23 @@ import EditColumn from '../../components/TableEditColumn';
 function ProductDashboard() {
   // TODO terminar
   const { locale } = useSelector((state) => state.locale);
+  const [userRole, setUserRole] = useState('common');
   const [isLoading, setIsLoading] = useState(true);
   const [materials, setMaterials] = useState('');
   const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [searchField, setSearchField] = useState('');
   const [currentMaterial, setCurrentMaterial] = useState(null);
+
+  useEffect(() => {
+    const loadUserRole = async () => {
+      const { data } = await api.get('user');
+      if (data) {
+        const { role } = data;
+        if (role) setUserRole(role);
+      }
+    };
+    loadUserRole();
+  }, []);
 
   useEffect(() => {
     const getAllMaterialsToSell = async () => {
@@ -51,14 +63,14 @@ function ProductDashboard() {
           className="edit-buttons-container"
           style={{ justifyContent: 'center' }}
         >
-          <EditColumn hasDelete hasEdit />
+          <EditColumn hasDelete hasEdit userRole={userRole} />
         </div>
       ),
     };
 
     const cols = COLUMNS(locale);
     return [...cols, newCol];
-  }, [locale]);
+  }, [locale, userRole]);
 
   return (
     <>

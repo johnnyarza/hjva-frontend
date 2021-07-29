@@ -6,7 +6,7 @@ import Toggle from 'react-toggle';
 import { Container } from './Styles';
 
 function ToggleSwitch({ name, isChecked, label }) {
-  const [checked, setChecked] = useState(isChecked || false);
+  const [checked, setChecked] = useState(isChecked);
   const { fieldName, registerField } = useField(name);
   const inputRef = useRef(null);
 

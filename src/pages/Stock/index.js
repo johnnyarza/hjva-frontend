@@ -1,21 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  MdAddCircleOutline,
-  MdEdit,
-  MdRemoveCircleOutline,
-} from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { MdAddCircleOutline, MdRemoveCircleOutline } from 'react-icons/md';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 
 import { toast } from 'react-toastify';
 
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
 import SideBar from '../../components/SideBar';
-import DeleteButton from '../../components/DeleteButton';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/Table';
 import TopBar from '../../components/DinTopBar';
+import EditColumn from '../../components/TableEditColumn';
 
 import api from '../../services/api';
 import utils from '../../utils';
@@ -26,8 +22,11 @@ import COLUMNS from './Table/columns';
 import MaterialTransactionModal from './MaterialTransactionModal';
 
 function Stock() {
+  // TODO fix blinking table
   let timeout;
   const { locale } = useSelector((state) => state.locale);
+  const location = useLocation();
+  const [userRole, setUserRole] = useState('common');
   const [materials, setMaterials] = useState('');
   const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [searchField, setSearchField] = useState('');
@@ -43,14 +42,35 @@ function Stock() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const loadUserRole = async () => {
+      const { data } = await api.get('user');
+      if (data) {
+        const { role } = data;
+        if (role) setUserRole(role);
+      }
+    };
+    loadUserRole();
+  }, []);
+
+  useEffect(() => {
     return () => {
       clearTimeout(timeout);
     };
   }, [timeout]);
 
+  const isToSell = useCallback(() => {
+    const { pathname } = location;
+    const paths = pathname.split('/');
+    const last = paths[paths.length - 1];
+    return last === 'toSell';
+  }, [location]);
+
   useEffect(() => {
     const loadAllMaterials = async () => {
-      const { data } = await api.get('materials');
+      const toSell = isToSell();
+      const { data } = await api.get(
+        `${toSell ? 'materialsToSell' : 'materials'}`
+      );
       if (data) {
         const sortedData = data.sort((a, b) =>
           a.name.localeCompare(b.name, undefined, {
@@ -64,7 +84,7 @@ function Stock() {
     };
 
     loadAllMaterials();
-  }, []);
+  }, [location, isToSell]);
 
   useEffect(() => {
     if (materials) {
@@ -145,16 +165,12 @@ function Stock() {
           >
             <MdRemoveCircleOutline />
           </button>
-          <button
-            className="edit-button"
-            type="button"
-            onClick={() => handleEditClick(original)}
-          >
-            <MdEdit />
-          </button>
-          <DeleteButton
-            className="delete-button"
-            onClick={() => handleDeleteClick(original)}
+          <EditColumn
+            userRole={userRole}
+            hasDelete
+            hasEdit
+            onDeleteClick={() => handleDeleteClick(original)}
+            onEditClick={() => handleEditClick(original)}
           />
         </div>
       ),
@@ -162,10 +178,10 @@ function Stock() {
 
     const cols = COLUMNS(locale);
     return [...cols, newCol];
-  }, [handleDeleteClick, handleEditClick, locale]);
+  }, [handleDeleteClick, handleEditClick, locale, userRole]);
 
   const handleNewButtonClick = () => {
-    setCurrentMaterial();
+    setCurrentMaterial({ toSell: true });
     setIsMaterialModalOpen(true);
   };
 
@@ -234,7 +250,6 @@ function Stock() {
         await handleMaterialFilesChanges(id, filesToCreate);
         newMaterial = (await api.get(`material/${id}`)).data;
       }
-
       if (newMaterial) {
         const newMaterials = [...materials, newMaterial];
         newMaterials.sort((a, b) =>
@@ -253,7 +268,6 @@ function Stock() {
 
   const handleSubmit = (data) => {
     try {
-      // TODO terminar toSell field
       const body = {
         ...data,
         ...{
@@ -309,7 +323,13 @@ function Stock() {
   };
 
   const handleSearch = useCallback(() => {
-    let filtered = materials;
+    let filtered = [];
+    if (!isToSell()) {
+      filtered = [...materials];
+    }
+    if (isToSell() && materials) {
+      filtered = materials.filter((mat) => !!mat.toSell);
+    }
     if (searchField) {
       const entries = Object.entries(searchField);
       const [field, value] = entries[0];
@@ -335,7 +355,7 @@ function Stock() {
       });
     }
     setTimeout(() => setFilteredMaterials(filtered), 350);
-  }, [materials, searchField]);
+  }, [materials, searchField, isToSell]);
 
   useEffect(() => {
     handleSearch();
@@ -404,6 +424,11 @@ function Stock() {
                 },
               ]}
             >
+              <MenuButton>
+                <Link to="/materialTransactions" style={{ color: 'black' }}>
+                  Entradas/Salidas
+                </Link>
+              </MenuButton>
               <Menu
                 menuButton={<MenuButton>Registro</MenuButton>}
                 arrow

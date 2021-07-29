@@ -66,7 +66,7 @@ export default function SideBar() {
         )}
         {(userRole === 'admin' || userRole === 'escritorio') && (
           <BarItem>
-            <Link to="/product/edit">
+            <Link to="/stock/toSell">
               <MdLocalGroceryStore />
               <span>Editar Produtos</span>
             </Link>

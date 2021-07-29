@@ -64,11 +64,11 @@ export default function Routes() {
       />
 
       <Route
-        path="/product/edit"
+        path="/stock/toSell"
         exact
         isPrivate
         hasSideBar
-        component={(props) => <ProductDashboard {...props} />}
+        component={(props) => <Stock {...props} />}
       />
 
       <Route

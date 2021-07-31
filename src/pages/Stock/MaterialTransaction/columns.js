@@ -61,7 +61,7 @@ const COLUMNS = (locale = 'pt-BR') => {
     {
       Header: 'Unidad',
       id: 'unidad',
-      width: 15,
+      width: 10,
       accessor: ({ material }) => {
         if (material) {
           return material.measurement.abbreviation;
@@ -77,7 +77,7 @@ const COLUMNS = (locale = 'pt-BR') => {
     {
       Header: 'Persona',
       id: 'person',
-      width: 15,
+      width: 25,
       accessor: ({ client, provider }) => {
         if (client) {
           return `Salida: ${client.name}`;

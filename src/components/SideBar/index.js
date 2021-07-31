@@ -98,17 +98,18 @@ export default function SideBar() {
               </Link>
             </BarItem>
             <BarItem>
-              <Link to="/stock">
-                <FaDolly />
-                <span>Estoque</span>
-              </Link>
-            </BarItem>
-            <BarItem>
               <Link to="/clients">
                 <MdPerson />
                 <span>Clientes</span>
               </Link>
             </BarItem>
+            <BarItem>
+              <Link to="/stock">
+                <FaDolly />
+                <span>Estoque</span>
+              </Link>
+            </BarItem>
+
             <BarItem>
               <Link to="/concreteDesigns">
                 <FaBalanceScale />

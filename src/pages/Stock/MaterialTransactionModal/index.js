@@ -21,25 +21,25 @@ function MaterialTransactionModal({
   onSubmit,
   ...rest
 }) {
-  const [listContent, setListContent] = useState(null);
-  const [transaction, setTransaction] = useState(null);
+  const [listContent, setListContent] = useState([]);
+  const [transaction, setTransaction] = useState('');
   const formRef = useRef(null);
 
   useEffect(() => {
-    if (initialData.id) {
-      const person = initialData.client || initialData.provider;
+    if (transactionType === 'in') {
+      const person = initialData.provider;
       const formatedData = {
         ...initialData,
         person: { value: person.id, label: person.name },
       };
-      setTransaction(formatedData);
+      return setTransaction(formatedData);
     }
-    setTransaction({});
-  }, [initialData]);
+    return setTransaction(initialData);
+  }, [initialData, transactionType]);
 
   useEffect(() => {
     if (transaction) {
-      formRef.current.setData(transaction);
+      formRef.current?.setData(transaction);
     }
   }, [transaction]);
 
@@ -52,7 +52,7 @@ function MaterialTransactionModal({
           sensitivity: 'base',
         })
       );
-      setListContent(data || []);
+      setListContent(data);
     };
     loadList();
   }, [listContentType]);
@@ -107,57 +107,63 @@ function MaterialTransactionModal({
   return (
     <GenericModal isOpen {...rest}>
       <>
-        <h3 style={{ textAlign: 'center', marginBottom: '15px' }}>
-          {`Registrar ${transactionType === 'in' ? 'Entrada' : 'Salida'}`}
-        </h3>
-        <Form ref={formRef} onSubmit={handleSubmit} id="teste">
-          <Label
-            label={`${transactionType === 'in' ? 'Entrada' : 'Salida'}`}
-            htmlFor="quantity_per_m3"
-          >
-            <Input
-              name="entry"
-              id="entry"
-              type="number"
-              hasBorder={false}
-              step=".01"
-              onChange={() => formRef.current.setFieldError('entry', '')}
-              {...inputRange()}
-            />
-          </Label>
-          <Label
-            label={`${transactionType === 'in' ? 'Proveedor' : 'Cliente'}`}
-            htmlFor="person"
-          >
-            <SearchbleList
-              name="person"
-              values={formatValues()}
-              onChange={() => formRef.current.setFieldError('person', '')}
-            />
-          </Label>
-          <Label label="Observación" htmlFor="notes">
-            <TextArea name="notes" />
-          </Label>
+        {!transaction ? (
+          ''
+        ) : (
+          <>
+            <h3 style={{ textAlign: 'center', marginBottom: '15px' }}>
+              {`Registrar ${transactionType === 'in' ? 'Entrada' : 'Salida'}`}
+            </h3>
+            <Form ref={formRef} onSubmit={handleSubmit} id="teste">
+              <Label
+                label={`${transactionType === 'in' ? 'Entrada' : 'Salida'}`}
+                htmlFor="quantity_per_m3"
+              >
+                <Input
+                  name="entry"
+                  id="entry"
+                  type="number"
+                  hasBorder={false}
+                  step=".01"
+                  onChange={() => formRef.current.setFieldError('entry', '')}
+                  {...inputRange()}
+                />
+              </Label>
+              <Label
+                label={`${transactionType === 'in' ? 'Proveedor' : 'Cliente'}`}
+                htmlFor="person"
+              >
+                <SearchbleList
+                  name="person"
+                  values={formatValues()}
+                  onChange={() => formRef.current.setFieldError('person', '')}
+                />
+              </Label>
+              <Label label="Observación" htmlFor="notes">
+                <TextArea name="notes" />
+              </Label>
 
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginTop: '10px',
-            }}
-          >
-            <button type="submit" style={{ backgroundColor: '#2ecc71' }}>
-              Ok
-            </button>
-            <button
-              type="button"
-              style={{ backgroundColor: '#e74c3c' }}
-              onClick={() => onCancelPress()}
-            >
-              Cancelar
-            </button>
-          </div>
-        </Form>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  marginTop: '10px',
+                }}
+              >
+                <button type="submit" style={{ backgroundColor: '#2ecc71' }}>
+                  Ok
+                </button>
+                <button
+                  type="button"
+                  style={{ backgroundColor: '#e74c3c' }}
+                  onClick={() => onCancelPress()}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </Form>
+          </>
+        )}
       </>
     </GenericModal>
   );
@@ -167,25 +173,23 @@ MaterialTransactionModal.propTypes = {
   onSubmit: PropType.func.isRequired,
   onCancelPress: PropType.func,
   transactionType: PropType.oneOf(['in', 'out']),
-  initialData: PropType.objectOf(
-    PropType.oneOf([
-      {
+  initialData: PropType.oneOfType([
+    PropType.shape({
+      id: PropType.string,
+      entry: PropType.string,
+      notes: PropType.string,
+      client: PropType.shape({ id: PropType.string, name: PropType.string }),
+    }),
+    PropType.shape({
+      id: PropType.string,
+      entry: PropType.string,
+      notes: PropType.string,
+      provider: PropType.shape({
         id: PropType.string,
-        entry: PropType.string,
-        notes: PropType.string,
-        client: PropType.shape({ id: PropType.string, name: PropType.string }),
-      },
-      {
-        id: PropType.string,
-        entry: PropType.string,
-        notes: PropType.string,
-        provider: PropType.shape({
-          id: PropType.string,
-          name: PropType.string,
-        }),
-      },
-    ])
-  ),
+        name: PropType.string,
+      }),
+    }),
+  ]),
   listContentType: PropType.oneOf(['clients', 'providers']),
 };
 

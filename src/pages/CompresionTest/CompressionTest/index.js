@@ -1,26 +1,26 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
+import { useHistory, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MdEdit, MdVisibility } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 import CompressionTestsTable from '../../../components/Table';
+import DeleteButton from '../../../components/DeleteButton';
+import TopBar from '../../../components/DinTopBar';
 
 import COLUMNS from '../Table/columns';
-import TopBar from './CompressionTestTopBar';
 
 import { Container, Content } from './style';
 
 import Spinner from '../../../components/Spinner';
 import CompresionTestModal from '../CompresionTestModal';
 import utils from '../../../utils';
-
 import api from '../../../services/api';
-import DeleteButton from '../../../components/DeleteButton';
 
 function CompresionTest() {
   const history = useHistory();
-  const [searchInput, setSearchInput] = useState('');
+  const [searchField, setSearchField] = useState('');
   const { locale } = useSelector((state) => state.locale);
   const [compressionTests, setCompressionTests] = useState(null);
   const [filteredCompressionTests, setFilteredCompressionTests] = useState([]);
@@ -33,10 +33,13 @@ function CompresionTest() {
   );
 
   useEffect(() => {
+    if (!searchField) setFilteredCompressionTests(compressionTests);
+  }, [compressionTests, searchField]);
+
+  useEffect(() => {
     const loadAllCompressionTests = async () => {
       const { data } = await api.get('compressionTests');
       setCompressionTests(data || []);
-      setFilteredCompressionTests(data || []);
     };
 
     const loadAllClients = async () => {
@@ -201,46 +204,43 @@ function CompresionTest() {
   }, [handleDelete, locale, history, handleEditClick]);
 
   const handleSearch = useCallback(() => {
-    let foundCompressionTests = compressionTests;
-    const { client, tracker, updatedAt } = searchInput;
+    let filtered = compressionTests;
 
-    if (client) {
-      foundCompressionTests = compressionTests.filter(
-        ({ client: currentClient }) => {
-          if (!currentClient.name) return false;
-          const currentName = currentClient.name.toLowerCase();
-          const newName = client.name.toLowerCase();
-          return currentName.includes(newName);
-        }
-      );
-    }
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
 
-    if (tracker && tracker > 0) {
-      foundCompressionTests = compressionTests.filter(
-        ({ tracker: currentTracker }) => {
-          const currentName = String(currentTracker);
-          const newName = String(tracker);
-          return currentName.includes(newName);
-        }
-      );
-    }
+      if (value) {
+        filtered = compressionTests.filter((comp) => {
+          const newValue = { ...comp };
 
-    if (updatedAt) {
-      const { from, to } = updatedAt;
-      if (from && to) {
-        foundCompressionTests = compressionTests.filter(
-          ({ updatedAt: date }) => {
-            return utils.isBetweenDates(from, to, date);
+          newValue.client = newValue.client.name;
+          newValue.concreteProvider = newValue.concreteProvider.name;
+          newValue.concreteDesign = newValue.concreteDesign.name;
+
+          const valueToCompare = newValue[field];
+
+          if (!valueToCompare) return false;
+          if (field === 'updatedAt' || field === 'updated_at') {
+            const { from, to } = value;
+            if (from && to) {
+              return utils.isBetweenDates(from, to, valueToCompare);
+            }
+            return true;
           }
-        );
+
+          return String(valueToCompare)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        });
       }
+      setTimeout(() => setFilteredCompressionTests(filtered), 350);
     }
-    setTimeout(() => setFilteredCompressionTests(foundCompressionTests), 350);
-  }, [compressionTests, searchInput]);
+  }, [compressionTests, searchField]);
 
   useEffect(() => {
-    if (searchInput) handleSearch();
-  }, [searchInput, handleSearch]);
+    handleSearch();
+  }, [searchField, handleSearch, compressionTests]);
 
   return (
     <>
@@ -250,13 +250,75 @@ function CompresionTest() {
         <Container>
           <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Ensayos</h2>
           <TopBar
-            onNewButton={() => {
-              setCurrentCompressionTest({});
-              setIsCompresionTestModalOpen(true);
+            onSearchInputChange={(data) => setSearchField(data)}
+            onCleanSearchButton={() => {
+              setFilteredCompressionTests(compressionTests);
             }}
-            onInputChange={(data) => setSearchInput(data)}
-            onCleanButton={() => setFilteredCompressionTests(compressionTests)}
-          />
+            buttons={[
+              {
+                label: 'Crear',
+                onClick: () => {
+                  setCurrentCompressionTest({});
+                  setIsCompresionTestModalOpen(true);
+                },
+              },
+            ]}
+            fields={[
+              {
+                field: 'tracker',
+                label: 'Doc. Nª',
+                inputProps: { type: 'number' },
+              },
+              {
+                field: 'client',
+                label: 'Cliente',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'concreteProvider',
+                label: 'Prov. Hormigón',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'concreteDesign',
+                label: 'Dosificación',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'updatedAt',
+                label: 'Actualizado',
+                inputProps: { type: 'date' },
+              },
+            ]}
+          >
+            <MenuButton>
+              <Link to="/materialTransactions" style={{ color: 'black' }}>
+                Entradas/Salidas
+              </Link>
+            </MenuButton>
+            <Menu
+              menuButton={<MenuButton>Registro</MenuButton>}
+              arrow
+              direction="bottom"
+              viewScroll="initial"
+            >
+              <MenuItem>
+                <Link to="/clients" style={{ color: 'black' }}>
+                  Clientes
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/providers" style={{ color: 'black' }}>
+                  Proveedores
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/measurements" style={{ color: 'black' }}>
+                  Unidades de Medida
+                </Link>
+              </MenuItem>
+            </Menu>
+          </TopBar>
           <Content>
             <CompressionTestsTable
               columns={columns}

@@ -27,7 +27,6 @@ function Category() {
   useEffect(() => {
     const loadAllCategories = async () => {
       const { data } = await api.get('categories');
-      console.log(data);
       if (data) {
         data.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
         setCategories(data);

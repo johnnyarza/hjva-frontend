@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const COLUMNS = (locale = 'pt-BR') => {
   const formater = Intl.NumberFormat(locale, { minimumFractionDigits: 2 });
   return [

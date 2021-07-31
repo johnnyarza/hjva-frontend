@@ -17,8 +17,8 @@ import DeleteButton from '../../components/DeleteButton';
 
 function Providers() {
   const [searchField, setSearchField] = useState('');
-  const [providers, setProviders] = useState(null);
-  const [filteredProviders, setFilteredProviders] = useState([]);
+  const [providers, setProviders] = useState('');
+  const [filteredProviders, setFilteredProviders] = useState('');
   const [currentProvider, setCurrentProvider] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isModalProviderShow, setIsModalProviderShow] = useState(false);
@@ -30,7 +30,6 @@ function Providers() {
       if (data) {
         data.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
         setProviders(data);
-        setFilteredProviders(data);
       }
     };
     loadAllProviders();
@@ -38,9 +37,10 @@ function Providers() {
 
   useEffect(() => {
     if (providers) {
+      if (!searchField) setFilteredProviders(providers);
       setIsLoading(false);
     }
-  }, [providers]);
+  }, [providers, searchField]);
 
   function clean(obj) {
     const propNames = Object.getOwnPropertyNames(obj);
@@ -179,22 +179,23 @@ function Providers() {
       const entries = Object.entries(searchField);
       const [field, value] = entries[0];
 
-      filtered = providers.filter((provider) => {
-        const valueToCompare = provider[field];
-        if (!valueToCompare) return false;
-        if (field === 'updatedAt') {
-          const { from, to } = value;
-          if (from && to) {
-            return utils.isBetweenDates(from, to, valueToCompare);
+      if (value) {
+        filtered = providers.filter((provider) => {
+          const valueToCompare = provider[field];
+          if (!valueToCompare) return false;
+          if (field === 'updatedAt') {
+            const { from, to } = value;
+            if (from && to) {
+              return utils.isBetweenDates(from, to, valueToCompare);
+            }
+            return false;
           }
-          return false;
-        }
 
-        return valueToCompare.toLowerCase().includes(value.toLowerCase());
-      });
+          return valueToCompare.toLowerCase().includes(value.toLowerCase());
+        });
+      }
+      setTimeout(() => setFilteredProviders(filtered), 350);
     }
-
-    setFilteredProviders(filtered);
   }, [providers, searchField]);
 
   useEffect(() => {

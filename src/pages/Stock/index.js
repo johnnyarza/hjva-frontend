@@ -7,11 +7,11 @@ import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 import { toast } from 'react-toastify';
 
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
-import SideBar from '../../components/SideBar';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/Table';
 import TopBar from '../../components/DinTopBar';
 import EditColumn from '../../components/TableEditColumn';
+import Empty from '../../components/Empty';
 
 import api from '../../services/api';
 import utils from '../../utils';
@@ -83,7 +83,7 @@ function Stock() {
 
     loadAllMaterials();
   }, [location, isMaterialToSellPageShowing]);
-  // TODO do the same to the others
+
   useEffect(() => {
     if (materials) {
       if (!searchField) setFilteredMaterials(materials);
@@ -110,6 +110,7 @@ function Stock() {
 
   const handleDeleteMaterial = async () => {
     try {
+      setIsConfirmationModalOpen(false);
       const { data: affectedRows } = await deleteMaterial(currentMaterial);
       if (affectedRows) {
         const newMaterials = materials.filter(
@@ -117,7 +118,6 @@ function Stock() {
         );
         setMaterials(newMaterials);
       }
-      setIsConfirmationModalOpen(false);
       toast.success('Material apagado');
     } catch (error) {
       setIsConfirmationModalOpen(false);
@@ -156,7 +156,8 @@ function Stock() {
             className="delete-button"
             type="button"
             onClick={() => {
-              setCurrentMaterial(original);
+              // eslint-disable-next-line react/prop-types
+              setCurrentMaterial({ id: original.id });
               setTransactionListType('clients');
               setTransactionType('out');
               setIsMaterialTransactionModalOpen(true);
@@ -321,7 +322,6 @@ function Stock() {
     }
   };
 
-  // TODO do the same to the others
   const handleSearch = useCallback(() => {
     let filtered = materials;
 
@@ -351,7 +351,9 @@ function Stock() {
             return true;
           }
 
-          return valueToCompare.toLowerCase().includes(value.toLowerCase());
+          return String(valueToCompare)
+            .toLowerCase()
+            .includes(value.toLowerCase());
         });
       }
       setTimeout(() => setFilteredMaterials(filtered), 350);
@@ -378,15 +380,13 @@ function Stock() {
 
   return (
     <>
-      <SideBar />
-
       {isLoading ? (
         <Spinner />
       ) : (
         <>
           <Container>
             <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
-              Estoque
+              {isMaterialToSellPageShowing() ? 'Productos' : 'Estoque'}
             </h2>
             <TopBar
               onSearchInputChange={(data) => setSearchField(data)}
@@ -446,14 +446,23 @@ function Stock() {
                     Proveedores
                   </Link>
                 </MenuItem>
+                <MenuItem>
+                  <Link to="/measurements" style={{ color: 'black' }}>
+                    Unidades de Medida
+                  </Link>
+                </MenuItem>
               </Menu>
             </TopBar>
             <Content>
-              <Table
-                showWarning
-                columns={columns}
-                data={materialsHasWarnings(filteredMaterials)}
-              />
+              {!filteredMaterials?.length ? (
+                <Empty />
+              ) : (
+                <Table
+                  showWarning
+                  columns={columns}
+                  data={materialsHasWarnings(filteredMaterials)}
+                />
+              )}
             </Content>
           </Container>
           <SimpleConfirmationModal
@@ -478,6 +487,7 @@ function Stock() {
               listContentType={transactionListType}
               transactionType={transactionType}
               onSubmit={handleMaterialTransactionSubmit}
+              initialData={currentMaterial}
             />
           )}
         </>

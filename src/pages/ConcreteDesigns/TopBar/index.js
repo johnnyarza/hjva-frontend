@@ -164,4 +164,10 @@ export default ConcreteDesignTopBar;
 
 ConcreteDesignTopBar.propTypes = {
   onNewButton: PropTypes.func.isRequired,
+  onCleanButton: PropTypes.func,
+  onInputChange: PropTypes.func,
+};
+ConcreteDesignTopBar.defaultProps = {
+  onCleanButton: () => {},
+  onInputChange: () => {},
 };

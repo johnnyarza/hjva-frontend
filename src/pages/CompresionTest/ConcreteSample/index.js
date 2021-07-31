@@ -13,7 +13,7 @@ import Empty from '../../../components/Empty';
 import { Container, Content, ConcreteSampleContainer } from './styles';
 import ConcreteSampleTable from './ConcreteSampleTable/index';
 import ConcreteSampleModal from './ConcreteSampleModal';
-import TopBar from './ConcreteSampleTopBar';
+import TopBar from '../../../components/DinTopBar';
 
 import api from '../../../services/api';
 
@@ -25,13 +25,13 @@ import TableEditColumn from '../../../components/TableEditColumn';
 function ConcreteSample() {
   const { locale } = useSelector((state) => state.locale);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchField, setSearchField] = useState('');
   const [userRole, setUserRole] = useState('');
   const [compressionTest, setCompressionTest] = useState('');
   const [isConcreteSampleModalOpen, setIsConcreteSampleModalOpen] = useState(
     false
   );
-  const [concreteSamples, setConcreteSamples] = useState(null);
+  const [concreteSamples, setConcreteSamples] = useState('');
   const [filteredConcreteSamples, setFilteredConcreteSamples] = useState([]);
   const [currentConcreteSample, setCurrentConcreteSample] = useState({});
   const { id: urlId } = useParams();
@@ -72,11 +72,16 @@ function ConcreteSample() {
         });
       }
 
-      setConcreteSamples(data || []);
-      setFilteredConcreteSamples(data || []);
+      setConcreteSamples(data);
     };
     loadAllConcreteSamples();
   }, [compressionTest, urlId]);
+
+  useEffect(() => {
+    if (concreteSamples) {
+      if (!searchField) setFilteredConcreteSamples(concreteSamples);
+    }
+  }, [concreteSamples, searchField]);
 
   useEffect(() => {
     if (concreteSamples) setIsLoading(false);
@@ -101,6 +106,7 @@ function ConcreteSample() {
     },
     [concreteSamples]
   );
+
   const updateConcreteSample = async (concreteSample) => {
     try {
       const { concreteDesign } = compressionTest;
@@ -259,43 +265,44 @@ function ConcreteSample() {
   const columns = useCallback(COMPRESSIONTESTCOLUMNS, []);
 
   const handleSearch = useCallback(() => {
-    let foundConcreteSamples = concreteSamples;
-    const {
-      days: inputDays,
-      sampledAt,
-      loadedAt,
-      tracker: trackerInput,
-    } = searchInput;
-    if (trackerInput && trackerInput > 0) {
-      foundConcreteSamples = concreteSamples.filter(({ tracker }) => {
-        const currentName = String(tracker);
-        const newName = String(trackerInput);
-        return currentName.includes(newName);
-      });
-    }
-    if (inputDays) {
-      foundConcreteSamples = concreteSamples.filter(({ days }) => {
-        if (!days) return false;
-        return Number(inputDays) === days;
-      });
-    }
-    if (sampledAt || loadedAt) {
-      const fieldName = sampledAt ? 'sampledAt' : 'loadedAt';
-      const field = searchInput[fieldName];
-      const { from, to } = field;
-      if (from && to) {
-        foundConcreteSamples = concreteSamples.filter((concreteSample) => {
-          const date = concreteSample[fieldName];
-          return utils.isBetweenDates(from, to, date);
+    let filtered = concreteSamples;
+
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      if (value) {
+        filtered = concreteSamples.filter((comp) => {
+          const newValue = { ...comp };
+
+          const valueToCompare = newValue[field];
+
+          if (!valueToCompare) return false;
+          if (
+            field === 'updatedAt' ||
+            field === 'updated_at' ||
+            field === 'loadedAt' ||
+            field === 'sampledAt'
+          ) {
+            const { from, to } = value;
+            if (from && to) {
+              return utils.isBetweenDates(from, to, valueToCompare);
+            }
+            return true;
+          }
+
+          return String(valueToCompare)
+            .toLowerCase()
+            .includes(value.toLowerCase());
         });
       }
+      setTimeout(() => setFilteredConcreteSamples(filtered), 350);
     }
-    setTimeout(() => setFilteredConcreteSamples(foundConcreteSamples), 350);
-  }, [concreteSamples, searchInput]);
+  }, [concreteSamples, searchField]);
 
   useEffect(() => {
-    if (searchInput) handleSearch(searchInput);
-  }, [searchInput, handleSearch]);
+    handleSearch(searchField);
+  }, [searchField, handleSearch, concreteSamples]);
 
   return (
     <>
@@ -311,12 +318,70 @@ function ConcreteSample() {
             <h2>Probetas</h2>
           </div>
           <TopBar
-            onNewButton={() => {
-              setCurrentConcreteSample({});
-              setIsConcreteSampleModalOpen(true);
+            onSearchInputChange={(data) => setSearchField(data)}
+            onCleanSearchButton={() => {
+              setFilteredConcreteSamples(concreteSamples);
             }}
-            onInputChange={(data) => setSearchInput(data)}
-            onCleanButton={() => setFilteredConcreteSamples(concreteSamples)}
+            buttons={[
+              {
+                label: 'Crear',
+                onClick: () => {
+                  setCurrentConcreteSample({});
+                },
+              },
+            ]}
+            fields={[
+              {
+                field: 'tracker',
+                label: 'Prob. Nª',
+                inputProps: { type: 'number' },
+              },
+              {
+                field: 'slump',
+                label: 'Slump',
+                inputProps: { type: 'number' },
+              },
+              {
+                field: 'sampledAt',
+                label: 'Moldeo',
+                inputProps: { type: 'date' },
+              },
+              {
+                field: 'loadedAt',
+                label: 'Rotura',
+                inputProps: { type: 'date' },
+              },
+              {
+                field: 'days',
+                label: 'Días',
+                inputProps: { type: 'number', min: '0' },
+              },
+              {
+                field: 'diameter',
+                label: 'Diametro',
+                inputProps: { type: 'number' },
+              },
+              {
+                field: 'height',
+                label: 'Altura',
+                inputProps: { type: 'number' },
+              },
+              {
+                field: 'weight',
+                label: 'Peso',
+                inputProps: { type: 'number' },
+              },
+              {
+                field: 'load',
+                label: 'Rotura (Ton)',
+                inputProps: { type: 'number' },
+              },
+              {
+                field: 'mPa',
+                label: 'Rotura (MPa)',
+                inputProps: { type: 'number' },
+              },
+            ]}
           />
 
           <Content>

@@ -13,9 +13,9 @@ import utils from '../../utils';
 
 function Clients() {
   let timeout;
-  const [clients, setClients] = useState([]);
+  const [clients, setClients] = useState('');
   const [filteredClients, setFilteredClients] = useState([]);
-  const [searchField, setInputSearch] = useState({ value: '' });
+  const [searchField, setInputSearch] = useState('');
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [currentClient, setCurrentClient] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -42,9 +42,10 @@ function Clients() {
 
   useEffect(() => {
     if (clients) {
+      if (!searchField) setFilteredClients(clients);
       setIsLoading(false);
     }
-  }, [clients]);
+  }, [clients, searchField]);
 
   const deleteClient = useCallback(
     async (client) => {
@@ -167,55 +168,55 @@ function Clients() {
     <>
       <Container>
         <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Clientes</h2>
-        {!isLoading && (
-          <TopBar
-            onSearchInputChange={(data) => setInputSearch(data)}
-            onCleanSearchButton={() => setClients(clients)}
-            fields={[
-              {
-                field: 'name',
-                label: 'Nombre',
-                inputProps: { type: 'text' },
-              },
-              {
-                field: 'email',
-                label: 'Correo',
-                inputProps: { type: 'text' },
-              },
-              {
-                field: 'phone',
-                label: 'Telefono',
-                inputProps: { type: 'text' },
-              },
-              {
-                field: 'address',
-                label: 'Ubicación',
-                inputProps: { type: 'text' },
-              },
-              {
-                field: 'updatedAt',
-                label: 'Actualizado',
-                inputProps: { type: 'date' },
-              },
-            ]}
-            buttons={[
-              {
-                label: 'Crear',
-                onClick: () => {
-                  setCurrentClient({});
-                  setIsClientModalOpen(true);
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <TopBar
+              onSearchInputChange={(data) => setInputSearch(data)}
+              onCleanSearchButton={() => setFilteredClients(clients)}
+              fields={[
+                {
+                  field: 'name',
+                  label: 'Nombre',
+                  inputProps: { type: 'text' },
                 },
-              },
-            ]}
-          />
+                {
+                  field: 'email',
+                  label: 'Correo',
+                  inputProps: { type: 'email' },
+                },
+                {
+                  field: 'phone',
+                  label: 'Telefono',
+                  inputProps: { type: 'number' },
+                },
+                {
+                  field: 'address',
+                  label: 'Ubicación',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'updatedAt',
+                  label: 'Actualizado',
+                  inputProps: { type: 'date' },
+                },
+              ]}
+              buttons={[
+                {
+                  label: 'Crear',
+                  onClick: () => {
+                    setCurrentClient({});
+                    setIsClientModalOpen(true);
+                  },
+                },
+              ]}
+            />
+            <Content>
+              <ClientsTable data={filteredClients} columns={columns} />
+            </Content>
+          </>
         )}
-        <Content>
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <ClientsTable data={filteredClients} columns={columns} />
-          )}
-        </Content>
       </Container>
       {isClientModalOpen && (
         <ClientModal

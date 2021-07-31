@@ -9,7 +9,6 @@ import SignUp from '../pages/SignUp';
 import Product from '../pages/Product';
 import Location from '../pages/Location';
 import User from '../pages/User';
-import ProductDashboard from '../pages/ProductDashboard';
 import UsersDashboard from '../pages/UsersDashboard';
 import CompresionTestHome from '../pages/CompresionTest/Home';
 import Clients from '../pages/Clients';

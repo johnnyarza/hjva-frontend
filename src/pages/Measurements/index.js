@@ -33,7 +33,6 @@ function Measurements() {
           utils.naturalSortCompare(a.abbreviation, b.abbreviation)
         );
         setMeasurements(data);
-        setFilteredMeasurements(data);
       }
     };
     loadAllMeasurements();
@@ -41,9 +40,10 @@ function Measurements() {
 
   useEffect(() => {
     if (measurements) {
+      if (!searchField) setFilteredMeasurements(measurements);
       setIsLoading(false);
     }
-  }, [measurements]);
+  }, [measurements, searchField]);
 
   const createMeasure = (body) => {
     return api.post('measure', body);
@@ -188,22 +188,23 @@ function Measurements() {
       const entries = Object.entries(searchField);
       const [field, value] = entries[0];
 
-      filtered = measurements.filter((provider) => {
-        const valueToCompare = provider[field];
-        if (!valueToCompare) return false;
-        if (field === 'updatedAt') {
-          const { from, to } = value;
-          if (from && to) {
-            return utils.isBetweenDates(from, to, valueToCompare);
+      if (value) {
+        filtered = measurements.filter((provider) => {
+          const valueToCompare = provider[field];
+          if (!valueToCompare) return false;
+          if (field === 'updatedAt') {
+            const { from, to } = value;
+            if (from && to) {
+              return utils.isBetweenDates(from, to, valueToCompare);
+            }
+            return true;
           }
-          return true;
-        }
 
-        return valueToCompare.toLowerCase().includes(value.toLowerCase());
-      });
+          return valueToCompare.toLowerCase().includes(value.toLowerCase());
+        });
+      }
+      setTimeout(() => setFilteredMeasurements(filtered), 350);
     }
-
-    setFilteredMeasurements(filtered);
   }, [measurements, searchField]);
 
   useEffect(() => {

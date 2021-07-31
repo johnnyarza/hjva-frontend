@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { MdDelete, MdEdit } from 'react-icons/md';
+import { MdEdit } from 'react-icons/md';
 
 import { toast } from 'react-toastify';
 import Table from '../../components/Table';
@@ -16,6 +16,7 @@ import utils from '../../utils/index';
 import DeleteButton from '../../components/DeleteButton';
 
 function ConcreteDesigns() {
+  // TODO table doesnt re-render when update
   const { locale } = useSelector((state) => state.locale);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
   const [filteredConcreteDesigns, setFilteredConcreteDesigns] = useState([]);
@@ -86,6 +87,7 @@ function ConcreteDesigns() {
       notes,
       concreteDesignMaterial: concreteDesignMaterial
         .filter((c) => !c.toDelete)
+        // eslint-disable-next-line camelcase
         .map(({ quantity_per_m3, material }) => ({
           material_id: material.id,
           quantity_per_m3,
@@ -126,6 +128,7 @@ function ConcreteDesigns() {
     try {
       const concreteDesignMaterialtoUpdate = concreteDesignMaterial
         .filter((c) => !!c.id)
+        // eslint-disable-next-line camelcase
         .map(({ id, material, quantity_per_m3 }) => ({
           id,
           quantity_per_m3,
@@ -134,6 +137,7 @@ function ConcreteDesigns() {
 
       const concreteDesignMaterialtoCreate = concreteDesignMaterial
         .filter((c) => !c.id)
+        // eslint-disable-next-line camelcase
         .map(({ material, quantity_per_m3 }) => ({
           quantity_per_m3,
           material_id: material.id,

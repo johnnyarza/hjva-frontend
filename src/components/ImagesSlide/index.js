@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import { uniqueId } from 'lodash';
 
@@ -128,5 +129,13 @@ function ImagesSlide({ images, setImages }) {
     </Container>
   );
 }
+ImagesSlide.propTypes = {
+  setImages: PropTypes.func,
+  images: PropTypes.arrayOf,
+};
 
+ImagesSlide.defaultProps = {
+  setImages: () => {},
+  images: [],
+};
 export default ImagesSlide;

@@ -4,7 +4,7 @@ import { MdDelete, MdEdit } from 'react-icons/md';
 import api from '../../services/api';
 
 import { Container, Content } from './styles';
-import TopBar from './TopBar';
+import TopBar from '../../components/DinTopBar';
 import ClientsTable from '../../components/Table';
 import Spinner from '../../components/Spinner';
 import COLUMNS from './ClientTable/columns';
@@ -13,9 +13,9 @@ import utils from '../../utils';
 
 function Clients() {
   let timeout;
-  const [clients, setClients] = useState(undefined);
+  const [clients, setClients] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
-  const [inputSearch, setInputSearch] = useState(undefined);
+  const [searchField, setInputSearch] = useState({ value: '' });
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [currentClient, setCurrentClient] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +35,6 @@ function Clients() {
         data.sort((a, b) => utils.naturalSortCompare(a.name, b.name));
       }
       setClients(data || []);
-      setFilteredClients(data || []);
     };
 
     loadAllClients();
@@ -74,7 +73,7 @@ function Clients() {
     setIsClientModalOpen(true);
   };
 
-  const hadleClientEdit = async (client) => {
+  const handleClientEdit = async (client) => {
     try {
       let res;
       if (!client.id) {
@@ -134,51 +133,35 @@ function Clients() {
     return [...COLUMNS, newCol];
   }, [deleteClient]);
 
-  const handleSearch = useCallback(
-    (searchInput) => {
-      let foundClients = clients;
-      const { name, email, phone, updatedAt } = searchInput;
+  const handleSearch = useCallback(() => {
+    let filtered = clients;
 
-      if (name) {
-        foundClients = clients.filter(({ name: clientName }) => {
-          if (!clientName) return false;
-          const currentName = clientName.toLowerCase();
-          const newName = name.toLowerCase();
-          return currentName.includes(newName);
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      if (value) {
+        filtered = clients.filter((client) => {
+          const valueToCompare = client[field];
+          if (!valueToCompare) return false;
+          if (field === 'updatedAt' || field === 'updated_at') {
+            const { from, to } = value;
+            if (from && to) {
+              return utils.isBetweenDates(from, to, valueToCompare);
+            }
+            return true;
+          }
+
+          return valueToCompare.toLowerCase().includes(value.toLowerCase());
         });
       }
-      if (email) {
-        foundClients = clients.filter(({ email: clientEmail }) => {
-          if (!clientEmail) return false;
-          const currentName = clientEmail.toLowerCase();
-          const newName = email.toLowerCase();
-          return currentName.includes(newName);
-        });
-      }
-      if (phone) {
-        foundClients = clients.filter(({ phone: clientPhone }) => {
-          if (!clientPhone) return false;
-          const currentName = clientPhone.toLowerCase();
-          const newName = phone.toLowerCase();
-          return currentName.includes(newName);
-        });
-      }
-      if (updatedAt) {
-        const { from, to } = updatedAt;
-        if (from && to) {
-          foundClients = clients.filter(({ updatedAt: date }) => {
-            return utils.isBetweenDates(from, to, date);
-          });
-        }
-      }
-      setTimeout(() => setFilteredClients(foundClients), 350);
-    },
-    [clients]
-  );
+      setTimeout(() => setFilteredClients(filtered), 350);
+    }
+  }, [clients, searchField]);
 
   useEffect(() => {
-    if (inputSearch) handleSearch(inputSearch);
-  }, [inputSearch, handleSearch]);
+    handleSearch(searchField);
+  }, [searchField, handleSearch, clients]);
 
   return (
     <>
@@ -186,12 +169,44 @@ function Clients() {
         <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Clientes</h2>
         {!isLoading && (
           <TopBar
-            onNewButton={() => {
-              setCurrentClient({});
-              setIsClientModalOpen(true);
-            }}
-            onInputChange={(data) => setInputSearch(data)}
-            onCleanButton={() => setFilteredClients(clients)}
+            onSearchInputChange={(data) => setInputSearch(data)}
+            onCleanSearchButton={() => setClients(clients)}
+            fields={[
+              {
+                field: 'name',
+                label: 'Nombre',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'email',
+                label: 'Correo',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'phone',
+                label: 'Telefono',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'address',
+                label: 'Ubicación',
+                inputProps: { type: 'text' },
+              },
+              {
+                field: 'updatedAt',
+                label: 'Actualizado',
+                inputProps: { type: 'date' },
+              },
+            ]}
+            buttons={[
+              {
+                label: 'Crear',
+                onClick: () => {
+                  setCurrentClient({});
+                  setIsClientModalOpen(true);
+                },
+              },
+            ]}
           />
         )}
         <Content>
@@ -206,7 +221,7 @@ function Clients() {
         <ClientModal
           clients={clients}
           onSubmit={(data) => {
-            hadleClientEdit(data);
+            handleClientEdit(data);
           }}
           onCancelButton={() => setIsClientModalOpen(false)}
           initialData={currentClient}

@@ -22,7 +22,6 @@ import COLUMNS from './Table/columns';
 import MaterialTransactionModal from './MaterialTransactionModal';
 
 function Stock() {
-  // TODO adicionar transação não renderiza a tabela novamente
   let timeout;
   const { locale } = useSelector((state) => state.locale);
   const location = useLocation();
@@ -79,18 +78,18 @@ function Stock() {
           })
         );
         setMaterials(sortedData);
-        setFilteredMaterials(sortedData);
       }
     };
 
     loadAllMaterials();
   }, [location, isMaterialToSellPageShowing]);
-
+  // TODO do the same to the others
   useEffect(() => {
     if (materials) {
+      if (!searchField) setFilteredMaterials(materials);
       setIsLoading(false);
     }
-  }, [materials]);
+  }, [materials, searchField]);
 
   const handleEditClick = useCallback(
     (data) => {
@@ -322,6 +321,7 @@ function Stock() {
     }
   };
 
+  // TODO do the same to the others
   const handleSearch = useCallback(() => {
     let filtered = materials;
 
@@ -354,7 +354,6 @@ function Stock() {
           return valueToCompare.toLowerCase().includes(value.toLowerCase());
         });
       }
-
       setTimeout(() => setFilteredMaterials(filtered), 350);
     }
   }, [materials, searchField, isMaterialToSellPageShowing]);

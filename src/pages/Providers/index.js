@@ -79,8 +79,7 @@ function Providers() {
 
   const editProvider = async (provider) => {
     try {
-      const cleanedProvider = clean(provider);
-      const { data: updatedProvider } = await updateProvider(cleanedProvider);
+      const { data: updatedProvider } = await updateProvider(provider);
       if (updatedProvider) {
         const newProviders = providers.map((p) => {
           if (p.id === updatedProvider.id) {

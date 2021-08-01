@@ -1,10 +1,12 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { MdEdit } from 'react-icons/md';
-
 import { toast } from 'react-toastify';
+
 import Table from '../../components/Table';
 import Spinner from '../../components/Spinner';
+import DeleteButton from '../../components/DeleteButton';
+import ColumnEdit from '../../components/TableEditColumn';
 
 import { Container, Content } from './styles';
 import TopBar from './TopBar';
@@ -13,12 +15,11 @@ import ConcreteModal from './ConcreteDesignModal';
 
 import api from '../../services/api';
 import utils from '../../utils/index';
-import DeleteButton from '../../components/DeleteButton';
 
 function ConcreteDesigns() {
-  // TODO table doesnt re-render when update
   const { locale } = useSelector((state) => state.locale);
-  const [concreteDesigns, setConcreteDesigns] = useState(null);
+  const [userRole, setUserRole] = useState('');
+  const [concreteDesigns, setConcreteDesigns] = useState('');
   const [filteredConcreteDesigns, setFilteredConcreteDesigns] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [materials, setMaterials] = useState(null);
@@ -27,13 +28,17 @@ function ConcreteDesigns() {
   const [isConcreteModalOpen, setIsConcreteModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!searchInput && concreteDesigns)
+      setFilteredConcreteDesigns(
+        concreteDesigns.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
+      );
+  }, [searchInput, concreteDesigns]);
+
+  useEffect(() => {
     const loadAllConcreteDesigns = async () => {
       const { data } = await api.get('concreteDesigns');
       if (data) {
         setConcreteDesigns(
-          data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
-        );
-        setFilteredConcreteDesigns(
           data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
         );
       }
@@ -212,6 +217,17 @@ function ConcreteDesigns() {
     }
   };
 
+  useEffect(() => {
+    const loadUserRole = async () => {
+      const { data } = await api.get('/user');
+      if (data) {
+        const { role } = data;
+        setUserRole(role);
+      }
+    };
+    loadUserRole();
+  }, []);
+
   const columns = useMemo(() => {
     const newCol = {
       Header: 'Editar',
@@ -227,20 +243,20 @@ function ConcreteDesigns() {
           className="edit-buttons-container"
           style={{ justifyContent: 'center' }}
         >
-          <button
-            className="edit-button"
-            type="button"
-            onClick={() => handleEditClick(original)}
-          >
-            <MdEdit />
-          </button>
-          <DeleteButton onClick={() => handleDeleteClick(original)} />
+          <ColumnEdit
+            original={original}
+            hasDelete
+            hasEdit
+            onDeleteClick={handleDeleteClick}
+            onEditClick={handleEditClick}
+            userRole={userRole}
+          />
         </div>
       ),
     };
     const formatedCols = COLUMNS(locale);
     return [...formatedCols, newCol];
-  }, [handleDeleteClick, handleEditClick, locale]);
+  }, [handleDeleteClick, handleEditClick, locale, userRole]);
 
   const handleSearch = useCallback(() => {
     let foundCompressionTests = concreteDesigns;

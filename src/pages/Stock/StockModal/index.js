@@ -23,6 +23,7 @@ function StockModal({
   initialData,
   onCancelButton,
   materials,
+  toggleDisabled,
   ...rest
 }) {
   const formRef = useRef(null);
@@ -290,6 +291,7 @@ function StockModal({
                       name="toSell"
                       isChecked={!!material.toSell}
                       label="En venta"
+                      toggleDisabled={toggleDisabled}
                     />
 
                     <div className="btn-container">
@@ -318,6 +320,7 @@ function StockModal({
 export default StockModal;
 
 StockModal.propTypes = {
+  toggleDisabled: PropTypes.bool,
   initialData: PropTypes.shape({
     id: PropTypes.string,
     provider: PropTypes.shape({ name: PropTypes.string, id: PropTypes.string }),
@@ -340,4 +343,5 @@ StockModal.propTypes = {
 
 StockModal.defaultProps = {
   initialData: {},
+  toggleDisabled: false,
 };

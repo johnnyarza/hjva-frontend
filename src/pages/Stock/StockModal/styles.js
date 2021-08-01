@@ -2,8 +2,6 @@ import styled from 'styled-components';
 
 export const Container = styled.div``;
 export const Content = styled.div`
-  --emerald: #2ecc71;
-  --alizarin: #c0392b;
   display: grid;
   grid-template-columns: auto;
 
@@ -15,9 +13,9 @@ export const Content = styled.div`
   }
 
   .btn-cancel {
-    background-color: var(--alizarin);
+    background-color: var(--cancelButton);
   }
   .btn-ok {
-    background-color: var(--emerald);
+    background-color: var(--okButton);
   }
 `;

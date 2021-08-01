@@ -6,6 +6,7 @@ const COLUMNS = (locale = 'pt-BR') => {
     {
       Header: 'Nombre',
       accessor: 'name',
+      width: 60,
     },
     {
       id: 'category',

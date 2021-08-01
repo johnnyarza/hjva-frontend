@@ -22,10 +22,10 @@ import COLUMNS from './Table/columns';
 import MaterialTransactionModal from './MaterialTransactionModal';
 
 function Stock() {
-  let timeout;
   const { locale } = useSelector((state) => state.locale);
   const location = useLocation();
   const [userRole, setUserRole] = useState('common');
+  const [timeout, setTime] = useState('');
   const [materials, setMaterials] = useState('');
   const [filteredMaterials, setFilteredMaterials] = useState([]);
   const [searchField, setSearchField] = useState('');
@@ -86,10 +86,15 @@ function Stock() {
 
   useEffect(() => {
     if (materials) {
-      if (!searchField) setFilteredMaterials(materials);
       setIsLoading(false);
     }
-  }, [materials, searchField]);
+  }, [materials]);
+
+  useEffect(() => {
+    if (materials) {
+      if (!searchField) setFilteredMaterials(materials);
+    }
+  }, [searchField, materials]);
 
   const handleEditClick = useCallback(
     (data) => {
@@ -356,7 +361,7 @@ function Stock() {
             .includes(value.toLowerCase());
         });
       }
-      setTimeout(() => setFilteredMaterials(filtered), 350);
+      setTime(setTimeout(() => setFilteredMaterials(filtered), 350));
     }
   }, [materials, searchField, isMaterialToSellPageShowing]);
 
@@ -478,6 +483,7 @@ function Stock() {
               initialData={currentMaterial}
               materials={materials}
               onSubmit={handleSubmit}
+              toggleDisabled={isMaterialToSellPageShowing()}
             />
           )}
           {isMaterialTransactionModalOpen && (

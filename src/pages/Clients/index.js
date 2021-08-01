@@ -78,7 +78,7 @@ function Clients() {
     try {
       let res;
       if (!client.id) {
-        res = await api.post('client', utils.clean(client));
+        res = await api.post('client', client);
       }
       if (client.id) {
         res = await api.put(`client/${client.id}`, client);

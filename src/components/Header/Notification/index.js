@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MdNotifications } from 'react-icons/md';
+import { MdErrorOutline, MdNotifications } from 'react-icons/md';
 import Loader from 'react-loader-spinner';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropType from 'prop-types';
@@ -10,12 +10,15 @@ import {
   Notification,
 } from './styles';
 
-function Notifications({ isLoading, hasNotification }) {
+function Notifications({ isLoading, hasNotification, hasError }) {
   const [showNotificationContent, setShowNotificationContent] = useState(false);
+
   return (
     <NotificationContainer hasNotification={hasNotification}>
       {isLoading ? (
         <Loader type="TailSpin" color="#00BFFF" height={30} width={30} />
+      ) : hasError ? (
+        <MdErrorOutline />
       ) : (
         <button
           type="button"
@@ -45,6 +48,11 @@ function Notifications({ isLoading, hasNotification }) {
 Notifications.propTypes = {
   isLoading: PropType.bool.isRequired,
   hasNotification: PropType.bool.isRequired,
+  hasError: PropType.bool,
+};
+
+Notifications.defaultProps = {
+  hasError: false,
 };
 
 export default Notifications;

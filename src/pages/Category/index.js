@@ -14,6 +14,7 @@ import CategoryModal from './CategoryModal';
 
 import utils from '../../utils';
 import api from '../../services/api';
+import Empty from '../../components/Empty';
 
 function Category() {
   const [isLoading, setIsLoading] = useState(true);
@@ -234,7 +235,11 @@ function Category() {
               ]}
             />
             <Content>
-              <CategoryTable data={filteredCategories} columns={columns} />
+              {!filteredCategories.length ? (
+                <Empty />
+              ) : (
+                <CategoryTable data={filteredCategories} columns={columns} />
+              )}
             </Content>
           </>
         )}

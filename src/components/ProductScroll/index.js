@@ -1,26 +1,42 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import ScrollMenu from 'react-horizontal-scrolling-menu';
+import { FiChevronRight, FiChevronLeft } from 'react-icons/fi';
+import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { useHistory } from 'react-router-dom';
 import { Container, Arrow } from './style';
 
 export default function HorizontalScroll({ productCards, category }) {
   const history = useHistory();
+
+  function LeftArrow() {
+    const { isFirstItemVisible, scrollPrev } = useContext(VisibilityContext);
+
+    return (
+      <button type="button" onClick={() => scrollPrev()}>
+        <FiChevronLeft>Left</FiChevronLeft>
+      </button>
+    );
+  }
+
+  function RightArrow() {
+    const { isFirstItemVisible, scrollNext } = useContext(VisibilityContext);
+    return (
+      <button
+        onClick={() => {
+          scrollNext();
+        }}
+        type="button"
+      >
+        <FiChevronRight>Right</FiChevronRight>
+      </button>
+    );
+  }
   return (
     <Container>
       <span>{category}</span>
-      <ScrollMenu
-        key={category}
-        data={productCards}
-        arrowLeft={<Arrow>{'<'}</Arrow>}
-        arrowRight={<Arrow>{'>'}</Arrow>}
-        menuStyle={{ justifyContent: 'space-between' }}
-        wrapperStyle={{ width: '90%' }}
-        wheel={false}
-        dragging={false}
-        alignCenter
-        onSelect={(p) => history.push(`/product/${p}`)}
-      />
+      <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
+        {productCards}
+      </ScrollMenu>
     </Container>
   );
 }

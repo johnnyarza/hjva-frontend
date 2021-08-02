@@ -3,7 +3,7 @@ import { darken } from 'polished';
 
 export const Container = styled.div`
   height: 100%;
-  margin-top: 10%;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
 `;
@@ -19,7 +19,7 @@ export const Content = styled.div`
   form {
     display: flex;
     flex-direction: column;
-    margin: 30px;
+    margin: 20px 30px 20px 30px;
     span {
       color: #e74c3c;
       align-self: flex-start;

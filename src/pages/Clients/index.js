@@ -6,6 +6,7 @@ import api from '../../services/api';
 import { Container, Content } from './styles';
 import TopBar from '../../components/DinTopBar';
 import ClientsTable from '../../components/Table';
+import Empty from '../../components/Empty';
 import Spinner from '../../components/Spinner';
 import COLUMNS from './ClientTable/columns';
 import ClientModal from './ClientModal';
@@ -213,7 +214,11 @@ function Clients() {
               ]}
             />
             <Content>
-              <ClientsTable data={filteredClients} columns={columns} />
+              {!filteredClients.length ? (
+                <Empty />
+              ) : (
+                <ClientsTable data={filteredClients} columns={columns} />
+              )}
             </Content>
           </>
         )}

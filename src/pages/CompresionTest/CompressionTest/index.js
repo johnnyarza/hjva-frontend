@@ -17,12 +17,13 @@ import Spinner from '../../../components/Spinner';
 import CompresionTestModal from '../CompresionTestModal';
 import utils from '../../../utils';
 import api from '../../../services/api';
+import Empty from '../../../components/Empty';
 
 function CompresionTest() {
   const history = useHistory();
   const [searchField, setSearchField] = useState('');
   const { locale } = useSelector((state) => state.locale);
-  const [compressionTests, setCompressionTests] = useState(null);
+  const [compressionTests, setCompressionTests] = useState('');
   const [filteredCompressionTests, setFilteredCompressionTests] = useState([]);
   const [concreteDesigns, setConcreteDesigns] = useState(null);
   const [currentCompressionTest, setCurrentCompressionTest] = useState('');
@@ -320,11 +321,15 @@ function CompresionTest() {
             </Menu>
           </TopBar>
           <Content>
-            <CompressionTestsTable
-              columns={columns}
-              data={filteredCompressionTests || []}
-              showWarning
-            />
+            {!filteredCompressionTests.length ? (
+              <Empty />
+            ) : (
+              <CompressionTestsTable
+                columns={columns}
+                data={filteredCompressionTests}
+                showWarning
+              />
+            )}
           </Content>
         </Container>
       )}

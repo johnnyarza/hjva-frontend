@@ -14,6 +14,7 @@ import { Container, Content } from './styles';
 import api from '../../services/api';
 import utils from '../../utils';
 import DeleteButton from '../../components/DeleteButton';
+import Empty from '../../components/Empty';
 
 function Providers() {
   const [searchField, setSearchField] = useState('');
@@ -244,7 +245,11 @@ function Providers() {
               ]}
             />
             <Content>
-              <ProviderTable data={filteredProviders} columns={columns} />
+              {!filteredProviders.length ? (
+                <Empty />
+              ) : (
+                <ProviderTable data={filteredProviders} columns={columns} />
+              )}
             </Content>
           </>
         )}

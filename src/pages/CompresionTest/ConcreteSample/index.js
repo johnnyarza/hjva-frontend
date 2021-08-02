@@ -327,6 +327,7 @@ function ConcreteSample() {
                 label: 'Crear',
                 onClick: () => {
                   setCurrentConcreteSample({});
+                  setIsConcreteSampleModalOpen(true);
                 },
               },
             ]}
@@ -394,7 +395,7 @@ function ConcreteSample() {
             )}
 
             <ConcreteSampleContainer>
-              {!concreteSamples.length ? (
+              {!filteredConcreteSamples.length ? (
                 <Empty />
               ) : (
                 <ConcreteSampleTable

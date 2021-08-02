@@ -15,6 +15,7 @@ import TopBar from '../../components/DinTopBar';
 import MeasureModal from './MeasurementModal';
 
 import utils from '../../utils';
+import Empty from '../../components/Empty';
 
 function Measurements() {
   const [isLoading, setIsLoading] = useState(true);
@@ -252,7 +253,11 @@ function Measurements() {
               ]}
             />
             <Content>
-              <MeasureTable data={filteredMeasurements} columns={columns} />
+              {!filteredMeasurements.length ? (
+                <Empty />
+              ) : (
+                <MeasureTable data={filteredMeasurements} columns={columns} />
+              )}
             </Content>
           </>
         )}

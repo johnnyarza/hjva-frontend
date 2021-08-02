@@ -9752,10 +9752,10 @@ react-error-overlay@^6.0.9:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
   integrity sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==
 
-react-horizontal-scrolling-menu@^0.7.10:
-  version "0.7.10"
-  resolved "https://registry.yarnpkg.com/react-horizontal-scrolling-menu/-/react-horizontal-scrolling-menu-0.7.10.tgz#d5b941ddda459d5d7090f6aab53364e4e4884ba4"
-  integrity sha512-QwoTMIbKwO+K3byB9zr6culXE1lhXZ7hIJJmBt5bHMM7Okl7mCFyZvD5/GkQ8Txp5C4pqRI5Lq/zlWxxyy59nA==
+react-horizontal-scrolling-menu@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-horizontal-scrolling-menu/-/react-horizontal-scrolling-menu-2.0.1.tgz#df3796d5ba14634bb20c7c49d4c313ea2f64b652"
+  integrity sha512-z58fMI99bPDYi8pm8ghaoS4L191sYzYzELWgKZYHTzh1vYiz6ecjDynSlaZ5ioQaERVRAVZeDUGWE+SxUXVxOw==
 
 react-icons@^4.2.0:
   version "4.2.0"

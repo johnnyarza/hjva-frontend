@@ -1,43 +1,56 @@
-/* eslint-disable */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import { MdErrorOutline } from 'react-icons/md';
 
-import Loading from '../../components/Spinner'
-import ProductCard from '../../components/ProductCard'
-import ProductScroll from '../../components/ProductScroll'
+import Loading from '../../components/Spinner';
+import ProductCard from '../../components/HorizontalScrolling/Card';
+import ProductScroll from '../../components/HorizontalScrolling';
 
-import api from '../../services/api'
-import Empty from '../../components/Empty'
+import api from '../../services/api';
+
+import Empty from '../../components/Empty';
 
 export default function Home() {
-  const [products, setProducts] = useState({})
-  const [categories, setCategories] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  // TODO separar cards por categoria
+  const [products, setProducts] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     async function loadAllProducts() {
-      const res = await api.get('products')
-      setProducts(res.data)
-      if (res.data[0]) {
-        const categoriesSet = new Set(res.data.map((p) => p.category))
-        const cats = [...categoriesSet]
-        setCategories(cats)
+      try {
+        const { data } = await api.get('materialsToSell');
+        console.log(data);
+        setProducts(data);
+        if (data) {
+          const categoriesSet = new Set(data.map((p) => p.category.name));
+          setCategories([...categoriesSet]);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        setHasError(true);
       }
-      setIsLoading(false)
     }
-    loadAllProducts()
 
-  }, [])
+    loadAllProducts();
+  }, []);
 
   function generateProductCards(category) {
     if (products[0] && categories[0]) {
-      const prodsByCat = products.filter((p) => p.category === category)
+      const prodsByCat = products.filter((p) => p.category.name === category);
       const cards = prodsByCat.map((p) => (
-        <ProductCard text={p.name} description={p.description} key={p.id} file={p.file}/>
-      ))
-      return cards
+        <ProductCard
+          text={p.name}
+          description={p.notes}
+          key={p.id}
+          file={p.file}
+        />
+      ));
+      return cards;
     }
 
-    return null
+    return null;
   }
 
   function generateScrolls(cats) {
@@ -48,17 +61,25 @@ export default function Home() {
           category={cat}
         />
       </div>
-    ))
+    ));
   }
   return (
     <>
       {isLoading ? (
         <Loading />
-      ) : categories[0] && products[0] ? (
-        generateScrolls(categories)
+      ) : hasError ? (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <MdErrorOutline
+            style={{
+              height: '100px',
+              width: 'auto',
+              color: 'var(--errorColor)',
+            }}
+          />
+        </div>
       ) : (
-            <Empty />
-          )}
+        <ProductScroll data={products} />
+      )}
     </>
-  )
+  );
 }

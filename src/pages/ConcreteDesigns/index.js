@@ -1,11 +1,9 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { MdEdit } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 import Table from '../../components/Table';
 import Spinner from '../../components/Spinner';
-import DeleteButton from '../../components/DeleteButton';
 import ColumnEdit from '../../components/TableEditColumn';
 
 import { Container, Content } from './styles';
@@ -15,6 +13,7 @@ import ConcreteModal from './ConcreteDesignModal';
 
 import api from '../../services/api';
 import utils from '../../utils/index';
+import Empty from '../../components/Empty';
 
 function ConcreteDesigns() {
   const { locale } = useSelector((state) => state.locale);
@@ -326,7 +325,11 @@ function ConcreteDesigns() {
             onCleanButton={() => setFilteredConcreteDesigns(concreteDesigns)}
           />
           <Content>
-            <Table columns={columns} data={filteredConcreteDesigns} />
+            {!filteredConcreteDesigns.length ? (
+              <Empty />
+            ) : (
+              <Table columns={columns} data={filteredConcreteDesigns} />
+            )}
           </Content>
         </Container>
       )}

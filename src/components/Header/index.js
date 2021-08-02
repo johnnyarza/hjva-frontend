@@ -13,6 +13,7 @@ import api from '../../services/api';
 
 export default function Header() {
   const [hasNotification, setHasNotification] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const history = useHistory();
@@ -21,15 +22,19 @@ export default function Header() {
 
   useEffect(() => {
     const loadAllCompressionTests = async () => {
-      if (user) {
-        const { data } = await api.get('compressionTests');
-        if (data) {
-          const hasWarnings = data.find((c) => c.hasWarning);
-          setHasNotification(!!hasWarnings);
+      try {
+        if (user) {
+          const { data } = await api.get('compressionTests');
+          if (data) {
+            const hasWarnings = data.find((c) => c.hasWarning);
+            setHasNotification(!!hasWarnings);
+          }
         }
+      } catch (error) {
+        setHasError(true);
+      } finally {
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     };
     loadAllCompressionTests();
     // const timer = setInterval(() => {
@@ -71,6 +76,7 @@ export default function Header() {
               <Notifications
                 isLoading={isLoading}
                 hasNotification={hasNotification}
+                hasError={hasError}
               />
             )}
             <Link to="/login">

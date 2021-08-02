@@ -5,6 +5,7 @@ export const Container = styled.div`
   margin-top: 30px;
   margin-left: 30px;
   margin-right: 30px;
+  height: 400px;
 
   > span {
     display: inline-block;

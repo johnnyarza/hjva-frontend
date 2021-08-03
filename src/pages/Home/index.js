@@ -1,20 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 
 import Loading from '../../components/Spinner';
-import ProductCard from '../../components/HorizontalScrolling/Card';
+import Card from '../../components/HorizontalScrolling/Card';
 import ProductScroll from '../../components/HorizontalScrolling';
 
 import api from '../../services/api';
+import MobileCards from '../../components/MobileProductCards';
 
-import Empty from '../../components/Empty';
+import { InputContext } from '../_layouts/Default/index';
 
 export default function Home() {
   // TODO separar cards por categoria
-  const [products, setProducts] = useState({});
+  const [products, setProducts] = useState([]);
+  const [width, setWidth] = useState(window.innerWidth);
+  const [isMobile, setIsMobile] = useState(width <= 768);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [searchInputValue] = useContext(InputContext);
+
+  useEffect(() => {
+    setIsMobile(width <= 768);
+  }, [width]);
+
+  useEffect(() => {
+    console.log(searchInputValue);
+  }, [searchInputValue]);
+
+  const handleWindowSizeChange = () => {
+    setWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleWindowSizeChange);
+    return () => {
+      window.removeEventListener('resize', handleWindowSizeChange);
+    };
+  }, []);
 
   useEffect(() => {
     async function loadAllProducts() {
@@ -40,12 +63,7 @@ export default function Home() {
     if (products[0] && categories[0]) {
       const prodsByCat = products.filter((p) => p.category.name === category);
       const cards = prodsByCat.map((p) => (
-        <ProductCard
-          text={p.name}
-          description={p.notes}
-          key={p.id}
-          file={p.file}
-        />
+        <Card text={p.name} description={p.notes} key={p.id} file={p.file} />
       ));
       return cards;
     }
@@ -77,6 +95,8 @@ export default function Home() {
             }}
           />
         </div>
+      ) : isMobile ? (
+        <MobileCards data={products} />
       ) : (
         <ProductScroll data={products} />
       )}

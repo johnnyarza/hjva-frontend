@@ -3,11 +3,21 @@ import { lighten } from 'polished';
 
 export const Container = styled.div`
   background-color: #fff159;
-  padding: 0 64px;
+  padding: 0 16px;
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 2;
+  svg {
+    color: #000;
+    margin-right: 5px;
+    height: 20px;
+    width: 20px;
+
+    &:hover {
+      color: ${lighten(0.5, '#000')};
+    }
+  }
 `;
 
 export const NotificationContent = styled.div`
@@ -146,24 +156,12 @@ export const MiddleContent = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: flex-start;
+  justify-content: start;
+  align-items: flex-end;
 
   div {
     display: flex;
     justify-content: space-between;
-
-    svg {
-      color: #000;
-      margin-right: 5px;
-      height: 20px;
-      width: 20px;
-
-      &:hover {
-        color: ${lighten(0.5, '#000')};
-      }
-    }
   }
 `;
 

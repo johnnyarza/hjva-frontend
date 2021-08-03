@@ -44,6 +44,15 @@ const utils = {
       numeric: true,
       sensitivity: 'base',
     }),
+  getArrayNewIndex: (moveBy = 1, array, currentIndex = 0) => {
+    if (array.length > 0) {
+      let newIndex = currentIndex + moveBy;
+      if (newIndex > array.length - 1) newIndex = 0;
+      if (newIndex < 0) newIndex = array.length - 1;
+      return newIndex;
+    }
+    return currentIndex;
+  },
 };
 
 export default utils;

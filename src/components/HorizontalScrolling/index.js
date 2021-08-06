@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 
 import { LeftArrow, RightArrow } from './ArrowsHorizontalScroll';
@@ -6,41 +7,39 @@ import Card from './Card';
 
 import './styles.css';
 
-const elemPrefix = 'test';
-const getId = (index) => `${elemPrefix}${index}`;
+// const elemPrefix = 'test';
+// const getId = (index) => `${elemPrefix}${index}`;
 
-const getItems = () =>
-  Array(20)
-    .fill(0)
-    .map((_, ind) => ({ id: getId(ind) }));
+// const getItems = () =>
+//   Array(20)
+//     .fill(0)
+//     .map((_, ind) => ({ id: getId(ind) }));
 
-function onWheel(apiObj, ev) {
-  const isThouchpad = Math.abs(ev.deltaX) !== 0 || Math.abs(ev.deltaY) < 15;
+// function onWheel(apiObj, ev) {
+//   const isThouchpad = Math.abs(ev.deltaX) !== 0 || Math.abs(ev.deltaY) < 15;
 
-  if (isThouchpad) {
-    ev.stopPropagation();
-    return;
-  }
+//   if (isThouchpad) {
+//     ev.stopPropagation();
+//     return;
+//   }
 
-  if (ev.deltaY < 0) {
-    apiObj.scrollNext();
-  } else if (ev.deltaY > 0) {
-    apiObj.scrollPrev();
-  }
-}
+//   if (ev.deltaY < 0) {
+//     apiObj.scrollNext();
+//   } else if (ev.deltaY > 0) {
+//     apiObj.scrollPrev();
+//   }
+// }
 
 function HorizontalScrolling({ data = [] }) {
-  const [items] = useState(getItems);
-  const [selected, setSelected] = useState([]);
+  // const [items] = useState(getItems);
   // can save and restore position if needed
-  const [position, setPosition] = useState(100);
+  const [selected, setSelected] = useState([]);
+  const [position, setPosition] = useState(50);
 
   const isItemSelected = (id) => !!selected.find((el) => el === id);
 
-  const handleItemClick = (itemId) => ({ getItemById }) => {
+  const handleItemClick = (itemId) => () => {
     const itemSelected = isItemSelected(itemId);
-
-    console.log(getItemById(itemId));
 
     setSelected((currentSelected) =>
       itemSelected
@@ -67,15 +66,15 @@ function HorizontalScrolling({ data = [] }) {
 
   return (
     <>
-      <div className="example" style={{ paddingTop: '50px' }}>
+      <div className="example" style={{ paddingTop: '25px' }}>
         <div>
           <ScrollMenu
             LeftArrow={LeftArrow}
             RightArrow={RightArrow}
             onInit={restorePosition}
             onScroll={savePosition}
-            onWheel={onWheel}
-            className="teste"
+            // onWheel={onWheel}
+            className="scrollMenu"
           >
             {data.map(({ id, name, notes, file }) => (
               <Card
@@ -96,3 +95,16 @@ function HorizontalScrolling({ data = [] }) {
   );
 }
 export default HorizontalScrolling;
+
+HorizontalScrolling.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+      notes: PropTypes.string,
+    })
+  ),
+};
+HorizontalScrolling.defaultProps = {
+  data: [],
+};

@@ -38,10 +38,10 @@ function ImagesSlide({ images, setImages }) {
       currentImages.find((image) => !image.toDelete)
     ) {
       let image = currentImages[index];
-      if (image.toDelete) {
+      if (!image || image.toDelete) {
         changeImage();
       }
-      if (!image.toDelete) {
+      if (image && !image.toDelete) {
         image = image?.url ? image : '';
         setCurrentImage(image);
       }

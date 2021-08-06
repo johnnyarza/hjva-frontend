@@ -7,4 +7,8 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 16px;
+  a + a {
+    margin-top: 8px;
+  }
 `;

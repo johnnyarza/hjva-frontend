@@ -4,11 +4,8 @@ export const Card = styled.div`
   background-color: white;
   padding: 10px;
   border-radius: 15px;
-  height: 300px;
+  height: 400px;
   width: 200px;
-  & + div {
-    margin-top: 8px;
-  }
 `;
 
 export const Img = styled.div`
@@ -37,21 +34,32 @@ export const Img = styled.div`
 `;
 
 export const Texts = styled.div`
+  display: flex;
+  border-top: 1px solid #ebebeb;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
   height: 40%;
-  padding-top: 8px;
+
+  .notes {
+    overflow: auto;
+    text-align: justify;
+    text-justify: inter-word;
+    pre {
+      font: 16px 'Roboto';
+      white-space: pre-wrap; /* css-3 */
+      white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+      white-space: -pre-wrap; /* Opera 4-6 */
+      white-space: -o-pre-wrap; /* Opera 7 */
+      word-wrap: break-word;
+    }
+  }
+
+  h3 {
+    margin-bottom: 5%;
+  }
   p,
   h3 {
-    word-wrap: break-word;
-  }
-  .title,
-  .notes {
-    overflow: hidden;
-  }
-  .title {
-    height: 40%;
-    padding-bottom: 10px;
-  }
-  .notes {
-    height: auto;
+    font-size: 16px;
   }
 `;

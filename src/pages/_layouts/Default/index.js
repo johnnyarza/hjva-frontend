@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState, createContext } from 'react';
+import { useLocation } from 'react-router-dom';
+import { FaSearch } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 
 import Header from '../../../components/Header';
@@ -7,6 +9,7 @@ import SideBar from '../../../components/SideBar';
 import { Wrapper, Content, InputContainer, InputContent } from './styles';
 
 export const InputContext = createContext(['', () => {}]);
+export const IsMobileContext = createContext(['', () => {}]);
 
 export default function DefaultLayout({ children, hasSideBar }) {
   const sideBar = useMemo(() => <SideBar />, []);
@@ -15,8 +18,8 @@ export default function DefaultLayout({ children, hasSideBar }) {
   const [isMobile, setIsMobile] = useState(width <= 768);
   const [inputValue, setInputValue] = useState('');
   const { Provider: InputProvider } = InputContext;
-
-  // TODO implementar busca
+  const { Provider: IsMobileProvider } = IsMobileContext;
+  const { pathname } = useLocation();
 
   useEffect(() => {
     setIsMobile(width <= 768);
@@ -34,25 +37,28 @@ export default function DefaultLayout({ children, hasSideBar }) {
   }, []);
 
   return (
-    <Wrapper>
-      <Header />
-
-      <InputContainer>
-        <InputContent isFocused={isFocused}>
-          <input
-            value={inputValue}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onChange={(data) => setInputValue(data.target.value)}
-          />
-        </InputContent>
-      </InputContainer>
-      <InputProvider value={[inputValue, setInputValue]}>
-        <Content>
-          {hasSideBar && sideBar}
-          {children}
-        </Content>
-      </InputProvider>
+    <Wrapper isMobile={isMobile}>
+      <IsMobileProvider value={[isMobile, setIsMobile]}>
+        <Header mobileState={[isMobile, setIsMobile]} />
+        <InputContainer isMobile={isMobile}>
+          <InputContent isFocused={isFocused}>
+            <input
+              value={inputValue}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onChange={(data) => setInputValue(data.target.value)}
+              disabled={pathname !== '/'}
+            />
+            <FaSearch />
+          </InputContent>
+        </InputContainer>
+        <InputProvider value={[inputValue, setInputValue]}>
+          <Content isMobile={isMobile}>
+            {hasSideBar && sideBar}
+            {children}
+          </Content>
+        </InputProvider>
+      </IsMobileProvider>
     </Wrapper>
   );
 }

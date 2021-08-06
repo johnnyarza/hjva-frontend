@@ -1,26 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { VisibilityContext } from 'react-horizontal-scrolling-menu';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+// import { VisibilityContext } from 'react-horizontal-scrolling-menu';
+import { FaImage } from 'react-icons/fa';
 
-import { Container, Image, Title } from './styles';
-
-const urlEx =
-  'https://http2.mlstatic.com/D_NQ_NP_998101-MLB45928751274_052021-W.webp';
+import { Container, Image, Texts } from './styles';
 
 export default function Card({
   onClick,
-  selected,
-  title,
   itemId,
   name = 'Titulo',
   notes = 'Paragrafo',
   files = [],
+  ...rest
 }) {
   const [urls, setUrls] = useState('');
   const [url, setUrl] = useState('');
   const [index, setIndex] = useState(0);
 
-  const visibility = React.useContext(VisibilityContext);
-  const visible = visibility.isItemVisible(itemId);
+  // const visibility = React.useContext(VisibilityContext);
+  // const visible = visibility.isItemVisible(itemId);
 
   const changeImage = useCallback(
     (moveBy = 1) => {
@@ -52,25 +51,37 @@ export default function Card({
   }, [changeImage]);
 
   return (
-    <Container
-      onClick={() => onClick(visibility)}
-      onKeyDown={(ev) => {
-        if (ev.code === 'Enter') {
-          onClick(visibility);
-        }
-      }}
-      role="button"
-      tabIndex={0}
-    >
-      <Image hasUrl={url || urlEx} />
-      <Title>
-        <div className="title">
-          <h3>{name}</h3>
-        </div>
-        <div className="notes">
-          <p>{notes}</p>
-        </div>
-      </Title>
-    </Container>
+    <Link to={`/product/${itemId}`}>
+      <Container onClick={() => onClick()} role="button" tabIndex={0} {...rest}>
+        <Image hasUrl={url}>{!url && <FaImage />}</Image>
+        <Texts>
+          <div className="title">
+            <h3>{name}</h3>
+          </div>
+          <div className="notes">
+            <pre>{notes}</pre>
+          </div>
+        </Texts>
+      </Container>
+    </Link>
   );
 }
+
+Card.propTypes = {
+  onClick: PropTypes.func,
+  itemId: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  notes: PropTypes.string,
+  files: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      url: PropTypes.string,
+    })
+  ),
+};
+Card.defaultProps = {
+  onClick: () => {},
+  name: 'Name',
+  notes: 'Notes',
+  files: [],
+};

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FiChevronRight, FiChevronLeft } from 'react-icons/fi';
 
 import { VisibilityContext } from 'react-horizontal-scrolling-menu';
@@ -61,3 +62,17 @@ export function RightArrow() {
     </Arrow>
   );
 }
+
+Arrow.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]),
+  disabled: PropTypes.bool,
+  onClick: PropTypes.func,
+};
+Arrow.defaultProps = {
+  children: [],
+  disabled: false,
+  onClick: () => {},
+};

@@ -1,10 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { FaImage } from 'react-icons/fa';
-import utils from '../../../utils';
+import { Link } from 'react-router-dom';
 
 import { Card as Container, Img, Texts } from './styles';
 
-function Card({ name = 'Nombre', notes = 'notes', images = [] }) {
+import utils from '../../../utils';
+
+function Card({
+  name = 'Nombre',
+  notes = 'notes',
+  images = [],
+  productId,
+  ...rest
+}) {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -29,20 +38,41 @@ function Card({ name = 'Nombre', notes = 'notes', images = [] }) {
   }, [changeImage]);
 
   return (
-    <Container>
-      <Img hasUrl={currentImages[currentIndex]} title={name}>
-        {!currentImages[currentIndex] && <FaImage />}
-      </Img>
-      <Texts>
-        <div className="title">
-          <h3>{name}</h3>
-        </div>
-        <div className="notes">
-          <p>{notes}</p>
-        </div>
-      </Texts>
-    </Container>
+    <Link to={`/product/${productId}`}>
+      <Container {...rest}>
+        <Img hasUrl={currentImages[currentIndex]} title={name}>
+          {!currentImages[currentIndex] && <FaImage />}
+        </Img>
+        <Texts>
+          <div className="title">
+            <h3>{name}</h3>
+          </div>
+          <div className="notes">
+            <pre>{notes}</pre>
+          </div>
+        </Texts>
+      </Container>
+    </Link>
   );
 }
+Card.propTypes = {
+  name: PropTypes.string,
+  notes: PropTypes.string,
+  id: PropTypes.string,
+  productId: PropTypes.string,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      url: PropTypes.string,
+    })
+  ),
+};
 
+Card.defaultProps = {
+  name: '',
+  notes: '',
+  id: '',
+  productId: '',
+  images: [],
+};
 export default Card;

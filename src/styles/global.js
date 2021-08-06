@@ -26,7 +26,9 @@ export default createGlobalStyle`
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-
+#root {
+  min-width: 300px;
+}
 html,body,#root {
   height:100%
 }

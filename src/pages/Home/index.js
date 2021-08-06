@@ -12,21 +12,14 @@ import { InputContext } from '../_layouts/Default/index';
 
 export default function Home() {
   // TODO separar cards por categoria
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState('');
   const [width, setWidth] = useState(window.innerWidth);
   const [isMobile, setIsMobile] = useState(width <= 768);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [searchInputValue] = useContext(InputContext);
-
-  useEffect(() => {
-    setIsMobile(width <= 768);
-  }, [width]);
-
-  useEffect(() => {
-    console.log(searchInputValue);
-  }, [searchInputValue]);
 
   const handleWindowSizeChange = () => {
     setWidth(window.innerWidth);
@@ -40,18 +33,38 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    let tOut = '';
+    if (searchInputValue) {
+      const filtered = products.filter(({ name }) =>
+        name.toLowerCase().includes(searchInputValue.toLowerCase())
+      );
+      tOut = setTimeout(() => setFilteredProducts(filtered), 500);
+    }
+    if (!searchInputValue) setFilteredProducts('');
+    return () => {
+      if (tOut) {
+        clearTimeout(tOut);
+      }
+    };
+  }, [searchInputValue, products]);
+
+  useEffect(() => {
+    setIsMobile(width <= 768);
+  }, [width]);
+
+  useEffect(() => {
+    if (!hasError && categories && products) {
+      setIsLoading(false);
+    }
+    if (hasError) setIsLoading(false);
+  }, [hasError, categories, products]);
+
+  useEffect(() => {
     async function loadAllProducts() {
       try {
         const { data } = await api.get('materialsToSell');
-        console.log(data);
         setProducts(data);
-        if (data) {
-          const categoriesSet = new Set(data.map((p) => p.category.name));
-          setCategories([...categoriesSet]);
-        }
-        setIsLoading(false);
       } catch (error) {
-        setIsLoading(false);
         setHasError(true);
       }
     }
@@ -59,28 +72,43 @@ export default function Home() {
     loadAllProducts();
   }, []);
 
-  function generateProductCards(category) {
-    if (products[0] && categories[0]) {
-      const prodsByCat = products.filter((p) => p.category.name === category);
-      const cards = prodsByCat.map((p) => (
-        <Card text={p.name} description={p.notes} key={p.id} file={p.file} />
-      ));
-      return cards;
+  useEffect(() => {
+    const loadCategories = async () => {
+      const { data: cats } = await api.get('categories');
+      if (cats) setCategories(cats);
+    };
+    loadCategories();
+  }, []);
+
+  const createScrollByCategories = () => {
+    if (categories && products) {
+      const byCat = categories.map(({ id: catId, name: catName }) => {
+        const filteredProds = (filteredProducts || products).filter(
+          ({ category }) => category.id === catId
+        );
+        const scrolls = isMobile ? (
+          <div>
+            <h2 style={{ marginBottom: '8px' }}>{catName}</h2>
+            <MobileCards data={filteredProds} />
+          </div>
+        ) : (
+          <div style={{ marginBottom: '10px' }}>
+            <h2>{catName}</h2>
+            <ProductScroll data={filteredProds} />
+          </div>
+        );
+
+        return !filteredProds.length ? '' : scrolls;
+      });
+      return byCat;
     }
+    return '';
+  };
 
-    return null;
-  }
+  // useEffect(() => {
+  //   createScrollByCategories();
+  // }, [categories, products]);
 
-  function generateScrolls(cats) {
-    return cats.map((cat) => (
-      <div style={{ width: '100%' }} key={cat}>
-        <ProductScroll
-          productCards={generateProductCards(cat)}
-          category={cat}
-        />
-      </div>
-    ));
-  }
   return (
     <>
       {isLoading ? (
@@ -95,11 +123,17 @@ export default function Home() {
             }}
           />
         </div>
-      ) : isMobile ? (
-        <MobileCards data={products} />
       ) : (
-        <ProductScroll data={products} />
+        createScrollByCategories()
       )}
     </>
   );
 }
+
+/* <>
+          <h2>Bloques</h2>
+          <ProductScroll
+            data={filteredProducts || products}
+            categories={categories}
+          />
+        </> */

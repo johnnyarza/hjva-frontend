@@ -1,9 +1,12 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
+import { darken } from 'polished';
 import { FaImage } from 'react-icons/fa';
 
 export const Container = styled.div`
   display: grid;
   grid-template-columns: 15% 70% 15%;
+  grid-template-rows: 100%;
+
   label,
   button {
     transition: box-shadow 0.2s;
@@ -18,21 +21,11 @@ export const Container = styled.div`
       box-shadow: rgba(0, 0, 0, 0.8) 0 0 10px !important;
     }
   }
-`;
-
-export const Content = styled.div`
-  height: 100%;
-  width: 100%;
-  ${(props) => {
-    return props.hasUrl
-      ? css`
-          background: url(${props.hasUrl});
-        `
-      : '';
-  }}
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
+  .teste {
+    img {
+      max-height: 100%;
+    }
+  }
 `;
 
 export const Arrow = styled.button`
@@ -45,6 +38,7 @@ export const Arrow = styled.button`
   display: flex;
   justify-content: center !important;
   align-items: center !important;
+  border-color: ${darken(0.1, '#ebebeb')}!important;
 
   svg {
     color: black;

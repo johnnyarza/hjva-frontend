@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import BackgroundImageOnLoad from 'background-image-on-load';
 import PropTypes from 'prop-types';
 import { FaImage } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -6,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Card as Container, Img, Texts } from './styles';
 
 import utils from '../../../utils';
+import logo from '../../../assets/HJVA-logo.gif';
 
 function Card({
   name = 'Nombre',
@@ -16,6 +18,7 @@ function Card({
 }) {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isImgLoaded, setIsImgLoaded] = useState(false);
 
   useEffect(() => {
     if (images.length) {
@@ -40,8 +43,17 @@ function Card({
   return (
     <Link to={`/product/${productId}`}>
       <Container {...rest}>
-        <Img hasUrl={currentImages[currentIndex]} title={name}>
+        <Img
+          hasUrl={isImgLoaded ? currentImages[currentIndex] : logo}
+          title={name}
+        >
           {!currentImages[currentIndex] && <FaImage />}
+          <BackgroundImageOnLoad
+            src={currentImages[currentIndex]}
+            onLoadBg={() => {
+              setIsImgLoaded(true);
+            }}
+          />
         </Img>
         <Texts>
           <div className="title">

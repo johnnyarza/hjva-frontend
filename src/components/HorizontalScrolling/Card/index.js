@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import BackgroundImageOnLoad from 'background-image-on-load';
 import PropTypes from 'prop-types';
+
 import { Link } from 'react-router-dom';
 // import { VisibilityContext } from 'react-horizontal-scrolling-menu';
 import { FaImage } from 'react-icons/fa';
+import logo from '../../../assets/HJVA-logo.gif';
 
 import { Container, Image, Texts } from './styles';
 
@@ -16,6 +19,7 @@ export default function Card({
 }) {
   const [urls, setUrls] = useState('');
   const [url, setUrl] = useState('');
+  const [isImgLoaded, setIsImgLoaded] = useState(false);
   const [index, setIndex] = useState(0);
 
   // const visibility = React.useContext(VisibilityContext);
@@ -53,7 +57,13 @@ export default function Card({
   return (
     <Link to={`/product/${itemId}`}>
       <Container onClick={() => onClick()} role="button" tabIndex={0} {...rest}>
-        <Image hasUrl={url}>{!url && <FaImage />}</Image>
+        <Image hasUrl={isImgLoaded ? url : logo}>{!url && <FaImage />}</Image>
+        <BackgroundImageOnLoad
+          src={url}
+          onLoadBg={() => {
+            setIsImgLoaded(true);
+          }}
+        />
         <Texts>
           <div className="title">
             <h3>{name}</h3>

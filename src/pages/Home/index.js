@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 
 import Loading from '../../components/Spinner';
-import Card from '../../components/HorizontalScrolling/Card';
 import ProductScroll from '../../components/HorizontalScrolling';
 
 import api from '../../services/api';
@@ -87,12 +86,12 @@ export default function Home() {
           ({ category }) => category.id === catId
         );
         const scrolls = isMobile ? (
-          <div>
+          <div key={catId}>
             <h2 style={{ marginBottom: '8px' }}>{catName}</h2>
             <MobileCards data={filteredProds} />
           </div>
         ) : (
-          <div style={{ marginBottom: '10px' }}>
+          <div style={{ marginBottom: '10px' }} key={catId}>
             <h2>{catName}</h2>
             <ProductScroll data={filteredProds} />
           </div>

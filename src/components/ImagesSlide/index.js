@@ -131,7 +131,14 @@ function ImagesSlide({ images, setImages }) {
 }
 ImagesSlide.propTypes = {
   setImages: PropTypes.func,
-  images: PropTypes.arrayOf,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+      url: PropTypes.string,
+      key: PropTypes.string,
+    })
+  ),
 };
 
 ImagesSlide.defaultProps = {

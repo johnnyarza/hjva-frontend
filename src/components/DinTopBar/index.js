@@ -142,7 +142,7 @@ TopBar.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.element),
     PropTypes.element,
-  ]).isRequired,
+  ]),
   fields: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string,
@@ -157,6 +157,10 @@ TopBar.propTypes = {
   ).isRequired,
   onCleanSearchButton: PropTypes.func.isRequired,
   onSearchInputChange: PropTypes.func.isRequired,
+};
+
+TopBar.defaultProps = {
+  children: <></>,
 };
 
 export default TopBar;

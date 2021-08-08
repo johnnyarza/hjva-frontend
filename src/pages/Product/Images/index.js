@@ -1,12 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 
-import { Container, Content, Arrow, Empty } from './styles';
+import MagnifierGlass from '../../../components/MagnifierGlass';
 
-function ImagesSlide({ images, setImages }) {
+import { Container, Arrow, Empty } from './styles';
+
+function Images({ images, setImages }) {
   const [currentImages, setCurrentImages] = useState('');
   const [currentImage, setCurrentImage] = useState('');
+  const [zoom] = useState(2);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -59,8 +62,8 @@ function ImagesSlide({ images, setImages }) {
           <Arrow onClick={() => changeImage(-1)} type="button">
             <FaAngleDoubleLeft />
           </Arrow>
-          <Content hasUrl={currentImage?.url} />
-          <Arrow onClick={() => changeImage()} type="button">
+          <MagnifierGlass imgUrl={currentImage?.url} zoom={zoom} />
+          <Arrow onClick={() => changeImage()} type="button" zoom={zoom}>
             <FaAngleDoubleRight />
           </Arrow>
         </>
@@ -70,13 +73,20 @@ function ImagesSlide({ images, setImages }) {
     </Container>
   );
 }
-ImagesSlide.propTypes = {
+Images.propTypes = {
   setImages: PropTypes.func,
-  images: PropTypes.arrayOf,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+      url: PropTypes.string,
+      key: PropTypes.string,
+    })
+  ),
 };
 
-ImagesSlide.defaultProps = {
+Images.defaultProps = {
   setImages: () => {},
   images: [],
 };
-export default ImagesSlide;
+export default Images;

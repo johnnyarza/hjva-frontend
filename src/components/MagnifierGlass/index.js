@@ -10,6 +10,7 @@ import { Content, Glass } from './styles';
 function MagnifierGlass({ imgUrl, zoom = 2 }) {
   const [parentDims, setParentDims] = useState('');
   const [isImgLoaded, setIsImgLoaded] = useState(false);
+  const [showGlass, setShowGlass] = useState(false);
   const [parentState, setParentState] = useState('');
   const [isMobile] = useContext(IsMobileContext);
   const divRef = useRef(null);
@@ -115,7 +116,6 @@ function MagnifierGlass({ imgUrl, zoom = 2 }) {
         (ev) => {
           ev.preventDefault();
           moveMagnifier(ev);
-          moveMagnifier(ev);
         },
         { passive: false }
       );
@@ -126,8 +126,6 @@ function MagnifierGlass({ imgUrl, zoom = 2 }) {
     setIsImgLoaded(false);
   }, [imgUrl]);
 
-  // TODO implementar animação de leitura
-
   return (
     <Content
       hasUrl={isImgLoaded ? imgUrl : logo}
@@ -136,7 +134,13 @@ function MagnifierGlass({ imgUrl, zoom = 2 }) {
         setParentState(e);
         divRef.current = e;
       }}
-      onMouseMove={(e) => moveMagnifier(e)}
+      onMouseMove={(e) => {
+        if (showGlass) moveMagnifier(e);
+      }}
+      onMouseEnter={() => setShowGlass(true)}
+      onMouseLeave={() => setShowGlass(false)}
+      onTouchStart={() => setShowGlass(true)}
+      onTouchEnd={() => setShowGlass(false)}
     >
       <BackgroundImageOnLoad
         src={imgUrl}
@@ -150,6 +154,7 @@ function MagnifierGlass({ imgUrl, zoom = 2 }) {
         parentDims={parentDims}
         zoom={zoom}
         isMobile={isMobile}
+        showGlass={showGlass}
       />
     </Content>
   );

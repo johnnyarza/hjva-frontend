@@ -26,6 +26,17 @@ export const Image = styled.div`
   width: auto;
   border-bottom: 1px solid #ebebeb;
   transition: background 0.5s ease-out;
+  display: block;
+  ${(props) =>
+    props.isImgLoaded
+      ? ''
+      : css`
+          -webkit-animation: fadeInFromNone 0.5s ease-out infinite;
+          -moz-animation: fadeInFromNone 0.5s ease-out infinite;
+          -o-animation: fadeInFromNone 0.5s ease-out infinite;
+          animation: fadeInFromNone 0.5s ease-out infinite;
+        `}
+
   ${(props) => {
     return props.hasUrl
       ? css`
@@ -44,6 +55,74 @@ export const Image = styled.div`
     width: 50%;
     height: auto;
     color: ${darken(0.5, '#ebebeb')};
+  }
+
+  @-webkit-keyframes fadeInFromNone {
+    0% {
+      display: none;
+      opacity: 0;
+    }
+
+    1% {
+      display: block;
+      opacity: 0;
+    }
+
+    100% {
+      display: block;
+      opacity: 1;
+    }
+  }
+
+  @-moz-keyframes fadeInFromNone {
+    0% {
+      display: none;
+      opacity: 0;
+    }
+
+    1% {
+      display: block;
+      opacity: 0;
+    }
+
+    100% {
+      display: block;
+      opacity: 1;
+    }
+  }
+
+  @-o-keyframes fadeInFromNone {
+    0% {
+      display: none;
+      opacity: 0;
+    }
+
+    1% {
+      display: block;
+      opacity: 0;
+    }
+
+    100% {
+      display: block;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInFromNone {
+    0% {
+      display: none;
+      opacity: 0;
+    }
+
+    1% {
+      display: block;
+      opacity: 0;
+    }
+
+    100% {
+      display: block;
+      opacity: 1;
+    }
   }
 `;
 

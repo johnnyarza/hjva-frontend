@@ -46,6 +46,7 @@ function Card({
         <Img
           hasUrl={isImgLoaded ? currentImages[currentIndex] : logo}
           title={name}
+          isImgLoaded={isImgLoaded}
         >
           {!currentImages[currentIndex] && <FaImage />}
           <BackgroundImageOnLoad

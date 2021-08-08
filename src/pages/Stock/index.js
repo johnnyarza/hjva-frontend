@@ -493,7 +493,7 @@ function Stock() {
               listContentType={transactionListType}
               transactionType={transactionType}
               onSubmit={handleMaterialTransactionSubmit}
-              initialData={currentMaterial}
+              initialData={{ ...currentMaterial, notes: '' }}
             />
           )}
         </>

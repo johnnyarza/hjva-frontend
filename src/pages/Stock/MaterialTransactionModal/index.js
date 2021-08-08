@@ -111,9 +111,12 @@ function MaterialTransactionModal({
           ''
         ) : (
           <>
-            <h3 style={{ textAlign: 'center', marginBottom: '15px' }}>
+            <h3 style={{ textAlign: 'center' }}>
               {`Registrar ${transactionType === 'in' ? 'Entrada' : 'Salida'}`}
             </h3>
+            <h4 style={{ textAlign: 'center', marginBottom: '20px' }}>
+              {transaction.name}
+            </h4>
             <Form ref={formRef} onSubmit={handleSubmit} id="teste">
               <Label
                 label={`${transactionType === 'in' ? 'Entrada' : 'Salida'}`}

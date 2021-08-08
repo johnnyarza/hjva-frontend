@@ -57,7 +57,9 @@ export default function Card({
   return (
     <Link to={`/product/${itemId}`}>
       <Container onClick={() => onClick()} role="button" tabIndex={0} {...rest}>
-        <Image hasUrl={isImgLoaded ? url : logo}>{!url && <FaImage />}</Image>
+        <Image isImgLoaded={isImgLoaded} hasUrl={isImgLoaded ? url : logo}>
+          {!url && <FaImage />}
+        </Image>
         <BackgroundImageOnLoad
           src={url}
           onLoadBg={() => {

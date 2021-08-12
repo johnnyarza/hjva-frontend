@@ -1,10 +1,23 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  ControlledMenu,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuRadioGroup,
+} from '@szhsin/react-menu';
 import { useHistory, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MdEdit, MdVisibility } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
+import { FaPrint } from 'react-icons/fa';
 import CompressionTestsTable from '../../../components/Table';
 import DeleteButton from '../../../components/DeleteButton';
 import TopBar from '../../../components/DinTopBar';
@@ -18,9 +31,16 @@ import CompresionTestModal from '../CompresionTestModal';
 import utils from '../../../utils';
 import api from '../../../services/api';
 import Empty from '../../../components/Empty';
+import PrintMenuButton from '../../../components/PrintMenuButton';
 
 function CompresionTest() {
   const history = useHistory();
+  const ref = useRef(null);
+  const [printConcreteDesign, setPrintConcreteDesign] = useState(true);
+  const [isPrintMenuOpen, setIsPrintMenuOpen] = useState(false);
+  const [printUrl, setPrintUrl] = useState(
+    'http://localhost:3333/report/conpressionTest'
+  );
   const [searchField, setSearchField] = useState('');
   const { locale } = useSelector((state) => state.locale);
   const [compressionTests, setCompressionTests] = useState('');
@@ -243,6 +263,13 @@ function CompresionTest() {
     handleSearch();
   }, [searchField, handleSearch, compressionTests]);
 
+  useEffect(() => {
+    utils.managePrintURL('compressionTest', searchField, [
+      printUrl,
+      setPrintUrl,
+    ]);
+  }, [searchField, printUrl]);
+
   return (
     <>
       {isLoading ? (
@@ -292,11 +319,6 @@ function CompresionTest() {
               },
             ]}
           >
-            <MenuButton>
-              <Link to="/materialTransactions" style={{ color: 'black' }}>
-                Entradas/Salidas
-              </Link>
-            </MenuButton>
             <Menu
               menuButton={<MenuButton>Registro</MenuButton>}
               arrow
@@ -319,6 +341,40 @@ function CompresionTest() {
                 </Link>
               </MenuItem>
             </Menu>
+            <MenuButton
+              ref={ref}
+              onClick={() => setIsPrintMenuOpen(!isPrintMenuOpen)}
+            >
+              <FaPrint />
+            </MenuButton>
+            <ControlledMenu
+              anchorRef={ref}
+              isOpen={isPrintMenuOpen}
+              arrow
+              direction="bottom"
+              viewScroll="initial"
+            >
+              <MenuItem
+                type="checkbox"
+                checked={printConcreteDesign}
+                onClick={() => setPrintConcreteDesign(!printConcreteDesign)}
+              >
+                Mostrar Dosificación
+              </MenuItem>
+              <MenuItem>
+                <div
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <FaPrint />
+                </div>
+              </MenuItem>
+            </ControlledMenu>
+
+            {/* <PrintMenuButton url={printUrl} /> */}
           </TopBar>
           <Content>
             {!filteredCompressionTests.length ? (

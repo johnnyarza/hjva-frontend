@@ -15,8 +15,12 @@ import api from '../../services/api';
 import utils from '../../utils';
 import DeleteButton from '../../components/DeleteButton';
 import Empty from '../../components/Empty';
+import PrintMenuButton from '../../components/PrintMenuButton';
 
 function Providers() {
+  const [printUrl, setPrintUrl] = useState(
+    'http://localhost:3333/report/category'
+  );
   const [searchField, setSearchField] = useState('');
   const [providers, setProviders] = useState('');
   const [filteredProviders, setFilteredProviders] = useState('');
@@ -202,6 +206,10 @@ function Providers() {
     handleSearch();
   }, [searchField, handleSearch, providers]);
 
+  useEffect(() => {
+    utils.managePrintURL('provider', searchField, [printUrl, setPrintUrl]);
+  }, [searchField, printUrl]);
+
   return (
     <>
       <Container>
@@ -243,7 +251,9 @@ function Providers() {
                   inputProps: { type: 'text' },
                 },
               ]}
-            />
+            >
+              <PrintMenuButton url={printUrl} />
+            </TopBar>
             <Content>
               {!filteredProviders.length ? (
                 <Empty />

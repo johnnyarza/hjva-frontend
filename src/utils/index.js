@@ -53,6 +53,37 @@ const utils = {
     }
     return currentIndex;
   },
+  managePrintURL: (
+    suffixURL = 'category',
+    searchField,
+    urlState,
+    locale = '',
+    baseURL = 'http://localhost:3333/report/'
+  ) => {
+    const [printURL, setPrintURL] = urlState;
+    let url = baseURL + suffixURL;
+
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      if (value) {
+        switch (field) {
+          case 'updatedAt': {
+            url = url.concat(`?${'updated_at'}=${JSON.stringify(value)}`);
+            break;
+          }
+          default:
+            url = url.concat(`?${field}=${value}`);
+        }
+      }
+    }
+
+    if (locale) {
+      url = url.concat(`${url.includes('?') ? '&' : '?'}locale=${locale}`);
+    }
+    setPrintURL(url);
+  },
 };
 
 export default utils;

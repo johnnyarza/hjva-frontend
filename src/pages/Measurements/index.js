@@ -16,6 +16,7 @@ import MeasureModal from './MeasurementModal';
 
 import utils from '../../utils';
 import Empty from '../../components/Empty';
+import PrintMenuButton from '../../components/PrintMenuButton';
 
 function Measurements() {
   const [isLoading, setIsLoading] = useState(true);
@@ -212,6 +213,27 @@ function Measurements() {
     handleSearch();
   }, [handleSearch, measurements, searchField]);
 
+  const generatePdfLink = useCallback(() => {
+    let url = 'http://localhost:3333/report/measure';
+
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      if (value) {
+        switch (field) {
+          case 'updatedAt': {
+            url = url.concat(`?${'updated_at'}=${JSON.stringify(value)}`);
+            break;
+          }
+          default:
+            url = url.concat(`?${field}=${value}`);
+        }
+      }
+    }
+    return <PrintMenuButton url={url} />;
+  }, [searchField]);
+
   return (
     <>
       <Container>
@@ -224,7 +246,10 @@ function Measurements() {
           <>
             <TopBar
               onSearchInputChange={(data) => setSearchField(data)}
-              onCleanSearchButton={() => setFilteredMeasurements(measurements)}
+              onCleanSearchButton={() => {
+                setFilteredMeasurements(measurements);
+                setSearchField('');
+              }}
               buttons={[
                 {
                   label: 'Crear',
@@ -251,7 +276,9 @@ function Measurements() {
                   inputProps: { type: 'date' },
                 },
               ]}
-            />
+            >
+              {generatePdfLink()}
+            </TopBar>
             <Content>
               {!filteredMeasurements.length ? (
                 <Empty />

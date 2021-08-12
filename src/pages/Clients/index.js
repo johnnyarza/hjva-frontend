@@ -11,9 +11,13 @@ import Spinner from '../../components/Spinner';
 import COLUMNS from './ClientTable/columns';
 import ClientModal from './ClientModal';
 import utils from '../../utils';
+import PrintMenuButton from '../../components/PrintMenuButton';
 
 function Clients() {
   let timeout;
+  const [printUrl, setPrintUrl] = useState(
+    'http://localhost:3333/report/category'
+  );
   const [clients, setClients] = useState('');
   const [filteredClients, setFilteredClients] = useState([]);
   const [searchField, setInputSearch] = useState('');
@@ -165,6 +169,9 @@ function Clients() {
     handleSearch(searchField);
   }, [searchField, handleSearch, clients]);
 
+  useEffect(() => {
+    utils.managePrintURL('client', searchField, [printUrl, setPrintUrl]);
+  }, [searchField, printUrl]);
   return (
     <>
       <Container>
@@ -175,7 +182,10 @@ function Clients() {
           <>
             <TopBar
               onSearchInputChange={(data) => setInputSearch(data)}
-              onCleanSearchButton={() => setFilteredClients(clients)}
+              onCleanSearchButton={() => {
+                setInputSearch('');
+                setFilteredClients(clients);
+              }}
               fields={[
                 {
                   field: 'name',
@@ -212,7 +222,9 @@ function Clients() {
                   },
                 },
               ]}
-            />
+            >
+              <PrintMenuButton url={printUrl} />
+            </TopBar>
             <Content>
               {!filteredClients.length ? (
                 <Empty />

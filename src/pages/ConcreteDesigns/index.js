@@ -14,9 +14,13 @@ import ConcreteModal from './ConcreteDesignModal';
 import api from '../../services/api';
 import utils from '../../utils/index';
 import Empty from '../../components/Empty';
+import PrintMenuButton from '../../components/PrintMenuButton';
 
 function ConcreteDesigns() {
   const { locale } = useSelector((state) => state.locale);
+  const [printUrl, setPrintUrl] = useState(
+    'http://localhost:3333/report/concreteDesign'
+  );
   const [userRole, setUserRole] = useState('');
   const [concreteDesigns, setConcreteDesigns] = useState('');
   const [filteredConcreteDesigns, setFilteredConcreteDesigns] = useState([]);
@@ -259,7 +263,7 @@ function ConcreteDesigns() {
 
   const handleSearch = useCallback(() => {
     let foundCompressionTests = concreteDesigns;
-    const { slump, name, notes, createdAt } = searchInput;
+    const { slump, name, notes, updatedAt } = searchInput;
 
     if (notes) {
       foundCompressionTests = concreteDesigns.filter((current) => {
@@ -283,15 +287,15 @@ function ConcreteDesigns() {
       foundCompressionTests = concreteDesigns.filter(
         ({ slump: currentSlump }) => {
           if (!currentSlump) return false;
-          const currentName = String(currentSlump);
-          const newName = String(slump);
-          return currentName.includes(newName);
+          const currentName = Number(currentSlump);
+          const newName = Number(slump);
+          return currentName === newName;
         }
       );
     }
 
-    if (createdAt) {
-      const { from, to } = createdAt;
+    if (updatedAt) {
+      const { from, to } = updatedAt;
       if (from && to) {
         foundCompressionTests = concreteDesigns.filter(
           ({ updatedAt: date }) => {
@@ -306,6 +310,15 @@ function ConcreteDesigns() {
   useEffect(() => {
     if (searchInput) handleSearch(searchInput);
   }, [searchInput, handleSearch]);
+
+  useEffect(() => {
+    utils.managePrintURL(
+      'concreteDesign',
+      searchInput,
+      [printUrl, setPrintUrl],
+      locale
+    );
+  }, [searchInput, printUrl, locale]);
 
   return (
     <>
@@ -322,8 +335,13 @@ function ConcreteDesigns() {
               setIsConcreteModalOpen(true);
             }}
             onInputChange={(data) => setSearchInput(data)}
-            onCleanButton={() => setFilteredConcreteDesigns(concreteDesigns)}
-          />
+            onCleanButton={() => {
+              setSearchInput('');
+              setFilteredConcreteDesigns(concreteDesigns);
+            }}
+          >
+            <PrintMenuButton url={printUrl} />
+          </TopBar>
           <Content>
             {!filteredConcreteDesigns.length ? (
               <Empty />

@@ -17,10 +17,6 @@ function TopBar({
   const fromDateInputRef = useRef(null);
   const toDateInputRef = useRef(null);
   const [searchField, setSearchField] = useState('');
-  // const fields = [
-  //   { field: 'name', label: 'Nombre', inputProps: { type: 'text' } },
-  // ];
-  // const buttons = [{ label: 'Crear', onClick: () => console.log('clicou') }];
 
   const handleSearchFieldClick = (target) => {
     setSearchField(target.value);

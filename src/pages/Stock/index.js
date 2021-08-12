@@ -12,6 +12,7 @@ import Table from '../../components/Table';
 import TopBar from '../../components/DinTopBar';
 import EditColumn from '../../components/TableEditColumn';
 import Empty from '../../components/Empty';
+import PrintMenuButton from '../../components/PrintMenuButton';
 
 import api from '../../services/api';
 import utils from '../../utils';
@@ -24,6 +25,9 @@ import MaterialTransactionModal from './MaterialTransactionModal';
 function Stock() {
   const { locale } = useSelector((state) => state.locale);
   const location = useLocation();
+  const [printUrl, setPrintUrl] = useState(
+    'http://localhost:3333/report/material'
+  );
   const [userRole, setUserRole] = useState('common');
   const [timeout, setTime] = useState('');
   const [materials, setMaterials] = useState('');
@@ -383,6 +387,15 @@ function Stock() {
     return newMaterials;
   };
 
+  useEffect(() => {
+    utils.managePrintURL(
+      'material',
+      searchField,
+      [printUrl, setPrintUrl],
+      locale
+    );
+  }, [searchField, printUrl, locale]);
+
   return (
     <>
       {isLoading ? (
@@ -395,7 +408,10 @@ function Stock() {
             </h2>
             <TopBar
               onSearchInputChange={(data) => setSearchField(data)}
-              onCleanSearchButton={() => setFilteredMaterials(materials)}
+              onCleanSearchButton={() => {
+                setSearchField('');
+                setFilteredMaterials(materials);
+              }}
               fields={[
                 {
                   field: 'name',
@@ -430,11 +446,6 @@ function Stock() {
                 },
               ]}
             >
-              <MenuButton>
-                <Link to="/materialTransactions" style={{ color: 'black' }}>
-                  Entradas/Salidas
-                </Link>
-              </MenuButton>
               <Menu
                 menuButton={<MenuButton>Registro</MenuButton>}
                 arrow
@@ -457,6 +468,7 @@ function Stock() {
                   </Link>
                 </MenuItem>
               </Menu>
+              <PrintMenuButton url={printUrl} />
             </TopBar>
             <Content>
               {!filteredMaterials?.length ? (

@@ -8,6 +8,7 @@ function ConcreteDesignTopBar({
   onCleanButton,
   onInputChange,
   onNewButton,
+  children,
   ...rest
 }) {
   const inputRef = useRef(null);
@@ -28,7 +29,7 @@ function ConcreteDesignTopBar({
       case 'notes':
         label = 'descripción';
         break;
-      case 'createdAt':
+      case 'updatedAt':
         label = 'fecha';
         break;
       default:
@@ -58,7 +59,7 @@ function ConcreteDesignTopBar({
         case 'notes':
           data[searchField] = value;
           break;
-        case 'createdAt':
+        case 'updatedAt':
           data[searchField] = {
             from: firstDateInputRef.current.value,
             to: secondDateInputRef.current.value,
@@ -81,7 +82,7 @@ function ConcreteDesignTopBar({
       case 'slump':
         inputRef.current.value = '';
         break;
-      case 'createdAt':
+      case 'updatedAt':
         firstDateInputRef.current.value = '';
         secondDateInputRef.current.value = '';
         break;
@@ -150,12 +151,13 @@ function ConcreteDesignTopBar({
         <MenuItem value="notes" onClick={handleSearchFieldChange}>
           Descripción
         </MenuItem>
-        <MenuItem value="createdAt" onClick={handleSearchFieldChange}>
+        <MenuItem value="updatedAt" onClick={handleSearchFieldChange}>
           Fecha
         </MenuItem>
       </Menu>
       {prepareInput()}
       <MenuButton onClick={handleCleanButton}>Limpiar Consulta</MenuButton>
+      {children}
     </TopBar>
   );
 }

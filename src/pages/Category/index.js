@@ -9,6 +9,7 @@ import Spinner from '../../components/Spinner';
 import CategoryTable from '../../components/Table';
 import SimpleConfirmationModal from '../../components/SimpleConfirmationModal';
 import TopBar from '../../components/DinTopBar';
+import PrintMenuButton from '../../components/PrintMenuButton';
 
 import CategoryModal from './CategoryModal';
 
@@ -20,6 +21,9 @@ function Category() {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState(null);
   const [searchField, setSearchField] = useState('');
+  const [printUrl, setPrintUrl] = useState(
+    'http://localhost:3333/report/category'
+  );
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
@@ -199,6 +203,10 @@ function Category() {
     return [...COLUMNS, newCol];
   }, []);
 
+  useEffect(() => {
+    utils.managePrintURL('category', searchField, [printUrl, setPrintUrl]);
+  }, [searchField, printUrl]);
+
   return (
     <>
       <Container>
@@ -211,7 +219,10 @@ function Category() {
           <>
             <TopBar
               onSearchInputChange={(data) => setSearchField(data)}
-              onCleanSearchButton={() => setFilteredCategories(categories)}
+              onCleanSearchButton={() => {
+                setSearchField('');
+                setFilteredCategories(categories);
+              }}
               fields={[
                 {
                   field: 'name',
@@ -233,7 +244,9 @@ function Category() {
                   },
                 },
               ]}
-            />
+            >
+              <PrintMenuButton url={printUrl} />
+            </TopBar>
             <Content>
               {!filteredCategories.length ? (
                 <Empty />

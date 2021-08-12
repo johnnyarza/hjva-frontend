@@ -69,7 +69,7 @@ function CategoryModal({
       <GenericModal isOpen {...rest} onEscPress={onEscPress}>
         <Form ref={formRef} onSubmit={handleSubmit}>
           <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
-            {`${initialData?.id ? 'Editar' : 'Crear'} Proveedor`}
+            {`${initialData?.id ? 'Editar' : 'Crear'} Categoria`}
           </h2>
           <Input
             name="name"

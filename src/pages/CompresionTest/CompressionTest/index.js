@@ -9,6 +9,8 @@ import {
   ControlledMenu,
   Menu,
   MenuButton,
+  MenuDivider,
+  MenuHeader,
   MenuItem,
   MenuRadioGroup,
 } from '@szhsin/react-menu';
@@ -264,11 +266,16 @@ function CompresionTest() {
   }, [searchField, handleSearch, compressionTests]);
 
   useEffect(() => {
-    utils.managePrintURL('compressionTest', searchField, [
-      printUrl,
-      setPrintUrl,
-    ]);
-  }, [searchField, printUrl]);
+    console.log('a');
+    utils.managePrintURL(
+      `compressionTest${
+        printConcreteDesign ? '?printConcreteDesign=true' : ''
+      }`,
+      searchField,
+      [printUrl, setPrintUrl],
+      locale
+    );
+  }, [searchField, printUrl, printConcreteDesign, locale]);
 
   return (
     <>
@@ -354,23 +361,19 @@ function CompresionTest() {
               direction="bottom"
               viewScroll="initial"
             >
+              <MenuItem>
+                <a href={printUrl} target="_blank" rel="noreferrer noopener">
+                  Imprimir
+                </a>
+              </MenuItem>
+              <MenuDivider />
+              <MenuHeader>Opciones</MenuHeader>
               <MenuItem
                 type="checkbox"
                 checked={printConcreteDesign}
                 onClick={() => setPrintConcreteDesign(!printConcreteDesign)}
               >
                 Mostrar Dosificación
-              </MenuItem>
-              <MenuItem>
-                <div
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <FaPrint />
-                </div>
               </MenuItem>
             </ControlledMenu>
 

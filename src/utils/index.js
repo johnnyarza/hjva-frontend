@@ -70,11 +70,17 @@ const utils = {
       if (value) {
         switch (field) {
           case 'updatedAt': {
-            url = url.concat(`?${'updated_at'}=${JSON.stringify(value)}`);
+            url = url.concat(
+              `${url.includes('?') ? '&' : '?'}${'updated_at'}=${JSON.stringify(
+                value
+              )}`
+            );
             break;
           }
           default:
-            url = url.concat(`?${field}=${value}`);
+            url = url.concat(
+              `${url.includes('?') ? '&' : '?'}${field}=${value}`
+            );
         }
       }
     }
@@ -82,6 +88,7 @@ const utils = {
     if (locale) {
       url = url.concat(`${url.includes('?') ? '&' : '?'}locale=${locale}`);
     }
+    console.log(url);
     setPrintURL(url);
   },
 };

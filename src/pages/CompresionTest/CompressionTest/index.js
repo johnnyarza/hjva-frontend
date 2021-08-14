@@ -287,6 +287,7 @@ function CompresionTest() {
           <TopBar
             onSearchInputChange={(data) => setSearchField(data)}
             onCleanSearchButton={() => {
+              setSearchField('');
               setFilteredCompressionTests(compressionTests);
             }}
             buttons={[
@@ -360,9 +361,16 @@ function CompresionTest() {
               arrow
               direction="bottom"
               viewScroll="initial"
+              onMouseLeave={() => setIsPrintMenuOpen(false)}
             >
               <MenuItem>
-                <a href={printUrl} target="_blank" rel="noreferrer noopener">
+                <a
+                  href={printUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  onClick={() => setIsPrintMenuOpen(false)}
+                  style={{ width: '100%' }}
+                >
                   Imprimir
                 </a>
               </MenuItem>

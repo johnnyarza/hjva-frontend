@@ -8,7 +8,7 @@ export const Container = styled.div`
   display: inline-block;
   margin: 0 10px;
   width: 285px;
-  height: 480px;
+  height: 415px;
   user-select: none;
   cursor: pointer;
   background-color: white;

@@ -66,7 +66,7 @@ function HorizontalScrolling({ data = [] }) {
 
   return (
     <>
-      <div className="example" style={{ paddingTop: '25px' }}>
+      <div className="example" style={{ paddingTop: '20px' }}>
         <div>
           <ScrollMenu
             LeftArrow={LeftArrow}

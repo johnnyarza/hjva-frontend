@@ -6,7 +6,12 @@ import { FaPrint } from 'react-icons/fa';
 export default function PrintMenuButton({ url }) {
   return (
     <MenuButton>
-      <a href={url} target="_blank" rel="noreferrer noopener">
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer noopener"
+        style={{ width: '100%' }}
+      >
         <div
           style={{
             display: 'flex',

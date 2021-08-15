@@ -58,7 +58,7 @@ const utils = {
     searchField,
     urlState,
     locale = '',
-    baseURL = 'http://localhost:3333/report/'
+    baseURL = `${process.env.REACT_APP_API_BASE_URL}report/`
   ) => {
     const [printURL, setPrintURL] = urlState;
     let url = baseURL + suffixURL;

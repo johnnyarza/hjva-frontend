@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { MdContentCopy, MdKeyboardBackspace } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { startOfDay } from 'date-fns';
@@ -6,6 +12,14 @@ import { useSelector } from 'react-redux';
 import PropType from 'prop-types';
 
 import { Link, useParams } from 'react-router-dom';
+import {
+  ControlledMenu,
+  MenuButton,
+  MenuDivider,
+  MenuHeader,
+  MenuItem,
+} from '@szhsin/react-menu';
+import { FaPrint } from 'react-icons/fa';
 import Spinner from '../../../components/Spinner';
 import Table from '../../../components/Table';
 import Empty from '../../../components/Empty';
@@ -24,6 +38,12 @@ import TableEditColumn from '../../../components/TableEditColumn';
 
 function ConcreteSample() {
   const { locale } = useSelector((state) => state.locale);
+  const ref = useRef(null);
+  const [printConcreteDesign, setPrintConcreteDesign] = useState(true);
+  const [isPrintMenuOpen, setIsPrintMenuOpen] = useState(false);
+  const [printUrl, setPrintUrl] = useState(
+    'http://localhost:3333/report/conpressionTest'
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [searchField, setSearchField] = useState('');
   const [userRole, setUserRole] = useState('');
@@ -291,6 +311,10 @@ function ConcreteSample() {
             return true;
           }
 
+          if (!Number.isNaN(value)) {
+            return Number(value) === Number(valueToCompare);
+          }
+
           return String(valueToCompare)
             .toLowerCase()
             .includes(value.toLowerCase());
@@ -303,6 +327,15 @@ function ConcreteSample() {
   useEffect(() => {
     handleSearch(searchField);
   }, [searchField, handleSearch, concreteSamples]);
+
+  useEffect(() => {
+    utils.managePrintURL(
+      `concreteSample${`?compressionTest=${urlId}&printConcreteDesign=${printConcreteDesign}`}`,
+      searchField,
+      [printUrl, setPrintUrl],
+      locale
+    );
+  }, [searchField, printUrl, printConcreteDesign, locale, urlId]);
 
   return (
     <>
@@ -326,7 +359,7 @@ function ConcreteSample() {
               {
                 label: 'Crear',
                 onClick: () => {
-                  setCurrentConcreteSample({});
+                  setCurrentConcreteSample('');
                   setIsConcreteSampleModalOpen(true);
                 },
               },
@@ -383,7 +416,43 @@ function ConcreteSample() {
                 inputProps: { type: 'number' },
               },
             ]}
-          />
+          >
+            <MenuButton
+              ref={ref}
+              onClick={() => setIsPrintMenuOpen(!isPrintMenuOpen)}
+            >
+              <FaPrint />
+            </MenuButton>
+            <ControlledMenu
+              anchorRef={ref}
+              isOpen={isPrintMenuOpen}
+              arrow
+              direction="bottom"
+              viewScroll="initial"
+              onMouseLeave={() => setIsPrintMenuOpen(false)}
+            >
+              <MenuItem>
+                <a
+                  href={printUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  onClick={() => setIsPrintMenuOpen(false)}
+                  style={{ width: '100%' }}
+                >
+                  Imprimir
+                </a>
+              </MenuItem>
+              <MenuDivider />
+              <MenuHeader>Opciones</MenuHeader>
+              <MenuItem
+                type="checkbox"
+                checked={printConcreteDesign}
+                onClick={() => setPrintConcreteDesign(!printConcreteDesign)}
+              >
+                Mostrar Dosificación
+              </MenuItem>
+            </ControlledMenu>
+          </TopBar>
 
           <Content>
             {compressionTest && (

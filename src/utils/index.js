@@ -62,6 +62,7 @@ const utils = {
   ) => {
     const [printURL, setPrintURL] = urlState;
     let url = baseURL + suffixURL;
+    console.log(searchField);
 
     if (searchField) {
       const entries = Object.entries(searchField);
@@ -72,6 +73,22 @@ const utils = {
           case 'updatedAt': {
             url = url.concat(
               `${url.includes('?') ? '&' : '?'}${'updated_at'}=${JSON.stringify(
+                value
+              )}`
+            );
+            break;
+          }
+          case 'loadedAt': {
+            url = url.concat(
+              `${url.includes('?') ? '&' : '?'}${'loaded_at'}=${JSON.stringify(
+                value
+              )}`
+            );
+            break;
+          }
+          case 'sampledAt': {
+            url = url.concat(
+              `${url.includes('?') ? '&' : '?'}${'sampled_at'}=${JSON.stringify(
                 value
               )}`
             );

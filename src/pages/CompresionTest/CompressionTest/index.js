@@ -12,7 +12,6 @@ import {
   MenuDivider,
   MenuHeader,
   MenuItem,
-  MenuRadioGroup,
 } from '@szhsin/react-menu';
 import { useHistory, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -33,7 +32,6 @@ import CompresionTestModal from '../CompresionTestModal';
 import utils from '../../../utils';
 import api from '../../../services/api';
 import Empty from '../../../components/Empty';
-import PrintMenuButton from '../../../components/PrintMenuButton';
 
 function CompresionTest() {
   const history = useHistory();
@@ -266,11 +264,8 @@ function CompresionTest() {
   }, [searchField, handleSearch, compressionTests]);
 
   useEffect(() => {
-    console.log('a');
     utils.managePrintURL(
-      `compressionTest${
-        printConcreteDesign ? '?printConcreteDesign=true' : ''
-      }`,
+      `compressionTest${`?printConcreteDesign=${printConcreteDesign}`}`,
       searchField,
       [printUrl, setPrintUrl],
       locale

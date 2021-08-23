@@ -469,6 +469,11 @@ function Stock() {
                 </MenuItem>
               </Menu>
               <PrintMenuButton url={printUrl} />
+              <MenuButton>
+                <Link to="/materialTransactions" style={{ color: 'black' }}>
+                  Entradas/Salidas
+                </Link>
+              </MenuButton>
             </TopBar>
             <Content>
               {!filteredMaterials?.length ? (

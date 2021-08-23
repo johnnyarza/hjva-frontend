@@ -14,8 +14,8 @@ export default function Header({ mobileState }) {
   const [hasNotification, setHasNotification] = useState(false);
   const [isMobile] = mobileState;
   const [hasError, setHasError] = useState(false);
+  const [pastDueCompressionTests, setPastDueCompressionTests] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-
   const history = useHistory();
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -23,11 +23,12 @@ export default function Header({ mobileState }) {
   useEffect(() => {
     const loadAllCompressionTests = async () => {
       try {
-        if (user) {
+        if (user.id) {
           const { data } = await api.get('compressionTests');
           if (data) {
             const hasWarnings = data.find((c) => c.hasWarning);
             setHasNotification(!!hasWarnings);
+            setPastDueCompressionTests(data.filter((c) => c.hasWarning));
           }
         }
       } catch (error) {
@@ -60,6 +61,10 @@ export default function Header({ mobileState }) {
           loadingState={[isLoading, setIsLoading]}
           handleSignOut={handleSignOut}
           user={user}
+          compressionTestsState={[
+            pastDueCompressionTests,
+            setPastDueCompressionTests,
+          ]}
         />
       )}
     </Container>

@@ -379,8 +379,6 @@ function CompresionTest() {
                 Mostrar Dosificación
               </MenuItem>
             </ControlledMenu>
-
-            {/* <PrintMenuButton url={printUrl} /> */}
           </TopBar>
           <Content>
             {!filteredCompressionTests.length ? (

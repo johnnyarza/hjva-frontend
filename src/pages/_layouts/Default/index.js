@@ -40,6 +40,7 @@ export default function DefaultLayout({ children, hasSideBar }) {
     <Wrapper isMobile={isMobile}>
       <IsMobileProvider value={[isMobile, setIsMobile]}>
         <Header mobileState={[isMobile, setIsMobile]} />
+
         <InputContainer isMobile={isMobile}>
           <InputContent isFocused={isFocused}>
             <input

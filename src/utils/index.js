@@ -60,9 +60,8 @@ const utils = {
     locale = '',
     baseURL = `${process.env.REACT_APP_API_BASE_URL}report/`
   ) => {
-    const [printURL, setPrintURL] = urlState;
+    const [, setPrintURL] = urlState;
     let url = baseURL + suffixURL;
-    console.log(searchField);
 
     if (searchField) {
       const entries = Object.entries(searchField);
@@ -105,7 +104,6 @@ const utils = {
     if (locale) {
       url = url.concat(`${url.includes('?') ? '&' : '?'}locale=${locale}`);
     }
-    console.log(url);
     setPrintURL(url);
   },
 };

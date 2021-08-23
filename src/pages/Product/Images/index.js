@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 

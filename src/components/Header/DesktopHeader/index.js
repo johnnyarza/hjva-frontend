@@ -18,6 +18,7 @@ export default function DesktopHeader({
   errorState,
   user,
   handleSignOut,
+  compressionTestsState,
 }) {
   const [hasNotification] = notificationState;
   const [hasError] = errorState;
@@ -53,6 +54,7 @@ export default function DesktopHeader({
               isLoading={isLoading}
               hasNotification={hasNotification}
               hasError={hasError}
+              compressionTestsState={compressionTestsState}
             />
           )}
           <Link to="/login">
@@ -73,6 +75,9 @@ export default function DesktopHeader({
 }
 
 DesktopHeader.propTypes = {
+  compressionTestsState: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.shape({}), PropTypes.func])
+  ).isRequired,
   notificationState: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.bool, PropTypes.func])
   ),

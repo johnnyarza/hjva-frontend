@@ -168,8 +168,13 @@ ConcreteDesignTopBar.propTypes = {
   onNewButton: PropTypes.func.isRequired,
   onCleanButton: PropTypes.func,
   onInputChange: PropTypes.func,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.element),
+    PropTypes.element,
+  ]),
 };
 ConcreteDesignTopBar.defaultProps = {
   onCleanButton: () => {},
   onInputChange: () => {},
+  children: <></>,
 };

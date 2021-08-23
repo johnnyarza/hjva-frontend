@@ -68,8 +68,8 @@ function ConcreteSample() {
   useEffect(() => {
     const loadCompressionTest = async () => {
       if (urlId) {
-        const { data } = await api.get('compressionTests', null, {
-          params: { urlId },
+        const { data } = await api.get('compressionTests', {
+          params: { id: urlId },
         });
         if (data) {
           setCompressionTest(data[0]);

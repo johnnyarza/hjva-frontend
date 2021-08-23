@@ -22,8 +22,9 @@ export default function Header({ mobileState }) {
 
   useEffect(() => {
     const loadAllCompressionTests = async () => {
+      setHasError(false);
       try {
-        if (user.id) {
+        if (user) {
           const { data } = await api.get('compressionTests');
           if (data) {
             const hasWarnings = data.find((c) => c.hasWarning);
@@ -37,12 +38,12 @@ export default function Header({ mobileState }) {
         setIsLoading(false);
       }
     };
-    loadAllCompressionTests();
-    // const timer = setInterval(() => {
-    //   loadAllCompressionTests();
-    // }, 5000);
+
+    const timer = setInterval(() => {
+      loadAllCompressionTests();
+    }, 5000);
     return () => {
-      // clearInterval(timer);
+      clearInterval(timer);
     };
   }, [user]);
 

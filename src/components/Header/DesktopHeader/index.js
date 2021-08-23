@@ -76,7 +76,11 @@ export default function DesktopHeader({
 
 DesktopHeader.propTypes = {
   compressionTestsState: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.shape({}), PropTypes.func])
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.shape({})),
+      PropTypes.func,
+      PropTypes.string,
+    ])
   ).isRequired,
   notificationState: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.bool, PropTypes.func])

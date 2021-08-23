@@ -40,6 +40,8 @@ export const NotificationContent = styled.div`
   border-radius: 15px;
   padding: 10px;
 
+  border: 1px solid #b8b8b8;
+
   &::before {
     content: '';
     position: absolute;
@@ -54,7 +56,13 @@ export const NotificationContent = styled.div`
 `;
 
 export const Notification = styled.div`
-  max-height: 50px;
+  div {
+    display: flex;
+    flex-direction: column;
+    &:hover {
+      color: #3498db;
+    }
+  }
   & + div {
     margin-top: 10px;
     border-top: 1px solid rgb(0, 0, 0, 0.1);

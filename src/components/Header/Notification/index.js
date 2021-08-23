@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MdErrorOutline, MdNotifications } from 'react-icons/md';
 import Loader from 'react-loader-spinner';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -18,16 +18,12 @@ function Notifications({
   compressionTestsState,
 }) {
   const [showNotificationContent, setShowNotificationContent] = useState(false);
-  const [compressionTests, setCompressionTests] = compressionTestsState;
-
-  useEffect(() => {
-    console.log(compressionTests);
-  }, [compressionTests]);
+  const [compressionTests] = compressionTestsState;
 
   return (
     <NotificationContainer hasNotification={hasNotification}>
       {isLoading ? (
-        <Loader type="TailSpin" color="#00BFFF" height={30} width={30} />
+        <Loader type="TailSpin" color="#00BFFF" height={25} width={25} />
       ) : hasError ? (
         <MdErrorOutline />
       ) : (
@@ -38,20 +34,28 @@ function Notifications({
           <MdNotifications />
         </button>
       )}
-      {!!(showNotificationContent && compressionTests) && (
-        <NotificationContent>
-          <PerfectScrollbar style={{ maxHeight: '80px' }}>
-            {compressionTests.map((compressionTest) => {
-              const { id } = compressionTest;
-              return (
-                <Link to={`/compresionTest/${id}`} key={id}>
+      {!!showNotificationContent && (
+        <NotificationContent
+          onMouseLeave={() => setShowNotificationContent(false)}
+        >
+          <PerfectScrollbar style={{ maxHeight: '100px' }}>
+            {compressionTests &&
+              compressionTests.map((compressionTest) => {
+                const { id, tracker } = compressionTest;
+
+                return (
                   <Notification>
-                    <h4>Aviso de probeta</h4>
-                    <p>Probetas retrasadas o con fecha proximas</p>
+                    <div>
+                      <Link to={`/compresionTest/${id}`} key={id}>
+                        <div>
+                          <h4>Aviso de probeta</h4>
+                          <p>{`Ensayo nª ${tracker} tiene probeta(s) retrasada(s) o cerca de la fecha de rotura`}</p>
+                        </div>
+                      </Link>
+                    </div>
                   </Notification>
-                </Link>
-              );
-            })}
+                );
+              })}
           </PerfectScrollbar>
         </NotificationContent>
       )}
@@ -64,7 +68,11 @@ Notifications.propTypes = {
   hasNotification: PropType.bool.isRequired,
   hasError: PropType.bool,
   compressionTestsState: PropType.arrayOf(
-    PropType.oneOfType([PropType.arrayOf(PropType.shape({})), PropType.func])
+    PropType.oneOfType([
+      PropType.arrayOf(PropType.shape({})),
+      PropType.func,
+      PropType.string,
+    ])
   ).isRequired,
 };
 

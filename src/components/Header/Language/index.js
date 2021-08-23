@@ -29,7 +29,7 @@ function Language() {
           <MdLanguage />
         </button>
         {showLanguages && (
-          <LanguageList>
+          <LanguageList onMouseLeave={() => setShowLanguages(false)}>
             <Scroll>
               <LanguageOption isSelected={locale === 'pt-BR'}>
                 <button type="button" onClick={() => handleClick()}>

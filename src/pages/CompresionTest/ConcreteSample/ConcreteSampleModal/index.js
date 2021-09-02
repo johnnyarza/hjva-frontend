@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Form } from '@unform/web';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { format } from 'date-fns-tz';
 import { addDays, startOfDay } from 'date-fns';
 import PropTypes from 'prop-types';
+import Loader from 'react-loader-spinner';
 
 import GenericModal from '../../../../components/GenericModal';
 import Label from '../../../../components/Label';
@@ -20,6 +21,7 @@ function ConcreteSampleModal({
   ...rest
 }) {
   const formRef = useRef(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     let parsedInitialData = {};
@@ -68,7 +70,7 @@ function ConcreteSampleModal({
         new Date(body.sampledAt.replaceAll('-', '/'))
       );
       body.loadedAt = startOfDay(new Date(body.loadedAt.replaceAll('-', '/')));
-
+      setIsSaving(true);
       onSubmit(body);
     } catch (err) {
       const validationErrors = {};
@@ -111,6 +113,7 @@ function ConcreteSampleModal({
               type="number"
               step="0.001"
               min="0"
+              disabled={isSaving}
             />
           </Label>
           <Label htmlFor="sampledAt" label="Moldeo">
@@ -120,6 +123,7 @@ function ConcreteSampleModal({
               onChange={() => formRef.current.setFieldError('sampledAt', '')}
               hasBorder={false}
               type="date"
+              disabled={isSaving}
             />
           </Label>
           <Label htmlFor="loadedAt" label="Rotura">
@@ -130,6 +134,7 @@ function ConcreteSampleModal({
               hasBorder={false}
               type="date"
               onCalcClick={handleDateCalc}
+              disabled={isSaving}
             />
           </Label>
           <Label htmlFor="diameter" label="Diametro (cm)">
@@ -142,6 +147,7 @@ function ConcreteSampleModal({
               type="number"
               step="0.001"
               min="0"
+              disabled={isSaving}
             />
           </Label>
           <Label htmlFor="height" label="Altura (cm)">
@@ -154,6 +160,7 @@ function ConcreteSampleModal({
               type="number"
               step="0.001"
               min="0"
+              disabled={isSaving}
             />
           </Label>
           <Label htmlFor="weight" label="Peso (kg)">
@@ -166,6 +173,7 @@ function ConcreteSampleModal({
               type="number"
               step="0.001"
               min="0"
+              disabled={isSaving}
             />
           </Label>
           <Label htmlFor="load" label="Ton">
@@ -178,6 +186,7 @@ function ConcreteSampleModal({
               type="number"
               step="0.001"
               min="0"
+              disabled={isSaving}
             />
           </Label>
 
@@ -188,31 +197,44 @@ function ConcreteSampleModal({
               placeholder="Descripción"
               maxLength={255}
               onChange={() => formRef.current.setFieldError('notes', '')}
+              disabled={isSaving}
             />
           </Label>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginTop: '10px',
-            }}
-          >
-            <button
-              type="submit"
-              name="inserir"
-              style={{ backgroundColor: '#2ecc71' }}
+          {isSaving ? (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '10px',
+              }}
             >
-              Ok
-            </button>
-            <button
-              type="button"
-              name="cancelar"
-              style={{ backgroundColor: '#C0392B' }}
-              onClick={onCancelPress}
+              <Loader type="TailSpin" color="#00BFFF" height={30} width={30} />
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '10px',
+              }}
             >
-              Cancelar
-            </button>
-          </div>
+              <button
+                type="submit"
+                name="inserir"
+                style={{ backgroundColor: '#2ecc71' }}
+              >
+                Ok
+              </button>
+              <button
+                type="button"
+                name="cancelar"
+                style={{ backgroundColor: '#C0392B' }}
+                onClick={onCancelPress}
+              >
+                Cancelar
+              </button>
+            </div>
+          )}
         </Form>
       </>
     </GenericModal>

@@ -164,9 +164,10 @@ function ConcreteSample() {
             return 0;
           })
       );
-
+      setIsConcreteSampleModalOpen(false);
       toast.success('Probeta Guardada con éxito');
     } catch (error) {
+      setIsConcreteSampleModalOpen(false);
       toast.error(error.message);
     }
   };
@@ -198,8 +199,10 @@ function ConcreteSample() {
             })
           );
         }
+        setIsConcreteSampleModalOpen(false);
         toast.success('Probeta Guardada con éxito');
       } catch (error) {
+        setIsConcreteSampleModalOpen(false);
         toast.error(error.message);
       }
     },
@@ -235,8 +238,6 @@ function ConcreteSample() {
       }
     } catch (error) {
       toast.error(error.message);
-    } finally {
-      setIsConcreteSampleModalOpen(false);
     }
   };
 

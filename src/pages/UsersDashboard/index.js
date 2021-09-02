@@ -1,22 +1,26 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useMemo,
+} from 'react';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
-
 import { toast } from 'react-toastify';
-import { MdDelete } from 'react-icons/md';
+import { FaRedoAlt, FaKey } from 'react-icons/fa';
+
+import COLUMNS from './Table/columns';
+import { Container, Content } from './style';
+import ResetPassModal from './ResetPassModal';
+
 import Modal from '../../components/Modal';
-
-import {
-  Container,
-  Content,
-  GridContainer,
-  SelectContainer,
-  NameContainer,
-} from './style';
-
+import UsersTable from '../../components/Table';
 import api from '../../services/api';
 import GenericModal from '../../components/GenericModal';
 import Input from '../../components/Input';
+import TopBar from '../../components/DinTopBar';
+import TableEditColumn from '../../components/TableEditColumn';
 /* eslint-disable */
 const formSchema = Yup.object().shape({
   password: Yup.string().required('Nova senha é obrigatória'),
@@ -49,6 +53,7 @@ export default function UsersDashboard() {
     const res = await api.get('/users');
     const { data } = res;
     setUsers(data);
+    console.log(data);
   }, []);
 
   const loadAllRoles = useCallback(async () => {
@@ -61,27 +66,6 @@ export default function UsersDashboard() {
     loadAllUsers();
     loadAllRoles();
   }, [loadAllUsers, loadAllRoles]);
-
-  const handleSelectChange = useCallback(
-    (selectedUser, role) => {
-      try {
-        api.put(`/user/role/${selectedUser.id}`, { role });
-
-        const updatedUsers = users.map((user) => {
-          if (user.id === selectedUser.id) {
-            const newUser = { ...user };
-            newUser.role = role;
-            return newUser;
-          }
-          return user;
-        });
-        setUsers(updatedUsers);
-      } catch (error) {
-        toast.error('Erro ao atualizar privilégios');
-      }
-    },
-    [users]
-  );
 
   const handleUpdatePassword = async (data) => {
     try {
@@ -116,118 +100,73 @@ export default function UsersDashboard() {
     }
   };
 
-  const generateGridRows = useCallback(() => {
-    if (users.length && users.length > 0 && roles?.length > 0) {
-      const options = roles.map((role) => <option>{role.name}</option>);
-      const rows = users.map((user) => (
-        <>
-          <NameContainer key={`nameContainer-${user.id}`}>
-            <div>{user.name}</div>
-          </NameContainer>
-          <SelectContainer key={`selectContainer-${user.id}`}>
-            <select
-              key={user.id}
-              onChange={({ target }) => handleSelectChange(user, target.value)}
-              defaultValue={user.role}
+  const columns = useMemo(() => {
+    const newCol = {
+      Header: 'Editar',
+      accessor: 'edit',
+
+      width: 25,
+      disableResize: true,
+      disableSort: true,
+
+      // eslint-disable-next-line react/prop-types
+      Cell: ({ row: { original } }) => {
+        return (
+          <div
+            className="edit-buttons-container"
+            style={{ display: 'flex', justifyContent: 'center' }}
+          >
+            <button
+              type="button"
+              className="key-btn"
+              onClick={() => {
+                setCurrentUser(original);
+              }}
             >
-              {options}
-            </select>
-          </SelectContainer>
-          <button
-            key={`b-${user.id}`}
-            type="button"
-            className="reset-password"
-            onClick={() => {
-              setCurrentUser(user);
-              setIsResetPasswordModalOpen(true);
-            }}
-          >
-            Resetar Senha
-          </button>
-          <button
-            key={`b1-${user.id}`}
-            className="delete-user-button"
-            onClick={() => {
-              setCurrentUser(user);
-              setDeleteUserConfirmationOpen(true);
-            }}
-            type="button"
-          >
-            <MdDelete
-              key={`ic-${user.id}`}
-              style={{ minHeight: '20px', width: 'auto' }}
+              <FaKey />
+            </button>
+            <button
+              type="button"
+              className="key-btn"
+              onClick={() => {
+                setCurrentUser(original);
+                setIsResetPasswordModalOpen(true);
+              }}
+            >
+              <FaRedoAlt />
+            </button>
+            <TableEditColumn
+              userRole="admin"
+              original={original}
+              hasDelete
+              onEditClick={() => {}}
+              onDeleteClick={() => {
+                setCurrentUser(original);
+                setDeleteUserConfirmationOpen(true);
+              }}
             />
-          </button>
-        </>
-      ));
-      return rows;
-    }
-    return <></>;
-  }, [users, roles, handleSelectChange]);
+          </div>
+        );
+      },
+    };
+    return [...COLUMNS, newCol];
+  }, []);
 
   return (
     <>
       <Container>
+        <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Accesos</h2>
+        <TopBar />
         <Content>
-          <GridContainer style={{ gridTemplateColumns: '45% 20% 25% 10%' }}>
-            <div>
-              <h1>Usuário</h1>
-            </div>
-            <div className="access-title">
-              <h1>Acesso</h1>
-            </div>
-            <div />
-            <div />
-            {generateGridRows()}
-          </GridContainer>
+          <UsersTable data={users} columns={columns} />
         </Content>
 
         {isResetPasswordModalOpen && (
-          <GenericModal
-            isOpen
+          <ResetPassModal
+            onCancelPress={() => setIsResetPasswordModalOpen(false)}
             onEscPress={() => setIsResetPasswordModalOpen(false)}
-          >
-            <h1 style={{ marginBottom: '15px' }}>Resetar Senha</h1>
-            <Form
-              ref={formRef}
-              onSubmit={handleUpdatePassword}
-              schmea={formSchema}
-            >
-              <Input
-                type="password"
-                hasBorder={false}
-                name="password"
-                placeholder="Nova senha"
-                onChange={() => formRef.current.setFieldError('password', '')}
-              />
-              <Input
-                type="password"
-                hasBorder={false}
-                name="confirmPassword"
-                placeholder="Confirmar senha"
-                onChange={() =>
-                  formRef.current.setFieldError('confirmPassword', '')
-                }
-              />
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <button
-                  type="submit"
-                  name="resetPassword"
-                  className="form-ok-button"
-                >
-                  Atualizar
-                </button>
-                <button
-                  className="form-cancel-button"
-                  type="button"
-                  name="cancel"
-                  onClick={() => setIsResetPasswordModalOpen(false)}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </Form>
-          </GenericModal>
+            onSubmit={(data) => console.log(data)}
+          />
         )}
       </Container>
       {deleteUserConfirmationOpen && (

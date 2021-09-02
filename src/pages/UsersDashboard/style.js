@@ -15,47 +15,19 @@ export const Container = styled.div`
 `;
 export const Content = styled.div`
   max-height: 600px;
-  max-width: 500px;
   overflow-y: auto;
   overflow-x: hidden;
   margin-left: auto;
   margin-right: auto;
-
-  .access-title {
-    text-align: center;
-  }
-  .delete-user-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
+  .key-btn {
+    background: none;
     border: none;
-    border-radius: 5px;
-    height: 100%;
-    width: 80%;
-    cursor: pointer;
-    transition: all 0.2s;
-    &:hover {
-      box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+    margin-right: 2px;
+    svg {
+      height: 18px;
     }
-    &:active {
-      box-shadow: rgba(0, 0, 0, 0.8) 0 0 8px;
-    }
-  }
-  .reset-password {
-    width: 95%;
-    border: none;
-    border-radius: 5px;
-    background-color: #e74c3c;
-    font: 14px 'Roboto';
-    color: white;
-    font-weight: 500;
-    transition: all 0.2s;
-    &:hover {
-      box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
-    }
-    &:active {
-      box-shadow: rgba(0, 0, 0, 0.8) 0 0 8px;
+    :hover {
+      color: #3498db;
     }
   }
 `;

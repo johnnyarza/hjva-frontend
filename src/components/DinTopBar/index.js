@@ -98,7 +98,7 @@ function TopBar({
 
   return (
     <Container {...rest}>
-      {buttons.map(({ label, onClick }) => {
+      {buttons?.map(({ label, onClick }) => {
         return (
           <button type="button" onClick={onClick} key={uniqueId()}>
             {label}

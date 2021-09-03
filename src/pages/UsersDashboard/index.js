@@ -6,7 +6,6 @@ import React, {
   useMemo,
 } from 'react';
 import * as Yup from 'yup';
-import { Form } from '@unform/web';
 import { toast } from 'react-toastify';
 import { FaRedoAlt, FaKey } from 'react-icons/fa';
 
@@ -17,10 +16,9 @@ import ResetPassModal from './ResetPassModal';
 import Modal from '../../components/Modal';
 import UsersTable from '../../components/Table';
 import api from '../../services/api';
-import GenericModal from '../../components/GenericModal';
-import Input from '../../components/Input';
 import TopBar from '../../components/DinTopBar';
 import TableEditColumn from '../../components/TableEditColumn';
+import RoleModal from './RoleModal';
 /* eslint-disable */
 const formSchema = Yup.object().shape({
   password: Yup.string().required('Nova senha é obrigatória'),
@@ -44,10 +42,10 @@ export default function UsersDashboard() {
   );
 
   const [currentUser, setCurrentUser] = useState({});
-  const [roles, setRoles] = useState([]);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(
     false
   );
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
   const loadAllUsers = useCallback(async () => {
     const res = await api.get('/users');
@@ -56,16 +54,9 @@ export default function UsersDashboard() {
     console.log(data);
   }, []);
 
-  const loadAllRoles = useCallback(async () => {
-    const res = await api.get('/roles');
-    const { data } = res;
-    setRoles(data);
-  }, []);
-
   useEffect(() => {
     loadAllUsers();
-    loadAllRoles();
-  }, [loadAllUsers, loadAllRoles]);
+  }, [loadAllUsers]);
 
   const handleUpdatePassword = async (data) => {
     try {
@@ -87,7 +78,7 @@ export default function UsersDashboard() {
     }
   };
 
-  const deleteHandle = async () => {
+  const handleDeleteUser = async () => {
     try {
       await api.delete(`/user/${currentUser.id}`);
       const newUsers = users.filter((user) => user.id !== currentUser.id);
@@ -97,6 +88,26 @@ export default function UsersDashboard() {
     } catch (err) {
       const text = err.response?.data.message || err.message;
       toast.error(text);
+    }
+  };
+
+  const updateRoleHandle = (data) => {
+    try {
+      setUsers(
+        users.map((user) => {
+          const { id } = user;
+          if (id === currentUser.id) {
+            user.role = data.name;
+            return user;
+          }
+          return user;
+        })
+      );
+      setIsRoleModalOpen(false);
+      console.log(data);
+      toast.success('Acceso actualizado');
+    } catch (error) {
+      toast.error('Error al actualizar acceso');
     }
   };
 
@@ -121,6 +132,7 @@ export default function UsersDashboard() {
               className="key-btn"
               onClick={() => {
                 setCurrentUser(original);
+                setIsRoleModalOpen(true);
               }}
             >
               <FaKey />
@@ -173,9 +185,17 @@ export default function UsersDashboard() {
         <Modal
           isOpen
           onCancelClick={() => setDeleteUserConfirmationOpen(false)}
-          onOkClick={deleteHandle}
+          onOkClick={handleDeleteUser}
           message={`Certeza que deseja deletar usuário: ${currentUser.name} ?`}
           onEscPress={() => setDeleteUserConfirmationOpen(false)}
+        />
+      )}
+      {isRoleModalOpen && (
+        <RoleModal
+          onEscPress={() => setIsRoleModalOpen(false)}
+          onCancelPress={() => setIsRoleModalOpen(false)}
+          onSubmit={updateRoleHandle}
+          initialData={{ label: currentUser.role }}
         />
       )}
     </>

@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
+
 import GenericModal from '../../../components/GenericModal';
 import Input from '../../../components/Input';
 
@@ -79,3 +81,14 @@ function ResetPassModal({ onEscPress, onSubmit, onCancelPress }) {
 }
 
 export default ResetPassModal;
+
+ResetPassModal.propTypes = {
+  onEscPress: PropTypes.func,
+  onSubmit: PropTypes.func,
+  onCancelPress: PropTypes.func,
+};
+ResetPassModal.defaultProps = {
+  onEscPress: () => {},
+  onSubmit: () => {},
+  onCancelPress: () => {},
+};

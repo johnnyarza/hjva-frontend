@@ -27,6 +27,13 @@ export const Content = styled.div`
     font-size: 16px;
   }
 
+  .form-ok-button {
+    background-color: var(--okButton);
+  }
+  .form-cancel-button {
+    background-color: var(--cancelButton);
+  }
+
   button {
     width: 80px;
     height: 30px;

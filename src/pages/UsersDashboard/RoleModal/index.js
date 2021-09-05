@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
+import PropTypes from 'prop-types';
 
 import { toast } from 'react-toastify';
 import Loader from 'react-loader-spinner';
@@ -10,10 +11,11 @@ import Label from '../../../components/Label';
 
 import { Container, Content, FormButtonsContainer } from './styles';
 import api from '../../../services/api';
+import Spinner from '../../../components/Spinner';
 
 function RoleModal({ onEscPress, onCancelPress, onSubmit, initialData }) {
-  const [, setCurrentRole] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [currentRole, setCurrentRole] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [roles, setRoles] = useState('');
   const formRef = useRef(null);
 
@@ -27,12 +29,18 @@ function RoleModal({ onEscPress, onCancelPress, onSubmit, initialData }) {
     if (initialData && roles) {
       const { label } = initialData;
       const { id } = roles.find(({ name }) => name === label);
-      formRef.current.setData({
-        role: { value: id, label },
-      });
       setCurrentRole({ label, value: id });
     }
   }, [initialData, roles]);
+
+  useEffect(() => {
+    if (currentRole) {
+      formRef.current.setData({
+        role: { ...currentRole },
+      });
+      setIsLoading(false);
+    }
+  }, [currentRole]);
 
   useEffect(() => {
     loadAllRoles();
@@ -76,7 +84,9 @@ function RoleModal({ onEscPress, onCancelPress, onSubmit, initialData }) {
           <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
             Editar Acceso
           </h2>
-          {roles && (
+          {!roles ? (
+            <Spinner />
+          ) : (
             <Form ref={formRef} onSubmit={handleSubmit}>
               <Label htmlFor="role" label="Acceso">
                 <SearchbleList
@@ -125,3 +135,18 @@ function RoleModal({ onEscPress, onCancelPress, onSubmit, initialData }) {
 }
 
 export default RoleModal;
+
+RoleModal.propTypes = {
+  onEscPress: PropTypes.func,
+  onCancelPress: PropTypes.func,
+  onSubmit: PropTypes.func,
+  initialData: PropTypes.shape({
+    label: PropTypes.string,
+  }),
+};
+RoleModal.defaultProps = {
+  onEscPress: () => {},
+  onCancelPress: () => {},
+  onSubmit: () => {},
+  initialData: {},
+};

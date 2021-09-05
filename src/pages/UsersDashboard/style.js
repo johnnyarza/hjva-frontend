@@ -9,7 +9,7 @@ export const Container = styled.div`
     min-height: 32px;
   }
   .form-cancel-button {
-    background-color: #e74c3c;
+    background-color: var(--cancelButton);
     min-height: 32px;
   }
 `;

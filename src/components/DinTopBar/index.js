@@ -150,13 +150,14 @@ TopBar.propTypes = {
       label: PropTypes.string,
       onClick: PropTypes.func,
     })
-  ).isRequired,
+  ),
   onCleanSearchButton: PropTypes.func.isRequired,
   onSearchInputChange: PropTypes.func.isRequired,
 };
 
 TopBar.defaultProps = {
   children: <></>,
+  buttons: [],
 };
 
 export default TopBar;

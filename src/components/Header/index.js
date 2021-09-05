@@ -38,13 +38,14 @@ export default function Header({ mobileState }) {
         setIsLoading(false);
       }
     };
+    loadAllCompressionTests();
 
-    const timer = setInterval(() => {
-      loadAllCompressionTests();
-    }, 5000);
-    return () => {
-      clearInterval(timer);
-    };
+    // const timer = setInterval(() => {
+    //   loadAllCompressionTests();
+    // }, 5000);
+    // return () => {
+    //   clearInterval(timer);
+    // };
   }, [user]);
 
   const handleSignOut = useCallback(() => {

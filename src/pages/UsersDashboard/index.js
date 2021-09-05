@@ -19,6 +19,8 @@ import api from '../../services/api';
 import TopBar from '../../components/DinTopBar';
 import TableEditColumn from '../../components/TableEditColumn';
 import RoleModal from './RoleModal';
+import utils from '../../utils';
+import Spinner from '../../components/Spinner';
 /* eslint-disable */
 const formSchema = Yup.object().shape({
   password: Yup.string().required('Nova senha é obrigatória'),
@@ -36,27 +38,18 @@ const formSchema = Yup.object().shape({
 
 export default function UsersDashboard() {
   const formRef = useRef(null);
-  const [users, setUsers] = useState([]);
+  const [searchField, setSearchField] = useState('');
+  const [users, setUsers] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [deleteUserConfirmationOpen, setDeleteUserConfirmationOpen] = useState(
     false
   );
-
+  const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState({});
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(
     false
   );
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-
-  const loadAllUsers = useCallback(async () => {
-    const res = await api.get('/users');
-    const { data } = res;
-    setUsers(data);
-    console.log(data);
-  }, []);
-
-  useEffect(() => {
-    loadAllUsers();
-  }, [loadAllUsers]);
 
   const handleUpdatePassword = async (data) => {
     try {
@@ -74,6 +67,7 @@ export default function UsersDashboard() {
         });
         formRef.current.setErrors(validationErrors);
       }
+      setIsResetPasswordModalOpen(false);
       toast.error('Erro ao resetar senha');
     }
   };
@@ -91,22 +85,26 @@ export default function UsersDashboard() {
     }
   };
 
-  const updateRoleHandle = (data) => {
+  const updateRoleHandle = async (data) => {
     try {
+      const { data: newUser } = await api.put(`user/role/${currentUser.id}`, {
+        role: data.name,
+      });
+
       setUsers(
         users.map((user) => {
           const { id } = user;
-          if (id === currentUser.id) {
-            user.role = data.name;
-            return user;
+          if (id === newUser.id) {
+            return newUser;
           }
           return user;
         })
       );
+
       setIsRoleModalOpen(false);
-      console.log(data);
       toast.success('Acceso actualizado');
     } catch (error) {
+      setIsRoleModalOpen(false);
       toast.error('Error al actualizar acceso');
     }
   };
@@ -164,23 +162,91 @@ export default function UsersDashboard() {
     return [...COLUMNS, newCol];
   }, []);
 
+  const handleSearch = useCallback(() => {
+    let filtered = users;
+    if (searchField) {
+      const entries = Object.entries(searchField);
+      const [field, value] = entries[0];
+
+      if (value) {
+        filtered = users.filter((user) => {
+          const valueToCompare = user[field];
+          if (!valueToCompare) return false;
+          if (field === 'updatedAt') {
+            const { from, to } = value;
+            if (from && to) {
+              return utils.isBetweenDates(from, to, valueToCompare);
+            }
+            return true;
+          }
+
+          return valueToCompare.toLowerCase().includes(value.toLowerCase());
+        });
+      }
+      setTimeout(() => setFilteredUsers(filtered), 350);
+    }
+  }, [users, searchField]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch, users, searchField]);
+
+  useEffect(() => {
+    const loadAllUsers = async () => {
+      const res = await api.get('/users');
+      const { data } = res;
+      setUsers(data);
+    };
+    loadAllUsers();
+  }, []);
+
+  useEffect(() => {
+    if (users) {
+      if (!searchField) setFilteredUsers(users);
+      setIsLoading(false);
+    }
+  }, [users, searchField]);
   return (
     <>
       <Container>
         <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Accesos</h2>
-        <TopBar />
-        <Content>
-          <UsersTable data={users} columns={columns} />
-        </Content>
-
-        {isResetPasswordModalOpen && (
-          <ResetPassModal
-            onCancelPress={() => setIsResetPasswordModalOpen(false)}
-            onEscPress={() => setIsResetPasswordModalOpen(false)}
-            onSubmit={(data) => console.log(data)}
-          />
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <TopBar
+              onSearchInputChange={(data) => setSearchField(data)}
+              onCleanSearchButton={() => {
+                setFilteredUsers(users);
+                setSearchField('');
+              }}
+              fields={[
+                {
+                  field: 'name',
+                  label: 'Nombre',
+                  inputProps: { type: 'text' },
+                },
+                {
+                  field: 'role',
+                  label: 'Acceso',
+                  inputProps: { type: 'text' },
+                },
+              ]}
+            />
+            <Content>
+              <UsersTable data={filteredUsers} columns={columns} />
+            </Content>
+          </>
         )}
       </Container>
+      {isResetPasswordModalOpen && (
+        <ResetPassModal
+          onCancelPress={() => setIsResetPasswordModalOpen(false)}
+          onEscPress={() => setIsResetPasswordModalOpen(false)}
+          onSubmit={handleUpdatePassword}
+        />
+      )}
+
       {deleteUserConfirmationOpen && (
         <Modal
           isOpen

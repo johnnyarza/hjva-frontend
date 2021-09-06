@@ -19,6 +19,7 @@ import Measurements from '../pages/Measurements';
 import ConcreteDesigns from '../pages/ConcreteDesigns';
 import MaterialTransaction from '../pages/Stock/MaterialTransaction';
 import ConcreteSample from '../pages/CompresionTest/ConcreteSample';
+import utils from '../utils';
 
 export default function Routes() {
   return (
@@ -53,6 +54,7 @@ export default function Routes() {
         exact
         isPrivate
         hasSideBar
+        privilege={utils.pagesAccess.users}
         component={(props) => <UsersDashboard {...props} />}
       />
 
@@ -67,6 +69,7 @@ export default function Routes() {
         exact
         isPrivate
         hasSideBar
+        privilege={utils.pagesAccess.stockToSell}
         component={(props) => <Stock {...props} />}
       />
 
@@ -80,6 +83,7 @@ export default function Routes() {
         exact
         isPrivate
         hasSideBar
+        privilege={utils.pagesAccess.compressionTestHome}
         component={(props) => <CompresionTestHome {...props} />}
       />
 
@@ -87,6 +91,7 @@ export default function Routes() {
         path="/compresionTest/:id"
         isPrivate
         hasSideBar
+        privilege={utils.pagesAccess.compressionTestId}
         component={(props) => <ConcreteSample {...props} />}
         exact
       />
@@ -95,6 +100,7 @@ export default function Routes() {
         exact
         isPrivate
         hasSideBar
+        privilege={utils.pagesAccess.clients}
         component={(props) => <Clients {...props} />}
       />
       <Route
@@ -102,6 +108,7 @@ export default function Routes() {
         exact
         hasSideBar
         isPrivate
+        privilege={utils.pagesAccess.providers}
         component={(props) => <Providers {...props} />}
       />
       <Route
@@ -109,6 +116,7 @@ export default function Routes() {
         exact
         hasSideBar
         isPrivate
+        privilege={utils.pagesAccess.category}
         component={(props) => <Category {...props} />}
       />
 
@@ -117,6 +125,7 @@ export default function Routes() {
         exact
         hasSideBar
         isPrivate
+        privilege={utils.pagesAccess.stock}
         component={(props) => <Stock {...props} />}
       />
 
@@ -125,6 +134,7 @@ export default function Routes() {
         exact
         hasSideBar
         isPrivate
+        privilege={utils.pagesAccess.measurements}
         component={(props) => <Measurements {...props} />}
       />
       <Route
@@ -132,10 +142,12 @@ export default function Routes() {
         exact
         hasSideBar
         isPrivate
+        privilege={utils.pagesAccess.concreteDesigns}
         component={(props) => <ConcreteDesigns {...props} />}
       />
       <Route
         path="/materialTransactions"
+        privilege={utils.pagesAccess.materialTransactions}
         exact
         component={(props) => <MaterialTransaction {...props} />}
         hasSideBar

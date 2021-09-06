@@ -21,6 +21,7 @@ import { Container, Content, BarItem } from './style';
 import api from '../../services/api';
 import { signOut } from '../../store/modules/auth/actions';
 import concreteTestIconPath from '../../assets/concrete.ico';
+import utils from '../../utils';
 
 export default function SideBar() {
   const history = useHistory();
@@ -64,7 +65,7 @@ export default function SideBar() {
             </Link>
           </BarItem>
         )}
-        {(userRole === 'admin' || userRole === 'escritorio') && (
+        {utils.pagesAccess.stockToSell.find((r) => r === userRole) && (
           <BarItem>
             <Link to="/stock/toSell">
               <MdLocalGroceryStore />
@@ -72,37 +73,49 @@ export default function SideBar() {
             </Link>
           </BarItem>
         )}
+        {utils.pagesAccess.category.find((r) => r === userRole) && (
+          <BarItem>
+            <Link to="/category">
+              <FaTags />
+              <span>Categorias</span>
+            </Link>
+          </BarItem>
+        )}
+        {utils.pagesAccess.category.find((r) => r === userRole) && (
+          <BarItem>
+            <Link to="/category">
+              <FaTags />
+              <span>Categorias</span>
+            </Link>
+          </BarItem>
+        )}
+        {utils.pagesAccess.measurements.find((r) => r === userRole) && (
+          <BarItem>
+            <Link to="/measurements">
+              <FaWeightHanging />
+              <span>Unidades Medi.</span>
+            </Link>
+          </BarItem>
+        )}
+        {utils.pagesAccess.providers.find((r) => r === userRole) && (
+          <BarItem>
+            <Link to="/providers">
+              <MdLocalShipping />
+              <span>Proveedores</span>
+            </Link>
+          </BarItem>
+        )}
+        {utils.pagesAccess.clients.find((r) => r === userRole) && (
+          <BarItem>
+            <Link to="/clients">
+              <MdPerson />
+              <span>Clientes</span>
+            </Link>
+          </BarItem>
+        )}
 
         {userRole !== 'comum' && (
           <>
-            <BarItem>
-              <Link to="/category">
-                <FaTags />
-                <span>Categorias</span>
-              </Link>
-            </BarItem>
-            {(userRole === 'admin' ||
-              userRole === 'escritorio' ||
-              userRole === 'laboratorio') && (
-              <BarItem>
-                <Link to="/measurements">
-                  <FaWeightHanging />
-                  <span>Unidades Medi.</span>
-                </Link>
-              </BarItem>
-            )}
-            <BarItem>
-              <Link to="/providers">
-                <MdLocalShipping />
-                <span>Proveedores</span>
-              </Link>
-            </BarItem>
-            <BarItem>
-              <Link to="/clients">
-                <MdPerson />
-                <span>Clientes</span>
-              </Link>
-            </BarItem>
             <BarItem>
               <Link to="/stock">
                 <FaDolly />

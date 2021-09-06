@@ -2,16 +2,24 @@ import React, { useEffect, useMemo, useState, createContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import PropTypes from 'prop-types';
+import { RiForbid2Fill } from 'react-icons/ri';
 
 import Header from '../../../components/Header';
 import SideBar from '../../../components/SideBar';
 
-import { Wrapper, Content, InputContainer, InputContent } from './styles';
+import {
+  Wrapper,
+  Content,
+  InputContainer,
+  InputContent,
+  Forbidden,
+} from './styles';
+import api from '../../../services/api';
 
 export const InputContext = createContext(['', () => {}]);
 export const IsMobileContext = createContext(['', () => {}]);
 
-export default function DefaultLayout({ children, hasSideBar }) {
+export default function DefaultLayout({ privilege, children, hasSideBar }) {
   const sideBar = useMemo(() => <SideBar />, []);
   const [width, setWidth] = useState(window.innerWidth);
   const [isFocused, setIsFocused] = useState(false);
@@ -19,7 +27,27 @@ export default function DefaultLayout({ children, hasSideBar }) {
   const [inputValue, setInputValue] = useState('');
   const { Provider: InputProvider } = InputContext;
   const { Provider: IsMobileProvider } = IsMobileContext;
+  const [userRole, setUserRole] = useState('comum');
+  const [hasAccess, setHasAccess] = useState(false);
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    const loadUserRole = async () => {
+      const { data } = await api.get('user');
+      if (data) {
+        const { role } = data;
+        if (role) setUserRole(role);
+      }
+    };
+    loadUserRole();
+  }, []);
+
+  useEffect(() => {
+    if (userRole && privilege) {
+      if (privilege.find((p) => p === userRole)) setHasAccess(true);
+    }
+    if (!privilege) setHasAccess(true);
+  }, [userRole, privilege]);
 
   useEffect(() => {
     setIsMobile(width <= 768);
@@ -56,7 +84,14 @@ export default function DefaultLayout({ children, hasSideBar }) {
         <InputProvider value={[inputValue, setInputValue]}>
           <Content isMobile={isMobile}>
             {hasSideBar && sideBar}
-            {children}
+            {hasAccess ? (
+              children
+            ) : (
+              <Forbidden>
+                <RiForbid2Fill />
+                <span>Acceso Denegado</span>
+              </Forbidden>
+            )}
           </Content>
         </InputProvider>
       </IsMobileProvider>

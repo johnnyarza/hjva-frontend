@@ -1,25 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 
+import { useSelector } from 'react-redux';
 import DefaultLayout from '../pages/_layouts/Default';
-
-import { store } from '../store';
 
 function RouteWrapper({
   component: Component,
   isPrivate,
   hasSideBar,
+  privilege,
   ...rest
 }) {
-  const { signed } = store.getState().auth;
+  const { signed } = useSelector((state) => state.auth);
 
   if (!signed && isPrivate) {
     return <Redirect to="/login" />;
   }
 
   return (
-    <DefaultLayout hasSideBar={hasSideBar}>
+    <DefaultLayout hasSideBar={hasSideBar} privilege={privilege}>
       <Route {...rest} component={Component} />
     </DefaultLayout>
   );

@@ -5,6 +5,7 @@ import React, {
   useRef,
   useMemo,
 } from 'react';
+import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { FaRedoAlt, FaKey } from 'react-icons/fa';
@@ -37,6 +38,7 @@ const formSchema = Yup.object().shape({
 /* eslint-enable */
 
 export default function UsersDashboard() {
+  const [, setUserRole] = useState('common');
   const formRef = useRef(null);
   const [searchField, setSearchField] = useState('');
   const [users, setUsers] = useState('');
@@ -186,6 +188,16 @@ export default function UsersDashboard() {
       setTimeout(() => setFilteredUsers(filtered), 350);
     }
   }, [users, searchField]);
+
+  useEffect(() => {
+    const loadUserRole = async () => {
+      const res = await api.get('/user');
+      if (res.data) {
+        setUserRole(res.data.role);
+      }
+    };
+    loadUserRole();
+  }, []);
 
   useEffect(() => {
     handleSearch();

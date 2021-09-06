@@ -106,6 +106,19 @@ const utils = {
     }
     setPrintURL(url);
   },
+  pagesAccess: {
+    users: ['admin'],
+    stockToSell: ['admin', 'escritorio'],
+    compressionTestHome: ['escritorio', 'admin', 'laboratorio'],
+    compressionTestId: ['escritorio', 'admin', 'laboratorio'],
+    clients: ['escritorio', 'admin'],
+    providers: ['escritorio', 'admin'],
+    category: ['escritorio', 'admin'],
+    stock: ['escritorio', 'admin', 'estoque'],
+    measurements: ['escritorio', 'admin', 'estoque'],
+    concreteDesigns: ['escritorio', 'admin', 'laboratorio'],
+    materialTransactions: ['escritorio', 'admin', 'estoque'],
+  },
 };
 
 export default utils;

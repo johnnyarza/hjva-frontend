@@ -5,6 +5,21 @@ export const Wrapper = styled.div`
   overflow: hidden;
 `;
 
+export const Forbidden = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: ${darken(0.5, '#ebebeb')};
+  svg {
+    height: 60px;
+    width: 60px;
+  }
+  > span {
+    font-weight: 500;
+    font-size: 24px;
+  }
+`;
+
 export const Content = styled.div`
   margin-top: ${(props) => (props.isMobile ? '70px' : '125px')};
   margin-right: ${(props) => (props.isMobile ? '32px' : '64px')};

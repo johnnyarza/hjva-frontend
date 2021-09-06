@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MdAddCircleOutline, MdRemoveCircleOutline } from 'react-icons/md';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 
 import { toast } from 'react-toastify';
@@ -28,7 +28,7 @@ function Stock() {
   const [printUrl, setPrintUrl] = useState(
     'http://localhost:3333/report/material'
   );
-  const [userRole, setUserRole] = useState('common');
+  const [userRole, setUserRole] = useState('comum');
   const [timeout, setTime] = useState('');
   const [materials, setMaterials] = useState('');
   const [filteredMaterials, setFilteredMaterials] = useState([]);

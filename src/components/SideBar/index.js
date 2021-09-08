@@ -57,7 +57,8 @@ export default function SideBar() {
             <span>Editar usuario</span>
           </Link>
         </BarItem>
-        {userRole === 'admin' && (
+
+        {utils.pagesAccess.users.find((r) => r === userRole) && (
           <BarItem>
             <Link to="/users">
               <MdGroup />
@@ -81,14 +82,7 @@ export default function SideBar() {
             </Link>
           </BarItem>
         )}
-        {utils.pagesAccess.category.find((r) => r === userRole) && (
-          <BarItem>
-            <Link to="/category">
-              <FaTags />
-              <span>Categorias</span>
-            </Link>
-          </BarItem>
-        )}
+
         {utils.pagesAccess.measurements.find((r) => r === userRole) && (
           <BarItem>
             <Link to="/measurements">
@@ -113,26 +107,23 @@ export default function SideBar() {
             </Link>
           </BarItem>
         )}
-
-        {userRole !== 'comum' && (
-          <>
-            <BarItem>
-              <Link to="/stock">
-                <FaDolly />
-                <span>Estoque</span>
-              </Link>
-            </BarItem>
-
-            <BarItem>
-              <Link to="/concreteDesigns">
-                <FaBalanceScale />
-                <span>Dosificaciones</span>
-              </Link>
-            </BarItem>
-          </>
+        {utils.pagesAccess.stock.find((r) => r === userRole) && (
+          <BarItem>
+            <Link to="/stock">
+              <FaDolly />
+              <span>Estoque</span>
+            </Link>
+          </BarItem>
         )}
-
-        {userRole !== 'comum' && userRole !== 'vendedor' && (
+        {utils.pagesAccess.concreteDesigns.find((r) => r === userRole) && (
+          <BarItem>
+            <Link to="/concreteDesigns">
+              <FaBalanceScale />
+              <span>Dosificaciones</span>
+            </Link>
+          </BarItem>
+        )}
+        {utils.pagesAccess.compressionTestHome.find((r) => r === userRole) && (
           <BarItem>
             <Link to="/compresionTest/home">
               <img src={concreteTestIconPath} alt="probeta" />

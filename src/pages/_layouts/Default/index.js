@@ -102,6 +102,7 @@ export default function DefaultLayout({ privilege, children, hasSideBar }) {
 DefaultLayout.propTypes = {
   children: PropTypes.element.isRequired,
   hasSideBar: PropTypes.bool,
+  privilege: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 DefaultLayout.defaultProps = {

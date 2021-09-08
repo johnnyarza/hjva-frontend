@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 
@@ -25,6 +25,7 @@ function RouteWrapper({
   );
 }
 RouteWrapper.propTypes = {
+  privilege: PropTypes.arrayOf(PropTypes.string).isRequired,
   isPrivate: PropTypes.bool,
   hasSideBar: PropTypes.bool,
   component: PropTypes.oneOfType([PropTypes.element, PropTypes.func])

@@ -16,7 +16,7 @@ function TableEditColumn({
 }) {
   return (
     <Container className="edit-buttons-container">
-      {userRole === 'admin' ? (
+      {userRole === 'admin' || userRole === 'escritorio' ? (
         <>
           {hasEdit && (
             <button

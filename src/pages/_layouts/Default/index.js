@@ -28,7 +28,7 @@ export default function DefaultLayout({ privilege, children, hasSideBar }) {
   const { Provider: InputProvider } = InputContext;
   const { Provider: IsMobileProvider } = IsMobileContext;
   const [userRole, setUserRole] = useState('comum');
-  const [hasAccess, setHasAccess] = useState(false);
+  const [hasAccess, setHasAccess] = useState(!privilege);
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -46,7 +46,6 @@ export default function DefaultLayout({ privilege, children, hasSideBar }) {
     if (userRole && privilege) {
       if (privilege.find((p) => p === userRole)) setHasAccess(true);
     }
-    if (!privilege) setHasAccess(true);
   }, [userRole, privilege]);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MdAddCircleOutline, MdRemoveCircleOutline } from 'react-icons/md';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, MenuButton, MenuItem } from '@szhsin/react-menu';
 
 import { toast } from 'react-toastify';

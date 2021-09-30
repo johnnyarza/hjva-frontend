@@ -108,7 +108,7 @@ const utils = {
   },
   pagesAccess: {
     users: ['admin'],
-    stockToSell: ['admin', 'escritorio'],
+    stockToSell: ['admin', 'escritorio', 'vendedor'],
     compressionTestHome: ['escritorio', 'admin', 'laboratorio'],
     compressionTestId: ['escritorio', 'admin', 'laboratorio'],
     clients: ['escritorio', 'admin'],

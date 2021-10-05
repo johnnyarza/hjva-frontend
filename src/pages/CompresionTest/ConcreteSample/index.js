@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { MdContentCopy, MdKeyboardBackspace } from 'react-icons/md';
+import { MdContentCopy, MdEdit, MdKeyboardBackspace } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { startOfDay } from 'date-fns';
 import { useSelector } from 'react-redux';
@@ -252,6 +252,7 @@ function ConcreteSample() {
 
       // eslint-disable-next-line react/prop-types
       Cell: ({ row: { original } }) => {
+        const { mPa } = original;
         return (
           <div
             className="edit-buttons-container"
@@ -264,6 +265,16 @@ function ConcreteSample() {
             >
               <MdContentCopy />
             </button>
+            {(userRole === 'admin' || userRole === 'escritorio' || !mPa) && (
+              <button
+                className="edit-button"
+                type="button"
+                onClick={() => console.log(original)}
+              >
+                <MdEdit />
+              </button>
+            )}
+
             <TableEditColumn
               userRole={userRole}
               original={original}

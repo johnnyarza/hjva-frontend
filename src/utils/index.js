@@ -1,6 +1,11 @@
-import { getTime, startOfDay, parseISO, isDate } from 'date-fns';
+import { getTime, startOfDay, parseISO, isDate, isAfter } from 'date-fns';
 
 const utils = {
+  isDateAfter: (date, dateToCompare) => {
+    const parsedDate = getTime(startOfDay(parseISO(date)));
+    const parsedDateToCompare = getTime(startOfDay(parseISO(dateToCompare)));
+    return isAfter(parsedDate, parsedDateToCompare);
+  },
   isBetweenDates: (fromDate, toDate, dateToCompare) => {
     const parsedFrom = getTime(startOfDay(parseISO(fromDate)));
     const parsedTo = getTime(startOfDay(parseISO(toDate)));
@@ -111,9 +116,9 @@ const utils = {
     stockToSell: ['admin', 'escritorio', 'vendedor'],
     compressionTestHome: ['escritorio', 'admin', 'laboratorio'],
     compressionTestId: ['escritorio', 'admin', 'laboratorio'],
-    clients: ['escritorio', 'admin'],
-    providers: ['escritorio', 'admin'],
-    category: ['escritorio', 'admin'],
+    clients: ['escritorio', 'admin', 'vendedor', 'estoque'],
+    providers: ['escritorio', 'admin', 'vendedor', 'estoque'],
+    category: ['escritorio', 'admin', 'vendedor', 'estoque'],
     stock: ['escritorio', 'admin', 'estoque'],
     measurements: ['escritorio', 'admin', 'estoque'],
     concreteDesigns: ['escritorio', 'admin', 'laboratorio'],

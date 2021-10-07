@@ -1,9 +1,16 @@
-import { getTime, startOfDay, parseISO, isDate, isAfter } from 'date-fns';
+import {
+  getTime,
+  startOfDay,
+  parseISO,
+  isDate,
+  isAfter,
+  parse,
+} from 'date-fns';
 
 const utils = {
   isDateAfter: (date, dateToCompare) => {
-    const parsedDate = getTime(startOfDay(parseISO(date)));
-    const parsedDateToCompare = getTime(startOfDay(parseISO(dateToCompare)));
+    const parsedDate = getTime(startOfDay(date));
+    const parsedDateToCompare = getTime(startOfDay(dateToCompare));
     return isAfter(parsedDate, parsedDateToCompare);
   },
   isBetweenDates: (fromDate, toDate, dateToCompare) => {

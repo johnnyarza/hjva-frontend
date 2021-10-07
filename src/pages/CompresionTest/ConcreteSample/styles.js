@@ -5,7 +5,7 @@ export const Container = styled.div`
   padding-left: 130px;
   padding-bottom: 5px;
   min-height: 400px;
-  max-height: 600px;
+
   .title-container {
     display: flex;
     .back-button {
@@ -35,7 +35,7 @@ export const Content = styled.div`
   .edit-buttons-container {
     display: flex;
     justify-content: center;
-
+    color: black;
     button {
       background: none;
       border: none;

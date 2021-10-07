@@ -252,38 +252,41 @@ function ConcreteSample() {
 
       // eslint-disable-next-line react/prop-types
       Cell: ({ row: { original } }) => {
-        const { mPa } = original;
+        const { mPa, loadedAt } = original;
+
         return (
           <div
             className="edit-buttons-container"
             style={{ justifyContent: 'center' }}
           >
-            <button
-              type="button"
-              className="edit-button"
-              onClick={() => handleCopy(original)}
-            >
-              <MdContentCopy />
-            </button>
-            {(userRole === 'admin' || userRole === 'escritorio' || !mPa) && (
-              <button
-                className="edit-button"
-                type="button"
-                onClick={() => console.log(original)}
-              >
-                <MdEdit />
-              </button>
+            {(userRole === 'admin' ||
+              userRole === 'escritorio' ||
+              (!mPa && !utils.isDateAfter(new Date(), loadedAt))) && (
+              <>
+                <button
+                  type="button"
+                  className="edit-button"
+                  onClick={() => handleCopy(original)}
+                >
+                  <MdContentCopy />
+                </button>
+                <button
+                  className="edit-button"
+                  type="button"
+                  onClick={() => {
+                    setCurrentConcreteSample(original);
+                    setIsConcreteSampleModalOpen(true);
+                  }}
+                >
+                  <MdEdit />
+                </button>
+              </>
             )}
 
             <TableEditColumn
               userRole={userRole}
               original={original}
-              hasEdit
               hasDelete
-              onEditClick={() => {
-                setCurrentConcreteSample(original);
-                setIsConcreteSampleModalOpen(true);
-              }}
               onDeleteClick={handleDeleteConcreteSample}
             />
           </div>

@@ -1,6 +1,13 @@
 import styled, { css } from 'styled-components';
 import { darken } from 'polished';
 
+export const ListsContainer = styled.div`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  column-gap: 8px;
+  margin: 0px 0px 10px 0px;
+`;
+
 export const ListContainer = styled.div`
   background-color: white;
   min-width: 200px;
@@ -33,82 +40,6 @@ export const ListContainer = styled.div`
       : css``;
     return `${hasError}`;
   }}
-`;
-
-export const ToolTip = styled.div`
-  background-color: #e74c3c;
-  color: white;
-
-  display: flex;
-
-  border-radius: 15px;
-
-  position: absolute;
-  left: 103%;
-  padding: 5px;
-  min-height: 25px;
-  width: 30px;
-
-  transition: all 0.2s;
-
-  .icon-error {
-    display: block;
-
-    height: 20px;
-    align-self: center;
-    width: auto;
-  }
-
-  .error-message {
-    color: white;
-    display: none;
-    font-size: 12px;
-    white-space: nowrap;
-    margin: 0 0 0 5px;
-    align-self: center;
-    font-weight: 400;
-  }
-
-  &:hover {
-    width: auto;
-    .error-message {
-      display: block;
-    }
-  }
-
-  ${(props) => {
-    const hasError = props.hasError
-      ? css`
-          display: flex;
-        `
-      : css`
-          display: none;
-        `;
-    return `${hasError}`;
-  }}
-`;
-
-export const SearchContainer = styled.div`
-  padding: 5px 10px 0 5px;
-  margin-bottom: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  div {
-    border-bottom: ${(props) =>
-      `1px solid ${props.isFocused ? 'black' : '#ebebeb'}`};
-    transition: border-bottom 0.2s;
-  }
-
-  input {
-    border: none;
-  }
-  svg {
-    color: ${(props) => (props.isFocused ? 'black' : '#bdc3c7')};
-    margin-left: 10px;
-    transition: color 0.2s;
-  }
 `;
 
 export const Row = styled.li`

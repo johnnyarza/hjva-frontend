@@ -15,6 +15,7 @@ import api from '../../services/api';
 import utils from '../../utils/index';
 import Empty from '../../components/Empty';
 import PrintMenuButton from '../../components/PrintMenuButton';
+import MaterialsToConcreteDesigns from './MaterialsToConcreteDesigns';
 
 function ConcreteDesigns() {
   const { locale } = useSelector((state) => state.locale);
@@ -29,6 +30,7 @@ function ConcreteDesigns() {
   const [currentConcreteDesign, setCurrentConcreteDesign] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConcreteModalOpen, setIsConcreteModalOpen] = useState(false);
+  const [isMatsToConcDesOpen, setIsMatsToConcDesOpen] = useState(false);
 
   useEffect(() => {
     if (!searchInput && concreteDesigns)
@@ -334,6 +336,7 @@ function ConcreteDesigns() {
               setCurrentConcreteDesign({});
               setIsConcreteModalOpen(true);
             }}
+            onMatsToConcDesButton={() => setIsMatsToConcDesOpen(true)}
             onInputChange={(data) => setSearchInput(data)}
             onCleanButton={() => {
               setSearchInput('');
@@ -359,6 +362,11 @@ function ConcreteDesigns() {
           onSubmit={handleSubmit}
           materials={materials}
           locale={locale}
+        />
+      )}
+      {isMatsToConcDesOpen && (
+        <MaterialsToConcreteDesigns
+          onCancelButton={() => setIsMatsToConcDesOpen(false)}
         />
       )}
     </>

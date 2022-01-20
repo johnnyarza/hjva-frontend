@@ -10,7 +10,6 @@ import MobileCards from '../../components/MobileProductCards';
 import { InputContext } from '../_layouts/Default/index';
 
 export default function Home() {
-  // TODO separar cards por categoria
   const [products, setProducts] = useState('');
   const [filteredProducts, setFilteredProducts] = useState('');
   const [width, setWidth] = useState(window.innerWidth);

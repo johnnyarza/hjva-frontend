@@ -8,6 +8,7 @@ function ConcreteDesignTopBar({
   onCleanButton,
   onInputChange,
   onNewButton,
+  onMatsToConcDesButton,
   children,
   ...rest
 }) {
@@ -134,6 +135,7 @@ function ConcreteDesignTopBar({
   return (
     <TopBar {...rest}>
       <MenuButton onClick={onNewButton}>Crear</MenuButton>
+      <MenuButton onClick={onMatsToConcDesButton}>Lista Materiales</MenuButton>
       <Menu
         menuButton={
           <MenuButton>{`Consultar por ${searchLabel || '?'}`}</MenuButton>
@@ -166,6 +168,7 @@ export default ConcreteDesignTopBar;
 
 ConcreteDesignTopBar.propTypes = {
   onNewButton: PropTypes.func.isRequired,
+  onMatsToConcDesButton: PropTypes.func.isRequired,
   onCleanButton: PropTypes.func,
   onInputChange: PropTypes.func,
   children: PropTypes.oneOfType([

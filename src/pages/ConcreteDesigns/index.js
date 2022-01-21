@@ -51,6 +51,10 @@ function ConcreteDesigns() {
 
     const loadAllMaterials = async () => {
       const { data } = await api.get('materials');
+      // TODO materialsToConcreteDesigns have to return the same materials as materials
+      const { data: data2 } = await api.get('materialsToConcreteDesigns');
+      console.log(data);
+      console.log(data2);
       if (data) {
         setMaterials(
           data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))

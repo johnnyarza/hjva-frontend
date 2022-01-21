@@ -3,9 +3,20 @@ import { darken } from 'polished';
 
 export const ListsContainer = styled.div`
   display: grid;
-  grid-template-columns: 50% 50%;
-  column-gap: 8px;
+  grid-template-columns: 45% 10% 45%;
+  grid-template-rows: 20px auto;
   margin: 0px 0px 10px 0px;
+`;
+
+export const MiddleContainer = styled.div`
+  grid-area: 1/2/3/3;
+  display: grid;
+  grid-template-columns: 100%;
+  svg {
+    place-self: center;
+    width: 24px;
+    height: auto;
+  }
 `;
 
 export const ListContainer = styled.div`
@@ -18,6 +29,7 @@ export const ListContainer = styled.div`
   overflow: auto;
   overflow-x: hidden;
   transition: border-color 0.2s;
+  margin-top: 3px;
 
   &:hover {
     border-color: ${darken(0.2, '#EBEBEB')};

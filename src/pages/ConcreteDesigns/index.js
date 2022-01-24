@@ -50,14 +50,12 @@ function ConcreteDesigns() {
     };
 
     const loadAllMaterials = async () => {
-      const { data } = await api.get('materials');
-      // TODO materialsToConcreteDesigns have to return the same materials as materials
-      const { data: data2 } = await api.get('materialsToConcreteDesigns');
-      console.log(data);
-      console.log(data2);
+      // const { data } = await api.get('materials');
+      const { data } = await api.get('materialsToConcreteDesigns');
       if (data) {
+        const mats = data.map(({ material }) => material);
         setMaterials(
-          data.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
+          mats.sort((a, b) => utils.naturalSortCompare(a.name, b.name))
         );
       }
     };
@@ -87,7 +85,9 @@ function ConcreteDesigns() {
         setConcreteDesigns(concreteDesigns.filter((c) => c.id !== data.id));
         toast.success('Dosificación apagada con éxito');
       } catch (error) {
-        toast.error(error.message);
+        toast.error(
+          error?.response?.data?.message || 'Error al apagar dosificación'
+        );
       }
     },
     [concreteDesigns]

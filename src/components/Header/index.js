@@ -25,11 +25,10 @@ export default function Header({ mobileState }) {
       setHasError(false);
       try {
         if (user) {
-          const { data } = await api.get('compressionTests');
-          if (data) {
-            const hasWarnings = data.find((c) => c.hasWarning);
-            setHasNotification(!!hasWarnings);
-            setPastDueCompressionTests(data.filter((c) => c.hasWarning));
+          const { data } = await api.get('compressionTests/delayed');
+          if (data && data.length) {
+            setHasNotification(!!data.length);
+            setPastDueCompressionTests(data);
           }
         }
       } catch (error) {
@@ -40,12 +39,12 @@ export default function Header({ mobileState }) {
     };
     loadAllCompressionTests();
 
-    // const timer = setInterval(() => {
-    //   loadAllCompressionTests();
-    // }, 5000);
-    // return () => {
-    //   clearInterval(timer);
-    // };
+    const timer = setInterval(() => {
+      loadAllCompressionTests();
+    }, 5000);
+    return () => {
+      clearInterval(timer);
+    };
   }, [user]);
 
   const handleSignOut = useCallback(() => {

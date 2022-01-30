@@ -19,6 +19,8 @@ import Measurements from '../pages/Measurements';
 import ConcreteDesigns from '../pages/ConcreteDesigns';
 import MaterialTransaction from '../pages/Stock/MaterialTransaction';
 import ConcreteSample from '../pages/CompresionTest/ConcreteSample';
+import ContactMe from '../pages/ContactMe';
+
 import utils from '../utils';
 
 export default function Routes() {
@@ -62,6 +64,12 @@ export default function Routes() {
         path="/location"
         exact
         component={(props) => <Location {...props} />}
+      />
+
+      <Route
+        path="/contactMe"
+        exact
+        component={(props) => <ContactMe {...props} />}
       />
 
       <Route

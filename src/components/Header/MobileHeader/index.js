@@ -42,7 +42,7 @@ export default function MobielHeader() {
           alignItems: 'center',
         }}
       >
-        <Link to="/">
+        <Link to="/contactMe">
           <MdCall />
         </Link>
         <WhatsAppFowardButton style={{ border: 'none', background: 'none' }}>

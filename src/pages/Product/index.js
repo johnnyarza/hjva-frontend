@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
+import { MdKeyboardBackspace } from 'react-icons/md';
 import { Container, Content, Texts } from './style';
 import Images from './Images';
 
@@ -45,6 +46,11 @@ export default function Product() {
       ) : (
         <Container>
           <Content isMobile={isMobile}>
+            <div className="back-button">
+              <Link to="/">
+                <MdKeyboardBackspace />
+              </Link>
+            </div>
             <Images images={product.file} />
             <Texts isMobile={isMobile}>
               <div className="title">

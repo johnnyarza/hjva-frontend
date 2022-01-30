@@ -34,7 +34,7 @@ export default function DesktopHeader({
       </nav>
       <MiddleContent>
         <div>
-          <Link to="/">
+          <Link to="/contactMe">
             <MdCall />
           </Link>
           <WhatsAppFowardButton style={{ border: 'none', background: 'none' }}>

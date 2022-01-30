@@ -18,7 +18,7 @@ export const Container = styled.div`
       color: black;
       transition: color 0.2s;
       :hover {
-        height: #3498db;
+        color: #3498db;
       }
     }
     h2 {

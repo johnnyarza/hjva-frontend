@@ -3,10 +3,25 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   justify-content: center;
+
+  .back-button {
+    background: none;
+    border: none;
+    svg {
+      height: 100%;
+      width: auto;
+      color: black;
+      transition: color 0.2s;
+      :hover {
+        color: #3498db;
+      }
+    }
+  }
 `;
 export const Content = styled.div`
   display: grid;
-  grid-template-rows: ${(props) => (props.isMobile ? '50% 50%' : '70% 30%')};
+  grid-template-rows: ${(props) =>
+    props.isMobile ? '24px 50% 50%' : '24px 70% 30%'};
   row-gap: 5px;
   background-color: white;
   border-radius: 10px;

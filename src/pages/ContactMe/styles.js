@@ -3,25 +3,38 @@ import styled, { css } from 'styled-components';
 export const Container = styled.div`
   display: flex;
   justify-content: center;
+`;
+export const Buttons = styled.div`
+  background: none;
+  border: none;
+  display: flex;
+  ${({ userRole }) =>
+    userRole === 'admin'
+      ? css`
+          justify-content: space-between;
+        `
+      : css`
+          justify-content: start;
+        `}
 
-  .back-button {
+  svg {
+    height: 24px;
+    width: auto;
+    color: black;
+    transition: color 0.2s;
+    :hover {
+      color: #3498db;
+    }
+  }
+  button {
     background: none;
     border: none;
-    svg {
-      height: 24px;
-      width: auto;
-      color: black;
-      transition: color 0.2s;
-      :hover {
-        color: #3498db;
-      }
-    }
   }
 `;
 export const Content = styled.div`
   display: grid;
   grid-template-rows: 5% 45% 45%;
-  row-gap: 5px;
+  row-gap: 10px;
   background-color: white;
   max-width: 600px;
   width: 100%;
@@ -48,5 +61,20 @@ export const ImgContent = styled.div`
 `;
 
 export const TextContainer = styled.div`
-  padding: 5px;
+  border-top: 2px solid #ebebeb;
+  padding-top: 5px;
+`;
+export const TextContent = styled.div`
+  width: 100%;
+  overflow: auto;
+  text-align: center;
+  text-justify: inter-word;
+  pre {
+    font: 16px 'Roboto';
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word;
+  }
 `;

@@ -23,23 +23,28 @@ function ContactMe() {
   const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
-    const getContactMeText = async () => {
-      const { data } = await api.get(`setting/find/?name=CONTACTME_TEXT`);
-      if (data) {
-        setContactMe(data || '');
-      }
-    };
+    try {
+      const getContactMeText = async () => {
+        const { data } = await api.get(`setting/find/?name=CONTACTME_TEXT`);
+        if (data) {
+          setContactMe(data || '');
+        }
+      };
 
-    const loadUserRole = async () => {
-      const res = await api.get('/user');
-      if (!res.data) {
-        throw Error('Usuário não encontrado');
-      }
-      setUserRole(res.data.role);
-    };
+      const loadUserRole = async () => {
+        const res = await api.get('/user');
+        if (!res.data) {
+          throw Error('Usuário não encontrado');
+        }
+        setUserRole(res.data.role);
+      };
 
-    getContactMeText();
-    loadUserRole();
+      getContactMeText();
+      loadUserRole();
+    } catch (error) {
+      const message = error?.response?.data?.message;
+      toast.error(message || 'Error');
+    }
   }, []);
 
   const handleSubmit = async (body) => {

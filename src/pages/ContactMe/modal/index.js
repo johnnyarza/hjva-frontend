@@ -1,14 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { Form } from '@unform/web';
-import * as Yup from 'yup';
-import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 
 import { Container } from './styles';
 
 import GenericModal from '../../../components/GenericModal';
 import TextArea from '../../../components/TextArea';
-import utils from '../../../utils';
 
 function ContactMeModal({
   initialData = {},
@@ -67,7 +64,7 @@ function ContactMeModal({
 export default ContactMeModal;
 
 ContactMeModal.propTypes = {
-  initialData: PropTypes.shape({ name: PropTypes.string }).isRequired,
+  initialData: PropTypes.shape({ value: PropTypes.string }).isRequired,
   onEscPress: PropTypes.func.isRequired,
   onCancelButton: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

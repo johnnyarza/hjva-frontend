@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { IoLogoWhatsapp } from 'react-icons/io';
-import { MdAccountCircle, MdCall, MdClose, MdPlace } from 'react-icons/md';
+import {
+  MdAccountCircle,
+  MdCall,
+  MdClose,
+  MdPlace,
+  MdInfo,
+} from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 import { Content, MiddleContent } from './styles';
@@ -34,6 +40,9 @@ export default function DesktopHeader({
       </nav>
       <MiddleContent>
         <div>
+          <Link to="/aboutMe">
+            <MdInfo />
+          </Link>
           <Link to="/contactMe">
             <MdCall />
           </Link>

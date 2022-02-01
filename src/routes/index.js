@@ -22,6 +22,7 @@ import ConcreteSample from '../pages/CompresionTest/ConcreteSample';
 import ContactMe from '../pages/ContactMe';
 
 import utils from '../utils';
+import AboutMe from '../pages/AboutMe';
 
 export default function Routes() {
   return (
@@ -70,6 +71,12 @@ export default function Routes() {
         path="/contactMe"
         exact
         component={(props) => <ContactMe {...props} />}
+      />
+
+      <Route
+        path="/aboutMe"
+        exact
+        component={(props) => <AboutMe {...props} />}
       />
 
       <Route

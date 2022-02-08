@@ -13,7 +13,7 @@ import logo from '../../assets/HJVA-logo.gif';
 
 import { Content, Glass } from './styles';
 
-function MagnifierGlass({ imgUrl, zoom = 2 }) {
+function MagnifierGlass({ imgUrl, zoom = 2, hasZoom }) {
   const [parentDims, setParentDims] = useState('');
   const [isImgLoaded, setIsImgLoaded] = useState(false);
   const [showGlass, setShowGlass] = useState(false);
@@ -139,6 +139,10 @@ function MagnifierGlass({ imgUrl, zoom = 2 }) {
     setIsImgLoaded(false);
   }, [imgUrl]);
 
+  const handleHasZoom = (isShowing) => {
+    if (hasZoom) setShowGlass(isShowing);
+  };
+
   return (
     <Content
       hasUrl={isImgLoaded ? imgUrl : logo}
@@ -150,10 +154,10 @@ function MagnifierGlass({ imgUrl, zoom = 2 }) {
       onMouseMove={(e) => {
         if (showGlass) moveMagnifier(e);
       }}
-      onMouseEnter={() => setShowGlass(true)}
-      onMouseLeave={() => setShowGlass(false)}
-      onTouchStart={() => setShowGlass(true)}
-      onTouchEnd={() => setShowGlass(false)}
+      onMouseEnter={() => handleHasZoom(true)}
+      onMouseLeave={() => handleHasZoom(false)}
+      onTouchStart={() => handleHasZoom(true)}
+      onTouchEnd={() => handleHasZoom(false)}
     >
       <BackgroundImageOnLoad
         src={imgUrl}
@@ -177,9 +181,11 @@ export default MagnifierGlass;
 
 MagnifierGlass.propTypes = {
   zoom: PropTypes.number,
+  hasZoom: PropTypes.bool,
   imgUrl: PropTypes.string.isRequired,
 };
 
 MagnifierGlass.defaultProps = {
   zoom: 2,
+  hasZoom: false,
 };

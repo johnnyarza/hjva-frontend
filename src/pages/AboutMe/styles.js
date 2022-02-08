@@ -3,7 +3,9 @@ import { darken } from 'polished';
 
 export const Container = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 `;
 export const Content = styled.div`
   max-width: 600px;
@@ -11,10 +13,14 @@ export const Content = styled.div`
   border-radius: 10px;
   width: 100%;
   padding: 10px;
+  margin-bottom: 8px;
 `;
 
 export const About = styled.div`
-  border-bottom: 1px solid ${darken(0.2, '#ebebeb')};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
   margin-bottom: 8px;
 `;
 export const TextContainer = styled.div`
@@ -46,4 +52,24 @@ export const ImageContent = styled.div`
           background-image: url(${hasUrl});
         `
       : css``}
+`;
+export const Buttons = styled.div`
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: end;
+
+  svg {
+    height: 24px;
+    width: auto;
+    color: black;
+    transition: color 0.2s;
+    :hover {
+      color: #3498db;
+    }
+  }
+  button {
+    background: none;
+    border: none;
+  }
 `;

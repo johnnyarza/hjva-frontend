@@ -12,6 +12,7 @@ import {
   TextTitle,
   TextParagraf,
   Buttons,
+  TopBar,
 } from './styles';
 
 import frontImageUrl from '../../assets/20171019_102729.jpg';
@@ -56,6 +57,12 @@ function AboutMe() {
 
   return (
     <Container>
+      {userRole === 'admin' && (
+        <TopBar>
+          <button type="button">Crear</button>
+        </TopBar>
+      )}
+
       <Content>
         <About>
           <TextContainer>
@@ -69,9 +76,10 @@ function AboutMe() {
           </TextContainer>
         </About>
       </Content>
-      <Content>
-        {portifolios &&
-          portifolios.map(({ id, title, paragraph, file }) => {
+
+      {!!portifolios?.length && (
+        <Content>
+          {portifolios.map(({ id, title, paragraph, file }) => {
             return (
               <About key={id}>
                 {userRole === 'admin' && (
@@ -94,7 +102,8 @@ function AboutMe() {
               </About>
             );
           })}
-      </Content>
+        </Content>
+      )}
     </Container>
   );
 }

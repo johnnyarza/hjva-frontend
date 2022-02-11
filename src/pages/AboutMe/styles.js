@@ -6,6 +6,7 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 `;
 export const Content = styled.div`
   max-width: 600px;
@@ -71,5 +72,37 @@ export const Buttons = styled.div`
   button {
     background: none;
     border: none;
+  }
+`;
+export const TopBar = styled.h3`
+  max-width: 600px;
+  background-color: white;
+  border-radius: 10px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+
+  button {
+    min-height: 25px;
+    font: 16px 'Roboto';
+    min-width: 80px;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.2s;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    margin-left: 10px;
+
+    font-weight: 500;
+
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 5px;
+      background-color: #2ecc71;
+    }
+
+    &:active {
+      box-shadow: rgba(0, 0, 0, 0.8) 0 0 15px;
+    }
   }
 `;

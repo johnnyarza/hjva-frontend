@@ -23,6 +23,11 @@ import Delete from '../../components/DeleteButton';
 function AboutMe() {
   const [portifolios, setPortifolios] = useState('');
   const [userRole, setUserRole] = useState('');
+  const [lockButtons, setLockButtons] = useState(true);
+
+  const toastError = (error, optMessage = 'Erro desconocído') => {
+    toast.error(error?.response?.data?.message || optMessage);
+  };
 
   useEffect(() => {
     const getPortifolios = async () => {
@@ -32,7 +37,7 @@ function AboutMe() {
           setPortifolios(data);
         }
       } catch (error) {
-        toast.error(error?.response?.data?.message || 'Error al cargar');
+        toastError(error, 'Error al cargar');
       }
     };
     getPortifolios();
@@ -50,16 +55,37 @@ function AboutMe() {
 
       loadUserRole();
     } catch (error) {
-      const message = error?.response?.data?.message;
-      toast.error(message || 'Error');
+      toastError(error, 'Error al cargar usuário');
     }
   }, []);
+
+  const handleDeletePortifolio = async (portifolioId) => {
+    try {
+      // const wasDeleted = await api.delete(`portifolio/${portifolioId}`);
+      const wasDeleted = true;
+      setLockButtons(true);
+
+      if (wasDeleted) {
+        const filteredPortifolios = portifolios.filter(
+          ({ id }) => id !== portifolioId
+        );
+        setPortifolios(filteredPortifolios);
+        toast.success('Elemento apagado');
+      } else throw Error();
+    } catch (error) {
+      toastError(error, 'Error al apagar');
+    } finally {
+      setLockButtons(false);
+    }
+  };
 
   return (
     <Container>
       {userRole === 'admin' && (
         <TopBar>
-          <button type="button">Crear</button>
+          <button type="button" disabled={lockButtons}>
+            Crear
+          </button>
         </TopBar>
       )}
 
@@ -83,9 +109,16 @@ function AboutMe() {
             return (
               <About key={id}>
                 {userRole === 'admin' && (
-                  <Buttons>
-                    <Delete onClick={() => {}} />
-                    <button type="button" onClick={() => {}}>
+                  <Buttons disabled={lockButtons}>
+                    <Delete
+                      onClick={() => handleDeletePortifolio(id)}
+                      disabled={lockButtons}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {}}
+                      disabled={lockButtons}
+                    >
                       <MdEdit />
                     </button>
                   </Buttons>

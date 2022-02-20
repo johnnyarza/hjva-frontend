@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { darken } from 'polished';
 
 export const Container = styled.div`
   display: flex;
@@ -60,18 +59,33 @@ export const Buttons = styled.div`
   display: flex;
   justify-content: end;
 
+  ${({ disabled }) =>
+    disabled
+      ? css``
+      : css`
+          svg {
+            color: blacl;
+            :hover {
+              color: #3498db;
+            }
+          }
+        `}
+
   svg {
     height: 24px;
     width: auto;
-    color: black;
+
     transition: color 0.2s;
-    :hover {
-      color: #3498db;
-    }
   }
   button {
     background: none;
     border: none;
+    ${({ disabled }) =>
+      disabled
+        ? css`
+            cursor: progress;
+          `
+        : css``}
   }
 `;
 export const TopBar = styled.h3`

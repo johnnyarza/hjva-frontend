@@ -1,5 +1,3 @@
-import { format, parseISO } from 'date-fns';
-
 const COLUMNS = [
   {
     Header: 'Nombre',

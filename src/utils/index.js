@@ -1,11 +1,4 @@
-import {
-  getTime,
-  startOfDay,
-  parseISO,
-  isDate,
-  isAfter,
-  parse,
-} from 'date-fns';
+import { getTime, startOfDay, parseISO, isDate, isAfter } from 'date-fns';
 
 const utils = {
   isDateAfter: (date, dateToCompare) => {

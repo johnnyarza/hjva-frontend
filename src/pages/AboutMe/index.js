@@ -20,10 +20,13 @@ import api from '../../services/api';
 import Images from '../../components/Images';
 import Delete from '../../components/DeleteButton';
 
+import Portifolio from './PortifolioModal/index';
+
 function AboutMe() {
   const [portifolios, setPortifolios] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [lockButtons, setLockButtons] = useState(true);
+  const [lockButtons, setLockButtons] = useState(false);
+  const [portifolioModal, setPortifolioModal] = useState(true);
 
   const toastError = (error, optMessage = 'Erro desconocído') => {
     toast.error(error?.response?.data?.message || optMessage);
@@ -80,64 +83,67 @@ function AboutMe() {
   };
 
   return (
-    <Container>
-      {userRole === 'admin' && (
-        <TopBar>
-          <button type="button" disabled={lockButtons}>
-            Crear
-          </button>
-        </TopBar>
-      )}
+    <>
+      <Container>
+        {userRole === 'admin' && (
+          <TopBar>
+            <button type="button" disabled={lockButtons}>
+              Crear
+            </button>
+          </TopBar>
+        )}
 
-      <Content>
-        <About>
-          <TextContainer>
-            <TextTitle>Historia</TextTitle>
-          </TextContainer>
-          <ImageContainer>
-            <ImageContent hasUrl={frontImageUrl} />
-          </ImageContainer>
-          <TextContainer>
-            <TextParagraf>a a</TextParagraf>
-          </TextContainer>
-        </About>
-      </Content>
-
-      {!!portifolios?.length && (
         <Content>
-          {portifolios.map(({ id, title, paragraph, file }) => {
-            return (
-              <About key={id}>
-                {userRole === 'admin' && (
-                  <Buttons disabled={lockButtons}>
-                    <Delete
-                      onClick={() => handleDeletePortifolio(id)}
-                      disabled={lockButtons}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {}}
-                      disabled={lockButtons}
-                    >
-                      <MdEdit />
-                    </button>
-                  </Buttons>
-                )}
-                <TextContainer>
-                  <TextTitle>{title}</TextTitle>
-                </TextContainer>
-                <ImageContainer>
-                  <Images images={file} />
-                </ImageContainer>
-                <TextContainer>
-                  <TextParagraf>{paragraph}</TextParagraf>
-                </TextContainer>
-              </About>
-            );
-          })}
+          <About>
+            <TextContainer>
+              <TextTitle>Historia</TextTitle>
+            </TextContainer>
+            <ImageContainer>
+              <ImageContent hasUrl={frontImageUrl} />
+            </ImageContainer>
+            <TextContainer>
+              <TextParagraf>a a</TextParagraf>
+            </TextContainer>
+          </About>
         </Content>
-      )}
-    </Container>
+
+        {!!portifolios?.length && (
+          <Content>
+            {portifolios.map(({ id, title, paragraph, file }) => {
+              return (
+                <About key={id}>
+                  {userRole === 'admin' && (
+                    <Buttons disabled={lockButtons}>
+                      <Delete
+                        onClick={() => handleDeletePortifolio(id)}
+                        disabled={lockButtons}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {}}
+                        disabled={lockButtons}
+                      >
+                        <MdEdit />
+                      </button>
+                    </Buttons>
+                  )}
+                  <TextContainer>
+                    <TextTitle>{title}</TextTitle>
+                  </TextContainer>
+                  <ImageContainer>
+                    <Images images={file} />
+                  </ImageContainer>
+                  <TextContainer>
+                    <TextParagraf>{paragraph}</TextParagraf>
+                  </TextContainer>
+                </About>
+              );
+            })}
+          </Content>
+        )}
+      </Container>
+      {portifolioModal && <Portifolio setModalOpen={setPortifolioModal} />}
+    </>
   );
 }
 

@@ -24,9 +24,10 @@ import Portifolio from './PortifolioModal/index';
 
 function AboutMe() {
   const [portifolios, setPortifolios] = useState('');
+  const [currentPortifolio, setCurrentPortifolio] = useState('');
   const [userRole, setUserRole] = useState('');
   const [lockButtons, setLockButtons] = useState(false);
-  const [portifolioModal, setPortifolioModal] = useState(true);
+  const [portifolioModal, setPortifolioModal] = useState(false);
 
   const toastError = (error, optMessage = 'Erro desconocído') => {
     toast.error(error?.response?.data?.message || optMessage);
@@ -82,6 +83,24 @@ function AboutMe() {
     }
   };
 
+  const handleEditPortifolio = async (portifolio) => {
+    try {
+      setCurrentPortifolio(portifolio);
+      setPortifolioModal(true);
+    } catch (error) {
+      toastError(error, 'Error al editar');
+    }
+  };
+
+  const handleSubmit = async (data) => {
+    try {
+      console.log(data);
+      toast.success('Erro ao criar o produto');
+    } catch (error) {
+      toast.error('Erro ao criar o produto');
+    }
+  };
+
   return (
     <>
       <Container>
@@ -109,7 +128,8 @@ function AboutMe() {
 
         {!!portifolios?.length && (
           <Content>
-            {portifolios.map(({ id, title, paragraph, file }) => {
+            {portifolios.map((portifolio) => {
+              const { id, title, paragraph, file } = portifolio;
               return (
                 <About key={id}>
                   {userRole === 'admin' && (
@@ -120,7 +140,7 @@ function AboutMe() {
                       />
                       <button
                         type="button"
-                        onClick={() => {}}
+                        onClick={() => handleEditPortifolio(portifolio)}
                         disabled={lockButtons}
                       >
                         <MdEdit />
@@ -142,7 +162,13 @@ function AboutMe() {
           </Content>
         )}
       </Container>
-      {portifolioModal && <Portifolio setModalOpen={setPortifolioModal} />}
+      {portifolioModal && (
+        <Portifolio
+          setModalOpen={setPortifolioModal}
+          initialData={currentPortifolio}
+          onSubmit={handleSubmit}
+        />
+      )}
     </>
   );
 }

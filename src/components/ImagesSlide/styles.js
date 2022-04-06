@@ -85,6 +85,7 @@ export const ImageControls = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    display: flex;
   }
 
   button {

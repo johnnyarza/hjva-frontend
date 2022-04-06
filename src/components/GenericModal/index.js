@@ -2,7 +2,12 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Container, Content } from './style';
 
-export default function GenericModal({ isOpen, onEscPress, children }) {
+export default function GenericModal({
+  isOpen,
+  onEscPress,
+  flexDirection,
+  children,
+}) {
   const escFunction = useCallback(
     (event) => {
       if (event.keyCode === 27) {
@@ -21,7 +26,7 @@ export default function GenericModal({ isOpen, onEscPress, children }) {
 
   return (
     <Container isOpen={isOpen}>
-      <Content>{children}</Content>
+      <Content flexDirection={flexDirection}>{children}</Content>
     </Container>
   );
 }

@@ -40,6 +40,7 @@ function AboutMe() {
         if (data) {
           setPortifolios(data);
         }
+        console.log(data);
       } catch (error) {
         toastError(error, 'Error al cargar');
       }

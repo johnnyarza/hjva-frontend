@@ -18,7 +18,8 @@ export const Content = styled.div`
   background-color: #ebebeb;
   border-radius: 15px;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${(props) =>
+    props.flexDirection ? props.flexDirection : 'column'};
   align-items: center;
 
   span {

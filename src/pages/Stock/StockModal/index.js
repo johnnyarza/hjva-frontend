@@ -228,7 +228,7 @@ function StockModal({
                       setImages={(images) => setFiles(images)}
                     />
                   </div>
-                  <div>
+                  <div style={{ gridColumn: 2 }}>
                     <Label htmlFor="name" label="Nombre">
                       <Input
                         id="name"

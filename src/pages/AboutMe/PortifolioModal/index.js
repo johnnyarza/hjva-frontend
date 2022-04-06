@@ -10,6 +10,8 @@ import TextArea from '../../../components/TextArea';
 
 import { Container } from './styles';
 import Images from '../../../components/Images';
+import ImagesSlide from '../../../components/ImagesSlide';
+import Label from '../../../components/Label';
 
 function PortifolioModal({
   initialData = {},
@@ -25,47 +27,78 @@ function PortifolioModal({
 
   return (
     <Container>
-      <GenericModal isOpen onEscPress={() => setModalOpen(false)} {...rest}>
-        <Images images={initialData.file} />
+      <GenericModal
+        isOpen
+        onEscPress={() => setModalOpen(false)}
+        flexDirection="row"
+        {...rest}
+      >
         <Form ref={formRef} onSubmit={onSubmit}>
-          <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>Editar</h2>
-
-          <Input
-            name="title"
-            placeholder="Nome"
-            onChange={() => formRef.current.setFieldError('title', '')}
-            hasBorder={false}
-          />
-          <TextArea
-            name="paragraph"
-            placeholder="Insertar texto"
-            maxLength={255}
-            onChange={() => formRef.current.setFieldError('paragraph', '')}
-          />
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginTop: '10px',
-            }}
-          >
-            <button
-              type="submit"
-              name="inserir"
-              style={{ backgroundColor: '#2ecc71' }}
-            >
-              Ok
-            </button>
-            <button
-              type="button"
-              name="cancelar"
-              style={{ backgroundColor: '#C0392B' }}
-              onClick={() => {
-                setModalOpen(false);
+          <div style={{ display: 'grid', gridTemplateColumns: 'auto' }}>
+            <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>
+              Editar
+            </h2>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'auto auto',
+                columnGap: '10px',
               }}
             >
-              Cancelar
-            </button>
+              <div
+                style={{ gridColumn: 1, display: 'block', placeSelf: 'center' }}
+              >
+                <ImagesSlide
+                  images={initialData.file}
+                  setImages={(images) => {}}
+                />
+              </div>
+              <div style={{ placeSelf: 'center' }}>
+                <Label htmlFor="title" label="Titulo">
+                  <Input
+                    name="title"
+                    placeholder="Nome"
+                    onChange={() => formRef.current.setFieldError('title', '')}
+                    hasBorder={false}
+                  />
+                </Label>
+                <Label htmlFor="paragraph" label="Descrip.">
+                  <TextArea
+                    name="paragraph"
+                    placeholder="Insertar texto"
+                    maxLength={255}
+                    onChange={() =>
+                      formRef.current.setFieldError('paragraph', '')
+                    }
+                  />
+                </Label>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: '10px',
+                  }}
+                >
+                  <button
+                    type="submit"
+                    name="inserir"
+                    style={{ backgroundColor: '#2ecc71' }}
+                  >
+                    Ok
+                  </button>
+                  <button
+                    type="button"
+                    name="cancelar"
+                    style={{ backgroundColor: '#C0392B' }}
+                    onClick={() => {
+                      setModalOpen(false);
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </Form>
       </GenericModal>

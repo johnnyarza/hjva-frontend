@@ -1,5 +1,6 @@
-import { toast } from 'react-toastify';
 import React, { useEffect, useState } from 'react';
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 import { MdEdit } from 'react-icons/md';
 
 import {
@@ -24,7 +25,7 @@ import Portifolio from './PortifolioModal/index';
 
 function AboutMe() {
   const [portifolios, setPortifolios] = useState('');
-  const [currentPortifolio, setCurrentPortifolio] = useState('');
+  const [currentPortifolioId, setCurrentPortifolioId] = useState('');
   const [userRole, setUserRole] = useState('');
   const [lockButtons, setLockButtons] = useState(false);
   const [portifolioModal, setPortifolioModal] = useState(false);
@@ -84,9 +85,9 @@ function AboutMe() {
     }
   };
 
-  const handleEditPortifolio = async (portifolio) => {
+  const handleEditPortifolio = async (portifolioId) => {
     try {
-      setCurrentPortifolio(portifolio);
+      setCurrentPortifolioId(portifolioId);
       setPortifolioModal(true);
     } catch (error) {
       toastError(error, 'Error al editar');
@@ -95,10 +96,29 @@ function AboutMe() {
 
   const handleSubmit = async (data) => {
     try {
-      console.log(data);
+      const { id } = data;
+      let res;
+
+      if (id) {
+        res = await api.put(`portifolio/${id}`, data);
+      }
+
+      if (!id) {
+        res = await api.post(`portifolio/`, data);
+      }
+
+      if (!res) throw Error('response is empty');
+      const { data: newPortifolio } = res;
+
+      const oldPortifolios = portifolios.filter((p) => p.id !== id);
+      const newPortifolios = [newPortifolio, ...oldPortifolios];
+
+      setPortifolios(newPortifolios);
+      setPortifolioModal(false);
+
       toast.success('Erro ao criar o produto');
     } catch (error) {
-      toast.error('Erro ao criar o produto');
+      toast.success('Erro ao criar o produto');
     }
   };
 
@@ -141,7 +161,7 @@ function AboutMe() {
                       />
                       <button
                         type="button"
-                        onClick={() => handleEditPortifolio(portifolio)}
+                        onClick={() => handleEditPortifolio(id)}
                         disabled={lockButtons}
                       >
                         <MdEdit />
@@ -166,7 +186,8 @@ function AboutMe() {
       {portifolioModal && (
         <Portifolio
           setModalOpen={setPortifolioModal}
-          initialData={currentPortifolio}
+          portifolioState={[portifolios, setPortifolios]}
+          initialData={portifolios.find((p) => p.id === currentPortifolioId)}
           onSubmit={handleSubmit}
         />
       )}

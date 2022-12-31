@@ -127,7 +127,11 @@ function AboutMe() {
       <Container>
         {userRole === 'admin' && (
           <TopBar>
-            <button type="button" disabled={lockButtons}>
+            <button
+              type="button"
+              disabled={lockButtons}
+              onClick={() => setPortifolioModal(true)}
+            >
               Crear
             </button>
           </TopBar>

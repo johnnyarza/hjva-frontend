@@ -62,7 +62,7 @@ function Images({ images, setImages }) {
           <Arrow onClick={() => changeImage(-1)} type="button">
             <FaAngleDoubleLeft />
           </Arrow>
-          <MagnifierGlass imgUrl={currentImage?.url} zoom={zoom} />
+          <MagnifierGlass imgUrl={currentImage?.url} zoom={zoom} hasZoom />
           <Arrow onClick={() => changeImage()} type="button" zoom={zoom}>
             <FaAngleDoubleRight />
           </Arrow>

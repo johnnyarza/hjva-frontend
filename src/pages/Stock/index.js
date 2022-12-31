@@ -38,10 +38,8 @@ function Stock() {
   const [transactionType, setTransactionType] = useState('in');
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
-  const [
-    isMaterialTransactionModalOpen,
-    setIsMaterialTransactionModalOpen,
-  ] = useState(false);
+  const [isMaterialTransactionModalOpen, setIsMaterialTransactionModalOpen] =
+    useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

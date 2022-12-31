@@ -42,14 +42,12 @@ export default function UsersDashboard() {
   const [searchField, setSearchField] = useState('');
   const [users, setUsers] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [deleteUserConfirmationOpen, setDeleteUserConfirmationOpen] = useState(
-    false
-  );
+  const [deleteUserConfirmationOpen, setDeleteUserConfirmationOpen] =
+    useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState({});
-  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(
-    false
-  );
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
+    useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
   const handleUpdatePassword = async (data) => {

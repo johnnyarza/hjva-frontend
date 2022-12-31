@@ -49,9 +49,8 @@ function CompresionTest() {
   const [currentCompressionTest, setCurrentCompressionTest] = useState('');
   const [clients, setClients] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCompresionTestModalOpen, setIsCompresionTestModalOpen] = useState(
-    false
-  );
+  const [isCompresionTestModalOpen, setIsCompresionTestModalOpen] =
+    useState(false);
 
   useEffect(() => {
     if (!searchField) setFilteredCompressionTests(compressionTests);

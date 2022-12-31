@@ -7,8 +7,7 @@ import {
   useSortBy,
 } from 'react-table';
 import PropTypes from 'prop-types';
-import { isToday, isTomorrow } from 'date-fns';
-import { isPast } from 'date-fns/esm';
+import { isToday, isTomorrow, isPast } from 'date-fns';
 
 import { Container } from './styles';
 

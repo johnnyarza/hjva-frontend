@@ -17,11 +17,8 @@ function Arrow({ children, disabled, onClick }) {
 }
 
 export function LeftArrow() {
-  const {
-    isFirstItemVisible,
-    scrollPrev,
-    visibleItemsWithoutSeparators,
-  } = React.useContext(VisibilityContext);
+  const { isFirstItemVisible, scrollPrev, visibleItemsWithoutSeparators } =
+    React.useContext(VisibilityContext);
 
   const [disabled, setDisabled] = React.useState(
     !visibleItemsWithoutSeparators.length && isFirstItemVisible
@@ -41,11 +38,8 @@ export function LeftArrow() {
 }
 
 export function RightArrow() {
-  const {
-    isLastItemVisible,
-    scrollNext,
-    visibleItemsWithoutSeparators,
-  } = React.useContext(VisibilityContext);
+  const { isLastItemVisible, scrollNext, visibleItemsWithoutSeparators } =
+    React.useContext(VisibilityContext);
 
   const [disabled, setDisabled] = React.useState(
     !visibleItemsWithoutSeparators.length && isLastItemVisible

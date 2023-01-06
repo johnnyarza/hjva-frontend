@@ -130,7 +130,10 @@ function AboutMe() {
             <button
               type="button"
               disabled={lockButtons}
-              onClick={() => setPortifolioModal(true)}
+              onClick={() => {
+                setCurrentPortifolioId('');
+                setPortifolioModal(true);
+              }}
             >
               Crear
             </button>
@@ -152,39 +155,41 @@ function AboutMe() {
         </Content>
 
         {!!portifolios?.length && (
-          <Content>
+          <>
             {portifolios.map((portifolio) => {
               const { id, title, paragraph, file } = portifolio;
               return (
-                <About key={id}>
-                  {userRole === 'admin' && (
-                    <Buttons disabled={lockButtons}>
-                      <Delete
-                        onClick={() => handleDeletePortifolio(id)}
-                        disabled={lockButtons}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleEditPortifolio(id)}
-                        disabled={lockButtons}
-                      >
-                        <MdEdit />
-                      </button>
-                    </Buttons>
-                  )}
-                  <TextContainer>
-                    <TextTitle>{title}</TextTitle>
-                  </TextContainer>
-                  <ImageContainer>
-                    <Images images={file} />
-                  </ImageContainer>
-                  <TextContainer>
-                    <TextParagraf>{paragraph}</TextParagraf>
-                  </TextContainer>
-                </About>
+                <Content>
+                  <About key={id}>
+                    {userRole === 'admin' && (
+                      <Buttons disabled={lockButtons}>
+                        <Delete
+                          onClick={() => handleDeletePortifolio(id)}
+                          disabled={lockButtons}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleEditPortifolio(id)}
+                          disabled={lockButtons}
+                        >
+                          <MdEdit />
+                        </button>
+                      </Buttons>
+                    )}
+                    <TextContainer>
+                      <TextTitle>{title}</TextTitle>
+                    </TextContainer>
+                    <ImageContainer>
+                      <Images images={file} />
+                    </ImageContainer>
+                    <TextContainer>
+                      <TextParagraf>{paragraph}</TextParagraf>
+                    </TextContainer>
+                  </About>
+                </Content>
               );
             })}
-          </Content>
+          </>
         )}
       </Container>
       {portifolioModal && (

@@ -75,6 +75,7 @@ function PortifolioModal({
       const imagesToCreate = images.filter((file) => !!file.auxId);
       const imagesToDelete = images.filter((file) => file.id && file.toDelete);
       console.log(imagesToCreate);
+      console.log(imagesToDelete);
     }
   };
 

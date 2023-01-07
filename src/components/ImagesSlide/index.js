@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import { uniqueId } from 'lodash';
@@ -8,6 +8,7 @@ import { Container, Content, Arrow, Empty, ImageControls } from './styles';
 function ImagesSlide({ images, setImages }) {
   const [currentImages, setCurrentImages] = useState('');
   const [currentImage, setCurrentImage] = useState('');
+  const inputRef = useRef(null);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -108,10 +109,16 @@ function ImagesSlide({ images, setImages }) {
         <label htmlFor="file">
           <span>+</span>
           <input
+            ref={inputRef}
             type="file"
             id="file"
             multiple
-            onChange={(f) => handleAddImg(f.target.files)}
+            onChange={(f) => {
+              handleAddImg(f.target.files);
+            }}
+            onClick={() => {
+              inputRef.current.value = null;
+            }}
             accept="image/jpeg,
           image/pjpeg,
           image/png,

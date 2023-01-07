@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
 import { toast } from 'react-toastify';
@@ -16,11 +16,11 @@ import Label from '../../../components/Label';
 function PortifolioModal({
   initialData = {},
   setModalOpen,
-  portifolioState,
+  onSubmit,
   ...rest
 }) {
   const formRef = useRef(null);
-  const [portifolios, setPortifolios] = portifolioState;
+  const [files, setFiles] = useState('');
   const toastError = (error, optMessage = 'Erro desconocído') => {
     toast.error(error?.response?.data?.message || error?.message || optMessage);
   };
@@ -31,32 +31,14 @@ function PortifolioModal({
 
   const handleSubmit = async (data) => {
     try {
-      const newData = { ...initialData, ...data };
-      const { id } = newData;
+      const body = { ...initialData, ...data };
       const schema = Yup.object().shape({
         title: Yup.string().required('Titulo vacío'),
+        paragraph: Yup.string().required('Descrip. vacía'),
       });
 
-      await schema.validate(data, { abortEarly: false });
-      let res;
-
-      if (id) {
-        res = await api.put(`portifolio/${id}`, data);
-      }
-
-      if (!id) {
-        res = await api.post(`portifolio/`, data);
-      }
-
-      if (!res) throw Error('Response is empty');
-      const { data: newPortifolio } = res;
-
-      const oldPortifolios = portifolios.filter((p) => p.id !== id);
-      const newPortifolios = [newPortifolio, ...oldPortifolios];
-      setPortifolios(newPortifolios);
-
-      setModalOpen(false);
-      toast.success('Cambios guardados');
+      await schema.validate(body, { abortEarly: false });
+      onSubmit({ ...body, file: files });
     } catch (err) {
       const validationErrors = {};
       if (err instanceof Yup.ValidationError) {
@@ -67,15 +49,6 @@ function PortifolioModal({
       } else {
         toastError(err);
       }
-    }
-  };
-
-  const handleImages = (images) => {
-    if (images) {
-      const imagesToCreate = images.filter((file) => !!file.auxId);
-      const imagesToDelete = images.filter((file) => file.id && file.toDelete);
-      console.log(imagesToCreate);
-      console.log(imagesToDelete);
     }
   };
 
@@ -104,9 +77,7 @@ function PortifolioModal({
               >
                 <ImagesSlide
                   images={initialData.file}
-                  setImages={(images) => {
-                    handleImages(images);
-                  }}
+                  setImages={(images) => setFiles(images)}
                 />
               </div>
               <div style={{ placeSelf: 'center' }}>

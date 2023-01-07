@@ -41,7 +41,6 @@ function AboutMe() {
         if (data) {
           setPortifolios(data);
         }
-        console.log(data);
       } catch (error) {
         toastError(error, 'Error al cargar');
       }
@@ -67,8 +66,8 @@ function AboutMe() {
 
   const handleDeletePortifolio = async (portifolioId) => {
     try {
-      // const wasDeleted = await api.delete(`portifolio/${portifolioId}`);
-      const wasDeleted = true;
+      const wasDeleted = await api.delete(`portifolio/${portifolioId}`);
+      // const wasDeleted = true;
       setLockButtons(true);
 
       if (wasDeleted) {
@@ -85,6 +84,23 @@ function AboutMe() {
     }
   };
 
+  const handleMaterialFilesChanges = (portifolioId, files) => {
+    const filesToCreate = files.filter((file) => !!file.auxId);
+    const filesToDelete = files.filter((file) => file.id && file.toDelete);
+
+    const promises = Promise.all(
+      filesToCreate.map(({ file }) => {
+        const data = new FormData();
+        data.append('file', file);
+        return api.post(`portifolio/${portifolioId}/file`, data);
+      }),
+      filesToDelete.map(({ id }) => {
+        return api.delete(`portifolio/${id}/file`);
+      })
+    );
+
+    return promises;
+  };
   const handleEditPortifolio = async (portifolioId) => {
     try {
       setCurrentPortifolioId(portifolioId);
@@ -94,31 +110,49 @@ function AboutMe() {
     }
   };
 
-  const handleSubmit = async (data) => {
+  const handleCreatePortifolio = async (body) => {
     try {
-      const { id } = data;
-      let res;
+      const res = await api.post('portifolio/', body);
+      let newPortifolio = res.data;
+      const { id } = newPortifolio;
+      const { file } = body;
 
       if (id) {
-        res = await api.put(`portifolio/${id}`, data);
+        if (file && file.length) {
+          await handleMaterialFilesChanges(id, file);
+          const { data } = await api.get(`portifolio/${id}`);
+          if (data) {
+            newPortifolio = data;
+          }
+        }
+
+        const newPortifolios = [...portifolios, newPortifolio];
+        setPortifolios(newPortifolios);
+        toast.success('Portifolio creado');
       }
 
       if (!id) {
-        res = await api.post(`portifolio/`, data);
+        throw Error('');
       }
-
-      if (!res) throw Error('response is empty');
-      const { data: newPortifolio } = res;
-
-      const oldPortifolios = portifolios.filter((p) => p.id !== id);
-      const newPortifolios = [newPortifolio, ...oldPortifolios];
-
-      setPortifolios(newPortifolios);
-      setPortifolioModal(false);
-
-      toast.success('Erro ao criar o produto');
     } catch (error) {
-      toast.success('Erro ao criar o produto');
+      toastError(error, 'Error al crear');
+    }
+  };
+
+  const handleSubmit = (data) => {
+    try {
+      const { id } = data;
+      if (id) {
+        console.log('edit');
+        console.log(data);
+      }
+      if (!id) {
+        handleCreatePortifolio(data);
+      }
+    } catch (error) {
+      toast.error('Error al crear portifolio');
+    } finally {
+      setPortifolioModal(false);
     }
   };
 
@@ -159,8 +193,8 @@ function AboutMe() {
             {portifolios.map((portifolio) => {
               const { id, title, paragraph, file } = portifolio;
               return (
-                <Content>
-                  <About key={id}>
+                <Content key={id}>
+                  <About>
                     {userRole === 'admin' && (
                       <Buttons disabled={lockButtons}>
                         <Delete
@@ -195,8 +229,9 @@ function AboutMe() {
       {portifolioModal && (
         <Portifolio
           setModalOpen={setPortifolioModal}
-          portifolioState={[portifolios, setPortifolios]}
-          initialData={portifolios.find((p) => p.id === currentPortifolioId)}
+          initialData={() =>
+            portifolios.find((p) => p.id === currentPortifolioId)
+          }
           onSubmit={handleSubmit}
         />
       )}

@@ -101,10 +101,21 @@ function AboutMe() {
 
     return promises;
   };
-  const handleEditPortifolio = async (portifolioId) => {
+  const handleEditPortifolioClick = async (portifolioId) => {
     try {
       setCurrentPortifolioId(portifolioId);
       setPortifolioModal(true);
+    } catch (error) {
+      toastError(error, 'Error al editar');
+    }
+  };
+  // TODO Finish edit portifolio
+  const handleEditPortifolio = async (data) => {
+    try {
+      const { id: portifolioId, title, paragraph } = data;
+      if (!portifolioId) {
+        throw Error('Portifolio sin id');
+      }
     } catch (error) {
       toastError(error, 'Error al editar');
     }
@@ -203,7 +214,7 @@ function AboutMe() {
                         />
                         <button
                           type="button"
-                          onClick={() => handleEditPortifolio(id)}
+                          onClick={() => handleEditPortifolioClick(id)}
                           disabled={lockButtons}
                         >
                           <MdEdit />
@@ -229,9 +240,7 @@ function AboutMe() {
       {portifolioModal && (
         <Portifolio
           setModalOpen={setPortifolioModal}
-          initialData={() =>
-            portifolios.find((p) => p.id === currentPortifolioId)
-          }
+          initialData={portifolios.find((p) => p.id === currentPortifolioId)}
           onSubmit={handleSubmit}
         />
       )}

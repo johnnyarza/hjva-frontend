@@ -109,13 +109,33 @@ function AboutMe() {
       toastError(error, 'Error al editar');
     }
   };
-  // TODO Finish edit portifolio
-  const handleEditPortifolio = async (data) => {
+
+  const handleEditPortifolio = async (body) => {
     try {
-      const { id: portifolioId, title, paragraph } = data;
+      const { id: portifolioId, title, paragraph, file } = body;
+
       if (!portifolioId) {
         throw Error('Portifolio sin id');
       }
+
+      if (file && file.length) {
+        await handleMaterialFilesChanges(portifolioId, file);
+      }
+
+      const { data: newPortifolio } = await api.put(
+        `portifolio/${portifolioId}`,
+        { title, paragraph }
+      );
+
+      const newPortifolios = [...portifolios];
+      const objIndex = newPortifolios.findIndex(
+        (p) => p.id === newPortifolio.id
+      );
+
+      newPortifolios[objIndex] = newPortifolio;
+      setPortifolios(newPortifolios);
+
+      toast.success('Portifolio actualizado');
     } catch (error) {
       toastError(error, 'Error al editar');
     }
@@ -154,8 +174,7 @@ function AboutMe() {
     try {
       const { id } = data;
       if (id) {
-        console.log('edit');
-        console.log(data);
+        handleEditPortifolio(data);
       }
       if (!id) {
         handleCreatePortifolio(data);

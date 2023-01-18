@@ -35,10 +35,12 @@ GenericModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onEscPress: PropTypes.func,
   children: PropTypes.element.isRequired,
+  flexDirection: PropTypes.string,
 };
 
 GenericModal.defaultProps = {
   onEscPress: () => {
     // nothing
   },
+  flexDirection: 'column',
 };

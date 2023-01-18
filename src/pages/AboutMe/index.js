@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { MdEdit } from 'react-icons/md';
 

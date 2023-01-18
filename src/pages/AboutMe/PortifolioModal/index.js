@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
 import { toast } from 'react-toastify';
-
-import api from '../../../services/api';
 
 import GenericModal from '../../../components/GenericModal';
 import Input from '../../../components/Input';
@@ -132,5 +131,17 @@ function PortifolioModal({
     </Container>
   );
 }
+
+PortifolioModal.propTypes = {
+  initialData: PropTypes.objectOf,
+  setModalOpen: PropTypes.func,
+  onSubmit: PropTypes.func,
+};
+
+PortifolioModal.defaultProps = {
+  initialData: {},
+  setModalOpen: () => {},
+  onSubmit: () => {},
+};
 
 export default PortifolioModal;

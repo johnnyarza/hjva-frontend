@@ -44,6 +44,7 @@ export function setToken({ payload }) {
 
 export function signOut({ payload }) {
   const { history } = payload;
+  api.defaults.headers.Authorization = `Bearer `;
   history.push('/');
   toast.success('Logout com sucesso');
 }

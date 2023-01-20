@@ -60,7 +60,6 @@ export const Buttons = styled.div`
   justify-content: end;
 
   ${({ disabled }) => {
-    console.log(disabled);
     return disabled
       ? css`
           svg {

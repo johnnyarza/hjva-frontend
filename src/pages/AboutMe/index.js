@@ -137,6 +137,8 @@ function AboutMe() {
       toast.success('Portifolio actualizado');
     } catch (error) {
       toastError(error, 'Error al editar');
+    } finally {
+      setLockButtons(false);
     }
   };
 
@@ -166,12 +168,15 @@ function AboutMe() {
       }
     } catch (error) {
       toastError(error, 'Error al crear');
+    } finally {
+      setLockButtons(false);
     }
   };
 
   const handleSubmit = (data) => {
     try {
       const { id } = data;
+      setLockButtons(true);
       if (id) {
         handleEditPortifolio(data);
       }
@@ -179,7 +184,7 @@ function AboutMe() {
         handleCreatePortifolio(data);
       }
     } catch (error) {
-      toast.error('Error al crear portifolio');
+      toast.error('Error desconocído');
     } finally {
       setPortifolioModal(false);
     }
@@ -259,7 +264,9 @@ function AboutMe() {
         <Portifolio
           setModalOpen={setPortifolioModal}
           initialData={portifolios.find((p) => p.id === currentPortifolioId)}
-          onSubmit={handleSubmit}
+          onSubmit={(data) => {
+            handleSubmit(data);
+          }}
         />
       )}
     </>

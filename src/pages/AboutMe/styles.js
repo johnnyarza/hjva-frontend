@@ -59,17 +59,23 @@ export const Buttons = styled.div`
   display: flex;
   justify-content: end;
 
-  ${({ disabled }) =>
-    disabled
-      ? css``
+  ${({ disabled }) => {
+    console.log(disabled);
+    return disabled
+      ? css`
+          svg {
+            color: #ebebeb;
+          }
+        `
       : css`
           svg {
-            color: blacl;
+            color: black;
             :hover {
               color: #3498db;
             }
           }
-        `}
+        `;
+  }}
 
   svg {
     height: 24px;

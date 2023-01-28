@@ -25,6 +25,7 @@ function ContactMe() {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState('');
   const [startPos, setStartPos] = useState({ startX: 0, startY: 0 });
+  const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     try {
@@ -71,7 +72,9 @@ function ContactMe() {
     }
   };
 
-  const imgPosition = () => {};
+  const imgPosition = (event) => {
+    console.log(event.pageX);
+  };
 
   return (
     <Container>
@@ -103,7 +106,7 @@ function ContactMe() {
                   startY: prop.pageY,
                 })
               }
-              onMouseUp={(prop) => console.log(prop.pageX - startPos.startX)}
+              onMouseUp={imgPosition}
             />
           </ImgContainer>
           <TextContainer>

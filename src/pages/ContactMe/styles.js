@@ -55,7 +55,13 @@ export const ImgContent = styled.div`
         `
       : '';
   }}
-  background-position: center;
+  /* background-position: center; */
+  ${(props) => {
+    const position = props.position || 'center';
+    return css`
+      background-position: ${position};
+    `;
+  }}
   background-size: cover;
   background-repeat: no-repeat;
 `;

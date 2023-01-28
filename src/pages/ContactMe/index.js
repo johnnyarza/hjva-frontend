@@ -13,22 +13,31 @@ import {
   Buttons,
 } from './styles';
 import ContactMeModal from './modal';
+import Spinner from '../../components/Spinner';
 
 import imgUrl from '../../assets/contactMe.jpg';
 import api from '../../services/api';
 
 function ContactMe() {
-  const [contactMe, setContactMe] = useState('');
+  const [contactMeSetting, setContactMeSetting] = useState('');
+  const [landingImageSetting, SetLandingImageSetting] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState('');
+  const [startPos, setStartPos] = useState({ startX: 0, startY: 0 });
 
   useEffect(() => {
     try {
       const getContactMeText = async () => {
         const { data } = await api.get(`setting/find/?name=CONTACTME_TEXT`);
         if (data) {
-          setContactMe(data || '');
+          setContactMeSetting(data || '');
         }
+      };
+
+      const getLandingImage = async () => {
+        const { data } = await api.get(`setting/find/?name=CONTACTME_IMG`);
+        SetLandingImageSetting(data || '');
       };
 
       const loadUserRole = async () => {
@@ -40,7 +49,9 @@ function ContactMe() {
       };
 
       getContactMeText();
+      getLandingImage();
       loadUserRole();
+      setIsLoading(false);
     } catch (error) {
       const message = error?.response?.data?.message;
       toast.error(message || 'Error');
@@ -49,8 +60,8 @@ function ContactMe() {
 
   const handleSubmit = async (body) => {
     try {
-      const { data } = await api.put(`setting/${contactMe.id}`, body);
-      setContactMe(data);
+      const { data } = await api.put(`setting/${contactMeSetting.id}`, body);
+      setContactMeSetting(data);
       setIsModalOpen(false);
       toast.success('Alteración guardada');
     } catch (error) {
@@ -60,33 +71,54 @@ function ContactMe() {
     }
   };
 
+  const imgPosition = () => {};
+
   return (
     <Container>
-      <Content>
-        <Buttons userRole={userRole}>
-          <Link to="/">
-            <MdKeyboardBackspace />
-          </Link>
-          {userRole === 'admin' && (
-            <button type="button" onClick={() => setIsModalOpen(true)}>
-              <MdModeEdit />
-            </button>
-          )}
-        </Buttons>
-        <ImgContainer>
-          <ImgContent hasUrl={imgUrl} />
-        </ImgContainer>
-        <TextContainer>
-          <TextContent>
-            <pre>{contactMe.value}</pre>
-          </TextContent>
-        </TextContainer>
-      </Content>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <Content>
+          <Buttons userRole={userRole}>
+            <Link to="/">
+              <MdKeyboardBackspace />
+            </Link>
+            {userRole === 'admin' && (
+              <button type="button" onClick={() => setIsModalOpen(true)}>
+                <MdModeEdit />
+              </button>
+            )}
+          </Buttons>
+          <ImgContainer>
+            <ImgContent
+              hasUrl={
+                (landingImageSetting?.file &&
+                  landingImageSetting?.file[0]?.url) ||
+                imgUrl
+              }
+              position={`${startPos.startX}px ${startPos.startY}px`}
+              onMouseDown={(prop) =>
+                setStartPos({
+                  startX: prop.pageX,
+                  startY: prop.pageY,
+                })
+              }
+              onMouseUp={(prop) => console.log(prop.pageX - startPos.startX)}
+            />
+          </ImgContainer>
+          <TextContainer>
+            <TextContent>
+              <pre>{contactMeSetting.value}</pre>
+            </TextContent>
+          </TextContainer>
+        </Content>
+      )}
+
       {isModalOpen && (
         <ContactMeModal
           onEscPress={() => setIsModalOpen(false)}
           onCancelButton={() => setIsModalOpen(false)}
-          initialData={contactMe}
+          initialData={contactMeSetting}
           onSubmit={handleSubmit}
         />
       )}

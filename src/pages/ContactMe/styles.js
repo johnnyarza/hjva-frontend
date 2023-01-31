@@ -31,9 +31,24 @@ export const Buttons = styled.div`
     border: none;
   }
 `;
+export const TextButton = styled.div`
+  svg {
+    height: 24px;
+    width: auto;
+    color: black;
+    transition: color 0.2s;
+    :hover {
+      color: #3498db;
+    }
+  }
+  button {
+    background: none;
+    border: none;
+  }
+`;
 export const Content = styled.div`
   display: grid;
-  grid-template-rows: 5% 45% 45%;
+  grid-template-rows: 5% 45% 5% 45%;
   row-gap: 10px;
   background-color: white;
   max-width: 600px;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MdKeyboardBackspace, MdModeEdit } from 'react-icons/md';
 
@@ -11,6 +11,7 @@ import {
   ImgContent,
   TextContent,
   Buttons,
+  TextButton,
 } from './styles';
 import ContactMeModal from './modal';
 import Spinner from '../../components/Spinner';
@@ -19,13 +20,12 @@ import imgUrl from '../../assets/contactMe.jpg';
 import api from '../../services/api';
 
 function ContactMe() {
+  const inputRef = useRef(null);
   const [contactMeSetting, setContactMeSetting] = useState('');
-  const [landingImageSetting, SetLandingImageSetting] = useState('');
+  const [landingImageSetting, setLandingImageSetting] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState('');
-  const [startPos, setStartPos] = useState({ startX: 0, startY: 0 });
-  const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     try {
@@ -38,7 +38,7 @@ function ContactMe() {
 
       const getLandingImage = async () => {
         const { data } = await api.get(`setting/find/?name=CONTACTME_IMG`);
-        SetLandingImageSetting(data || '');
+        setLandingImageSetting(data || '');
       };
 
       const loadUserRole = async () => {
@@ -72,10 +72,6 @@ function ContactMe() {
     }
   };
 
-  const imgPosition = (event) => {
-    console.log(event.pageX);
-  };
-
   return (
     <Container>
       {isLoading ? (
@@ -87,9 +83,31 @@ function ContactMe() {
               <MdKeyboardBackspace />
             </Link>
             {userRole === 'admin' && (
-              <button type="button" onClick={() => setIsModalOpen(true)}>
-                <MdModeEdit />
-              </button>
+              <label htmlFor="file">
+                <span>
+                  <MdModeEdit />
+                </span>
+                <input
+                  style={{ display: 'none' }}
+                  ref={inputRef}
+                  type="file"
+                  id="file"
+                  multiple={false}
+                  onChange={(f) => {
+                    const imageSetting = {
+                      file: [{ url: URL.createObjectURL(f.target.files[0]) }],
+                    };
+                    setLandingImageSetting(imageSetting);
+                  }}
+                  onClick={() => {
+                    inputRef.current.value = null;
+                  }}
+                  accept="image/jpeg,
+                image/pjpeg,
+                image/png,
+                image/gif"
+                />
+              </label>
             )}
           </Buttons>
           <ImgContainer>
@@ -99,16 +117,15 @@ function ContactMe() {
                   landingImageSetting?.file[0]?.url) ||
                 imgUrl
               }
-              position={`${startPos.startX}px ${startPos.startY}px`}
-              onMouseDown={(prop) =>
-                setStartPos({
-                  startX: prop.pageX,
-                  startY: prop.pageY,
-                })
-              }
-              onMouseUp={imgPosition}
             />
           </ImgContainer>
+          <TextButton style={{ display: 'flex', justifyContent: 'end' }}>
+            {userRole === 'admin' && (
+              <button type="button" onClick={() => setIsModalOpen(true)}>
+                <MdModeEdit />
+              </button>
+            )}
+          </TextButton>
           <TextContainer>
             <TextContent>
               <pre>{contactMeSetting.value}</pre>

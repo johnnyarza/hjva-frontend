@@ -72,6 +72,25 @@ function ContactMe() {
     }
   };
 
+  const handleChangeImage = async (files) => {
+    try {
+      const data = new FormData();
+      const file = files[0];
+
+      data.append('file', file);
+      await api.post(`setting/${landingImageSetting.id}/file`, data);
+
+      const { data: newFile } = await api.get(
+        `setting/find/?name=CONTACTME_IMG`
+      );
+      setLandingImageSetting(newFile || '');
+      toast.success('Alteración guardada');
+    } catch (error) {
+      const message = error?.response?.data?.message;
+      toast.error(message || 'Error al guardar');
+    }
+  };
+
   return (
     <Container>
       {isLoading ? (
@@ -93,12 +112,7 @@ function ContactMe() {
                   type="file"
                   id="file"
                   multiple={false}
-                  onChange={(f) => {
-                    const imageSetting = {
-                      file: [{ url: URL.createObjectURL(f.target.files[0]) }],
-                    };
-                    setLandingImageSetting(imageSetting);
-                  }}
+                  onChange={(f) => handleChangeImage(f.target.files)}
                   onClick={() => {
                     inputRef.current.value = null;
                   }}

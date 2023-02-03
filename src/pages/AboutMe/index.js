@@ -125,10 +125,9 @@ function AboutMe() {
         await handleMaterialFilesChanges(portifolioId, file);
       }
 
-      const { data: newPortifolio } = await api.put(
-        `portifolio/${portifolioId}`,
-        { title, paragraph }
-      );
+      const {
+        data: newPortifolio,
+      } = await api.put(`portifolio/${portifolioId}`, { title, paragraph });
 
       const newPortifolios = [...portifolios];
       const objIndex = newPortifolios.findIndex(
@@ -217,7 +216,10 @@ function AboutMe() {
 
           <Content>
             <About>
-              <Buttons disabled={lockButtons}>
+              <Buttons
+                disabled={lockButtons}
+                onClick={() => setAboutMeModal(true)}
+              >
                 <MdModeEdit />
               </Buttons>
               <TextContainer>

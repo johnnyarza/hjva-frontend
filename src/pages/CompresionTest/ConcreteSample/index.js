@@ -48,8 +48,9 @@ function ConcreteSample() {
   const [searchField, setSearchField] = useState('');
   const [userRole, setUserRole] = useState('');
   const [compressionTest, setCompressionTest] = useState('');
-  const [isConcreteSampleModalOpen, setIsConcreteSampleModalOpen] =
-    useState(false);
+  const [isConcreteSampleModalOpen, setIsConcreteSampleModalOpen] = useState(
+    false
+  );
   const [concreteSamples, setConcreteSamples] = useState('');
   const [filteredConcreteSamples, setFilteredConcreteSamples] = useState([]);
   const [currentConcreteSample, setCurrentConcreteSample] = useState({});

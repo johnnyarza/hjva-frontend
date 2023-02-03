@@ -23,6 +23,9 @@
     "prettier"
   ],
   "rules": {
+    "prettier/prettier": ["off", {
+      "endOfLine":"auto"
+    }],
     "jsx-a11y/label-has-associated-control":["error", {
       "required": {
         "some": ["nesting", "id"]

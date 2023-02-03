@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { MdEdit } from 'react-icons/md';
+import { MdEdit, MdModeEdit } from 'react-icons/md';
 import Spinner from '../../components/Spinner';
 
 import {
@@ -22,6 +22,7 @@ import Images from '../../components/Images';
 import Delete from '../../components/DeleteButton';
 
 import Portifolio from './PortifolioModal/index';
+import AboutMeModal from './AboutMeModal/index';
 
 function AboutMe() {
   const [portifolios, setPortifolios] = useState('');
@@ -30,6 +31,7 @@ function AboutMe() {
   const [userRole, setUserRole] = useState('');
   const [lockButtons, setLockButtons] = useState(false);
   const [portifolioModal, setPortifolioModal] = useState(false);
+  const [aboutMeModal, setAboutMeModal] = useState(false);
 
   const toastError = (error, optMessage = 'Erro desconocído') => {
     toast.error(error?.response?.data?.message || optMessage);
@@ -215,6 +217,9 @@ function AboutMe() {
 
           <Content>
             <About>
+              <Buttons disabled={lockButtons}>
+                <MdModeEdit />
+              </Buttons>
               <TextContainer>
                 <TextTitle>Historia</TextTitle>
               </TextContainer>
@@ -276,6 +281,7 @@ function AboutMe() {
           }}
         />
       )}
+      {aboutMeModal && <AboutMeModal />}
     </>
   );
 }

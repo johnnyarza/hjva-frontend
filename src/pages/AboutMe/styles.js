@@ -25,6 +25,7 @@ export const About = styled.div`
 `;
 export const TextContainer = styled.div`
   margin-top: 8px;
+  text-align: center;
 `;
 export const TextParagraf = styled.pre`
   font: 16px 'Roboto';

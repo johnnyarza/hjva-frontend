@@ -125,9 +125,10 @@ function AboutMe() {
         await handleMaterialFilesChanges(portifolioId, file);
       }
 
-      const {
-        data: newPortifolio,
-      } = await api.put(`portifolio/${portifolioId}`, { title, paragraph });
+      const { data: newPortifolio } = await api.put(
+        `portifolio/${portifolioId}`,
+        { title, paragraph }
+      );
 
       const newPortifolios = [...portifolios];
       const objIndex = newPortifolios.findIndex(
@@ -213,12 +214,15 @@ function AboutMe() {
               </button>
             </TopBar>
           )}
-
+          {/* TODO FINISH EDIT ABOUT ME */}
           <Content>
             <About>
               <Buttons
                 disabled={lockButtons}
-                onClick={() => setAboutMeModal(true)}
+                onClick={() => {
+                  console.log('click');
+                  setAboutMeModal(true);
+                }}
               >
                 <MdModeEdit />
               </Buttons>
@@ -228,7 +232,17 @@ function AboutMe() {
               <ImageContainer>
                 <ImageContent hasUrl={frontImageUrl} />
               </ImageContainer>
+
               <TextContainer>
+                <Buttons
+                  disabled={lockButtons}
+                  onClick={() => {
+                    console.log('click');
+                    setAboutMeModal(true);
+                  }}
+                >
+                  <MdModeEdit />
+                </Buttons>
                 <TextParagraf>a a</TextParagraf>
               </TextContainer>
             </About>

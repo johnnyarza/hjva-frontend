@@ -1,4 +1,5 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 
@@ -20,7 +21,15 @@ function RouteWrapper({
 
   return (
     <DefaultLayout hasSideBar={hasSideBar} privilege={privilege}>
-      <Route {...rest} component={Component} />
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <h1>An error occurred: {error.message}</h1>
+          </div>
+        )}
+      >
+        <Route {...rest} component={Component} />
+      </ErrorBoundary>
     </DefaultLayout>
   );
 }

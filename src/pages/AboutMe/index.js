@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { MdEdit, MdModeEdit } from 'react-icons/md';
+import { MdEdit, MdModeEdit, MdImage } from 'react-icons/md';
 import Spinner from '../../components/Spinner';
+import Setting from '../../classes/Setting';
 
 import {
   Container,
@@ -32,6 +33,8 @@ function AboutMe() {
   const [lockButtons, setLockButtons] = useState(false);
   const [portifolioModal, setPortifolioModal] = useState(false);
   const [aboutMeModal, setAboutMeModal] = useState(false);
+  const [settings, setSettings] = useState('');
+  const [currentSetting, setCurrentSetting] = useState(new Setting());
 
   const toastError = (error, optMessage = 'Erro desconocído') => {
     toast.error(error?.response?.data?.message || optMessage);
@@ -58,12 +61,29 @@ function AboutMe() {
         }
       };
 
+      const getSettings = async () => {
+        const url = 'settings';
+        try {
+          const { data } = await api.get(url);
+          if (data) {
+            const newSettings = data.map((s) => {
+              const newSetting = new Setting(s);
+              return newSetting;
+            });
+            setSettings(newSettings);
+          }
+        } catch (error) {
+          toastError(error, `Error al cargar ${url}`);
+        }
+      };
+
       getPortifolios();
+      getSettings();
       loadUserRole();
 
       setIsLoading(false);
     } catch (error) {
-      toastError(error, 'Error al cargar usuário');
+      toastError(error, 'Error al cargar pagina ');
     }
   }, []);
 
@@ -194,6 +214,44 @@ function AboutMe() {
     }
   };
 
+  const getText = (settingsArray = [new Setting()], settingName = '') => {
+    const defaultText = 'Insertar Text';
+    if (settingsArray.length > 0) {
+      const setting = settingsArray.find((s) => s.name === settingName);
+      return setting.value || defaultText;
+    }
+    return '';
+  };
+
+  const handleEditAboutMeTitle = () => {
+    const setting = settings.find((s) => s.name === 'ABOUTME_TITLE');
+    setCurrentSetting(setting || {});
+  };
+
+  const handleEditAboutMeText = () => {
+    const setting = settings.find((s) => s.name === 'ABOUTME_TEXT');
+    setCurrentSetting(setting || {});
+  };
+
+  const updateSetting = async (payload) => {
+    try {
+      const { id } = payload;
+      const { data } = await api.put(`/setting/${id}`, payload);
+      if (data) {
+        const setting = new Setting(data);
+        const newSettings = settings.filter((s) => s.id !== id);
+        newSettings.push(setting);
+        setSettings(newSettings);
+        toast.success('Portifolio creado');
+      }
+    } catch (error) {
+      const message = error?.response?.data?.message;
+      toast.error(message || 'Error desconocído');
+    } finally {
+      setAboutMeModal(false);
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -214,20 +272,28 @@ function AboutMe() {
               </button>
             </TopBar>
           )}
-          {/* TODO FINISH EDIT ABOUT ME */}
+
           <Content>
             <About>
-              <Buttons
-                disabled={lockButtons}
-                onClick={() => {
-                  console.log('click');
-                  setAboutMeModal(true);
-                }}
-              >
-                <MdModeEdit />
+              <Buttons disabled={lockButtons}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleEditAboutMeTitle();
+                    setAboutMeModal(true);
+                  }}
+                  disabled={lockButtons}
+                >
+                  <MdEdit />
+                </button>
+                {/* TODO FINISH EDIT ABOUT ME LANDING PICTURE. DO THE SAME AS CONTACME */}
+                <button type="button" onClick={() => {}} disabled={lockButtons}>
+                  <MdImage />
+                </button>
               </Buttons>
+
               <TextContainer>
-                <TextTitle>Historia</TextTitle>
+                <TextTitle>{getText(settings, 'ABOUTME_TITLE')}</TextTitle>
               </TextContainer>
               <ImageContainer>
                 <ImageContent hasUrl={frontImageUrl} />
@@ -237,13 +303,13 @@ function AboutMe() {
                 <Buttons
                   disabled={lockButtons}
                   onClick={() => {
-                    console.log('click');
+                    handleEditAboutMeText();
                     setAboutMeModal(true);
                   }}
                 >
                   <MdModeEdit />
                 </Buttons>
-                <TextParagraf>a a</TextParagraf>
+                <TextParagraf>{getText(settings, 'ABOUTME_TEXT')}</TextParagraf>
               </TextContainer>
             </About>
           </Content>
@@ -297,7 +363,13 @@ function AboutMe() {
           }}
         />
       )}
-      {aboutMeModal && <AboutMeModal />}
+      {aboutMeModal && (
+        <AboutMeModal
+          initialData={currentSetting}
+          setModalOpen={setAboutMeModal}
+          onSubmit={updateSetting}
+        />
+      )}
     </>
   );
 }

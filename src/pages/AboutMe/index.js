@@ -317,7 +317,6 @@ function AboutMe() {
                   >
                     <MdEdit />
                   </button>
-                  {/* TODO FINISH EDIT ABOUT ME LANDING PICTURE. DO THE SAME AS CONTACME */}
                   <label htmlFor="file">
                     <span>
                       <MdImage />

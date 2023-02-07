@@ -36,7 +36,7 @@ function AboutMe() {
   const [aboutMeModal, setAboutMeModal] = useState(false);
   const [settings, setSettings] = useState('');
   const [currentSetting, setCurrentSetting] = useState(new Setting());
-  const inputRef = useRef(null);
+  const landInputRef = useRef(null);
 
   const toastError = (error, optMessage = 'Erro desconocído') => {
     toast.error(error?.response?.data?.message || optMessage);
@@ -251,7 +251,7 @@ function AboutMe() {
         const newSettings = settings.filter((s) => s.id !== id);
         newSettings.push(setting);
         setSettings(newSettings);
-        toast.success('Portifolio creado');
+        toast.success('Alteracíon guardada');
       }
     } catch (error) {
       const message = error?.response?.data?.message;
@@ -263,6 +263,7 @@ function AboutMe() {
 
   const handleChangeImage = async (fileList) => {
     try {
+      // TODO THIS IS CHANGIND LADING INSTEAD OF ADD IMAGE TO PORTIFOLIO
       const formData = new FormData();
       const file = fileList[0];
       const setting = settings.find((s) => s.name === 'ABOUTME_IMG');
@@ -317,19 +318,19 @@ function AboutMe() {
                   >
                     <MdEdit />
                   </button>
-                  <label htmlFor="file">
+                  <label htmlFor="land">
                     <span>
                       <MdImage />
                     </span>
                     <input
                       style={{ display: 'none' }}
-                      ref={inputRef}
+                      ref={landInputRef}
                       type="file"
-                      id="file"
+                      id="land"
                       multiple={false}
                       onChange={(f) => handleChangeImage(f.target.files)}
                       onClick={() => {
-                        inputRef.current.value = null;
+                        landInputRef.current.value = null;
                       }}
                       accept="image/jpeg,
                 image/pjpeg,

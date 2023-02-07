@@ -72,6 +72,7 @@ export const Buttons = styled.div`
             color: black;
             :hover {
               color: #3498db;
+              cursor: pointer;
             }
           }
         `;
@@ -80,7 +81,6 @@ export const Buttons = styled.div`
   svg {
     height: 24px;
     width: auto;
-
     transition: color 0.2s;
   }
   button {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { MdEdit, MdModeEdit, MdImage } from 'react-icons/md';
 import Spinner from '../../components/Spinner';
@@ -26,6 +26,7 @@ import Portifolio from './PortifolioModal/index';
 import AboutMeModal from './AboutMeModal/index';
 
 function AboutMe() {
+  const [landingImageSetting, setLandingImageSetting] = useState('');
   const [portifolios, setPortifolios] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [currentPortifolioId, setCurrentPortifolioId] = useState('');
@@ -35,10 +36,18 @@ function AboutMe() {
   const [aboutMeModal, setAboutMeModal] = useState(false);
   const [settings, setSettings] = useState('');
   const [currentSetting, setCurrentSetting] = useState(new Setting());
+  const inputRef = useRef(null);
 
   const toastError = (error, optMessage = 'Erro desconocído') => {
     toast.error(error?.response?.data?.message || optMessage);
   };
+
+  useEffect(() => {
+    if (settings) {
+      const setting = settings.find((s) => s.name === 'ABOUTME_IMG');
+      setLandingImageSetting(setting || {});
+    }
+  }, [settings]);
 
   useEffect(() => {
     try {
@@ -252,6 +261,27 @@ function AboutMe() {
     }
   };
 
+  const handleChangeImage = async (fileList) => {
+    try {
+      const formData = new FormData();
+      const file = fileList[0];
+      const setting = settings.find((s) => s.name === 'ABOUTME_IMG');
+
+      formData.append('file', file);
+      await api.post(`setting/${setting.id}/file`, formData);
+
+      const { data: newSetting } = await api.get(
+        `setting/find/?name=ABOUTME_IMG`
+      );
+
+      setLandingImageSetting(newSetting || '');
+      toast.success('Alteración guardada');
+    } catch (error) {
+      const message = error?.response?.data?.message;
+      toast.error(message || 'Error al guardar');
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -275,40 +305,69 @@ function AboutMe() {
 
           <Content>
             <About>
-              <Buttons disabled={lockButtons}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleEditAboutMeTitle();
-                    setAboutMeModal(true);
-                  }}
-                  disabled={lockButtons}
-                >
-                  <MdEdit />
-                </button>
-                {/* TODO FINISH EDIT ABOUT ME LANDING PICTURE. DO THE SAME AS CONTACME */}
-                <button type="button" onClick={() => {}} disabled={lockButtons}>
-                  <MdImage />
-                </button>
-              </Buttons>
+              {userRole === 'admin' && (
+                <Buttons disabled={lockButtons}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleEditAboutMeTitle();
+                      setAboutMeModal(true);
+                    }}
+                    disabled={lockButtons}
+                  >
+                    <MdEdit />
+                  </button>
+                  {/* TODO FINISH EDIT ABOUT ME LANDING PICTURE. DO THE SAME AS CONTACME */}
+                  <label htmlFor="file">
+                    <span>
+                      <MdImage />
+                    </span>
+                    <input
+                      style={{ display: 'none' }}
+                      ref={inputRef}
+                      type="file"
+                      id="file"
+                      multiple={false}
+                      onChange={(f) => handleChangeImage(f.target.files)}
+                      onClick={() => {
+                        inputRef.current.value = null;
+                      }}
+                      accept="image/jpeg,
+                image/pjpeg,
+                image/png,
+                image/gif"
+                    />
+                  </label>
+                </Buttons>
+              )}
 
               <TextContainer>
                 <TextTitle>{getText(settings, 'ABOUTME_TITLE')}</TextTitle>
               </TextContainer>
               <ImageContainer>
-                <ImageContent hasUrl={frontImageUrl} />
+                <ImageContent
+                  hasUrl={() => {
+                    const url =
+                      landingImageSetting?.file &&
+                      (landingImageSetting?.file[0].url || frontImageUrl);
+                    return url;
+                  }}
+                />
               </ImageContainer>
 
               <TextContainer>
-                <Buttons
-                  disabled={lockButtons}
-                  onClick={() => {
-                    handleEditAboutMeText();
-                    setAboutMeModal(true);
-                  }}
-                >
-                  <MdModeEdit />
-                </Buttons>
+                {userRole === 'admin' && (
+                  <Buttons
+                    disabled={lockButtons}
+                    onClick={() => {
+                      handleEditAboutMeText();
+                      setAboutMeModal(true);
+                    }}
+                  >
+                    <MdModeEdit />
+                  </Buttons>
+                )}
+
                 <TextParagraf>{getText(settings, 'ABOUTME_TEXT')}</TextParagraf>
               </TextContainer>
             </About>

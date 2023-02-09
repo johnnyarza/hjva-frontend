@@ -144,6 +144,7 @@ function AboutMe() {
 
   const handleEditPortifolio = async (body) => {
     try {
+      setLockButtons(true);
       const { id: portifolioId, title, paragraph, file } = body;
 
       if (!portifolioId) {
@@ -177,6 +178,7 @@ function AboutMe() {
 
   const handleCreatePortifolio = async (body) => {
     try {
+      setLockButtons(true);
       const res = await api.post('portifolio/', body);
       let newPortifolio = res.data;
       const { id } = newPortifolio;
@@ -263,7 +265,7 @@ function AboutMe() {
 
   const handleChangeImage = async (fileList) => {
     try {
-      // TODO LOCK BUTTONS DURING IMAGE UPLOAD
+      setLockButtons(true);
       const formData = new FormData();
       const file = fileList[0];
       const setting = settings.find((s) => s.name === 'ABOUTME_IMG');
@@ -280,6 +282,8 @@ function AboutMe() {
     } catch (error) {
       const message = error?.response?.data?.message;
       toast.error(message || 'Error al guardar');
+    } finally {
+      setLockButtons(false);
     }
   };
 

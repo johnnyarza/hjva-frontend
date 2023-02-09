@@ -263,7 +263,7 @@ function AboutMe() {
 
   const handleChangeImage = async (fileList) => {
     try {
-      // TODO THIS IS CHANGIND LADING INSTEAD OF ADD IMAGE TO PORTIFOLIO
+      // TODO LOCK BUTTONS DURING IMAGE UPLOAD
       const formData = new FormData();
       const file = fileList[0];
       const setting = settings.find((s) => s.name === 'ABOUTME_IMG');

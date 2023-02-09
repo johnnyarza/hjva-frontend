@@ -34,6 +34,7 @@ export default function DesktopHeader({
     <Content hasNotification={hasNotification}>
       <nav>
         <Link to="/">
+          {/* TODO INSERT EDIT LOGO OPTION */}
           <img src={logo} alt="HJVA" />
           <span>Comércio y Construcciones HVA Ltda</span>
         </Link>

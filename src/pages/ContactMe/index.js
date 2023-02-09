@@ -61,7 +61,10 @@ function ContactMe() {
 
   const handleSubmit = async (body) => {
     try {
-      const { data } = await api.put(`setting/${contactMeSetting.id}`, body);
+      const { data } = await api.put(`setting/${contactMeSetting.id}`, {
+        ...contactMeSetting,
+        ...body,
+      });
       setContactMeSetting(data);
       setIsModalOpen(false);
       toast.success('Alteración guardada');

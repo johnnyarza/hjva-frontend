@@ -45,7 +45,7 @@ function AboutMeModal({
   };
   return (
     <Container>
-      <Modal isOpen>
+      <Modal isOpen onEscPress={() => setModalOpen(false)}>
         <Form ref={formRef} onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: 'auto' }}>
             <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>

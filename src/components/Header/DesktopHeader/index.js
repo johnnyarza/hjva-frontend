@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { IoLogoWhatsapp } from 'react-icons/io';
 import {
@@ -7,13 +7,17 @@ import {
   MdClose,
   MdPlace,
   MdInfo,
+  MdEdit,
 } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
+import { toast } from 'react-toastify';
 import { Content, MiddleContent } from './styles';
 
 import Language from '../Language';
 import Notifications from '../Notification';
+import Modal from '../../GenericModal';
+import api from '../../../services/api';
 
 import logo from '../../../assets/HJVA-logo.png';
 import WhatsAppFowardButton from '../../WhatsAppFowardButton';
@@ -29,14 +33,49 @@ export default function DesktopHeader({
   const [hasNotification] = notificationState;
   const [hasError] = errorState;
   const [isLoading] = loadingState;
+  const [userRole, setUserRole] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const loadUserRole = async () => {
+        const res = await api.get('/user');
+        if (!res.data) {
+          throw Error('Usuário não encontrado');
+        }
+        setUserRole(res.data.role);
+      };
+      loadUserRole();
+    } catch (error) {
+      // Nothing
+    }
+  }, []);
 
   return (
     <Content hasNotification={hasNotification}>
       <nav>
         <Link to="/">
           {/* TODO INSERT EDIT LOGO OPTION */}
-          <img src={logo} alt="HJVA" />
-          <span>Comércio y Construcciones HVA Ltda</span>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+            }}
+          >
+            {userRole === 'admin' && (
+              <div style={{ position: 'absolute', right: '0px' }}>
+                <MdEdit
+                  onClick={() => {
+                    setIsModalOpen(true);
+                  }}
+                />
+              </div>
+            )}
+
+            <img src={logo} alt="HJVA" />
+            <span>Comércio y Construcciones HVA Ltda</span>
+          </div>
         </Link>
       </nav>
       <MiddleContent>
@@ -80,6 +119,11 @@ export default function DesktopHeader({
           )}
         </nav>
       </aside>
+      {isModalOpen && (
+        <Modal isOpen onEscPress={() => setIsModalOpen(false)}>
+          <div />
+        </Modal>
+      )}
     </Content>
   );
 }
